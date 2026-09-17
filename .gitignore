@@ -1,0 +1,35 @@
+# Godot-generated cache and local export credentials
+**/.godot/
+**/.DS_Store
+**/.godot_import/
+**/export_credentials.cfg
+# Generated builds, delivery archives and QA captures
+/builds/
+/screenshots/
+*.zip
+*.app/
+*.pck
+*.log
+*.tmp
+*.bak
+# Local secrets and editor state
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key
+.vscode/
+.idea/
+*.avi
+/test-logs/
+/game/test-logs/
+**/__pycache__/
+
+# Keep release evidence and QA logs local; the curated public gallery lives in docs/screenshots/.
+/docs/test-results/
+
+# Supplied planning/reference material can contain private family artwork or source notes.
+/reference/
+/docs/Doodle_Rumble_Mac_Plan.docx
+/docs/SUPPLIED_PLAN.txt

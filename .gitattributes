@@ -1,0 +1,12 @@
+* text=auto
+*.gd text eol=lf
+*.tscn text eol=lf
+*.godot text eol=lf
+*.png binary
+*.jpeg binary
+*.heic binary
+*.wav binary
+*.ttf binary
+*.docx binary
+*.ogv binary
+*.avi binary

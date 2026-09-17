@@ -1,0 +1,35 @@
+; Doodle Rumble — standard Godot 4, GDScript, Compatibility renderer.
+config_version=5
+
+[application]
+config/name="Doodle Rumble"
+run/main_scene="res://scenes/boot.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://assets/icon.svg"
+config/description="A tiny desktop. Six big imaginations."
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/size/resizable=true
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.82, 0.89, 0.94, 1)
+textures/default_filters/use_nearest_mipmap_filter=false
+textures/vram_compression/import_etc2_astc=true
+textures/vram_compression/import_s3tc_bptc=true
+
+[physics]
+common/physics_ticks_per_second=60
+
+[autoload]
+Data="*res://scripts/roster.gd"
+Settings="*res://scripts/settings.gd"
+Sound="*res://scripts/audio.gd"
+Chronicle="*res://scripts/story_progress.gd"

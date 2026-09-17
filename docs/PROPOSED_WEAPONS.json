@@ -1,0 +1,55 @@
+{
+  "status": "Initial tuning hypotheses; not balanced or implemented",
+  "logical_viewport": [
+    1280,
+    720
+  ],
+  "weapons": [
+    {
+      "id": "hammer",
+      "name": "Large hammer",
+      "damage": 20,
+      "reach_px": 92,
+      "windup_s": 0.22,
+      "recovery_s": 0.48,
+      "identity": "Big knockback; visible slow swing"
+    },
+    {
+      "id": "sword",
+      "name": "Pixel sword",
+      "damage": 12,
+      "reach_px": 112,
+      "windup_s": 0.1,
+      "recovery_s": 0.28,
+      "identity": "Fast, reliable close combat"
+    },
+    {
+      "id": "pickaxe",
+      "name": "Pickaxe",
+      "damage": 16,
+      "reach_px": 90,
+      "windup_s": 0.16,
+      "recovery_s": 0.36,
+      "identity": "Shorter hook-shaped swing"
+    },
+    {
+      "id": "pitchfork",
+      "name": "Pitchfork",
+      "damage": 13,
+      "reach_px": 138,
+      "windup_s": 0.14,
+      "recovery_s": 0.34,
+      "identity": "Long straight thrust; narrow vertical reach"
+    },
+    {
+      "id": "arrow",
+      "name": "Pointy arrow",
+      "damage": 10,
+      "range_px": 520,
+      "windup_s": 0.18,
+      "recovery_s": 0.5,
+      "projectile_speed_px_s": 650,
+      "identity": "Visible projectile; can be jumped over"
+    }
+  ]
+}

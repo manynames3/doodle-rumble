@@ -1,0 +1,136 @@
+{
+  "status": "Playable v0.4.0 includes six selectable fighters with dodge/counters and aerial moves, plus Pac-Man, H4CK3R (penultimate), Dark lord (final) and camera-bug helpers. Other entries remain future concepts.",
+  "updated": "2026-09-13",
+  "working_title": "Doodle Rumble",
+  "main_influence": "Animator vs. Animation",
+  "secondary_influence": "Minecraft-style tools and block environments",
+  "characters": [
+    {
+      "id": "alan_becker",
+      "name": "Alan Becker",
+      "role": "Animator role",
+      "proposal": "Giant cursor draws platforms and drops tools. Later boss or special mode.",
+      "phase": "Later",
+      "implementation_status": "not_implemented",
+      "starting_weapon": "cursor"
+    },
+    {
+      "id": "camera_bug",
+      "name": "Dark lord\u2019s camera bug",
+      "role": "Enemy helper",
+      "proposal": "Scuttles, marks a target, then fires a clearly signaled beam.",
+      "phase": "Implemented boss helper",
+      "implementation_status": "implemented_boss_helper",
+      "implemented_behavior": "Two visible camera-bug helpers accompany the Dark lord. Marked columns warn before a damaging beam; the Dark lord is immune to his own marks. This helper is not selectable, and the proposed scuttling movement is not implemented.",
+      "starting_weapon": "camera"
+    },
+    {
+      "id": "h4ck3r",
+      "name": "H4CK3R",
+      "role": "Penultimate story boss",
+      "proposal": "Glitch step and a temporary decoy. Keep the Victim reference with this entry for review.",
+      "phase": "Implemented boss",
+      "implementation_status": "implemented_boss",
+      "starting_weapon": "cursor_wand",
+      "implemented_behavior": "Fifth of six story opponents, 190 HP: title-inspired tilted monitor, cyan camera eye, cables, pale armor and handheld tablet; cursor melee, packet shot, cursor stamp, eraser and ink patterns. Not selectable. Decoy remains a future concept."
+    },
+    {
+      "id": "red",
+      "name": "Red",
+      "role": "Heavy hitter",
+      "proposal": "Large hammer; a ground slam sends a short shockwave.",
+      "phase": "Implemented",
+      "implementation_status": "implemented_playable",
+      "implemented_behavior": "Selectable hammer fighter with ground-wave special; second journey opponent, harder than Blue. Also has a shared timed dodge/counter and a character-specific airborne basic attack.",
+      "starting_weapon": "hammer"
+    },
+    {
+      "id": "green",
+      "name": "Green",
+      "role": "Sword fighter",
+      "proposal": "Oversized pixel sword; a forward dash slash.",
+      "phase": "Implemented",
+      "implementation_status": "implemented_playable",
+      "implemented_behavior": "Selectable pixel-sword fighter with dash-slash special; third journey opponent, harder than Red. Also has a shared timed dodge/counter and a character-specific airborne basic attack.",
+      "starting_weapon": "sword"
+    },
+    {
+      "id": "orange",
+      "name": "Orange",
+      "role": "Balanced starter",
+      "proposal": "Pitchfork; a broad spin attack. Preselected for first play.",
+      "phase": "Implemented",
+      "implementation_status": "implemented_playable",
+      "implemented_behavior": "Selectable pitchfork fighter with a broad spin special. Preselected for a fresh profile; later launches restore the saved fighter. Also has a shared timed dodge/counter and a character-specific airborne basic attack.",
+      "starting_weapon": "pitchfork"
+    },
+    {
+      "id": "pac_man",
+      "name": "Pac-man",
+      "role": "Guest concept",
+      "proposal": "Short chomp dash and a bouncing pellet.",
+      "phase": "Implemented fourth-stage boss",
+      "implementation_status": "implemented_boss",
+      "starting_weapon": "chomp",
+      "implemented_behavior": "Fourth of six story opponents, 150 HP: faster serrated yellow creature with warned bites, charged dashes, pellet fans and leaping chomps. Not selectable."
+    },
+    {
+      "id": "sign_guy",
+      "name": "Sign guy",
+      "role": "Defender",
+      "proposal": "Large sign works as a shield and a push attack.",
+      "phase": "Later",
+      "implementation_status": "not_implemented",
+      "starting_weapon": "sign"
+    },
+    {
+      "id": "purple",
+      "name": "Purple",
+      "role": "Archer",
+      "proposal": "Pointy arrows and a short burst shot.",
+      "phase": "Implemented",
+      "implementation_status": "implemented_playable",
+      "starting_weapon": "bow",
+      "implemented_behavior": "Selectable bow fighter: basic arrows and a long-range Signal shot, plus bow-draw animation and a decorative shield. Also has a shared timed dodge/counter and a character-specific airborne basic attack."
+    },
+    {
+      "id": "blue",
+      "name": "Blue",
+      "role": "Tool fighter",
+      "proposal": "Pickaxe; a slam throws a small block fragment.",
+      "phase": "Implemented",
+      "implementation_status": "implemented_playable",
+      "implemented_behavior": "Selectable pickaxe fighter with block-fragment special; gentle first journey opponent. Also has a shared timed dodge/counter and a character-specific airborne basic attack.",
+      "starting_weapon": "pickaxe"
+    },
+    {
+      "id": "dark_lord",
+      "name": "Dark lord",
+      "role": "Boss",
+      "proposal": "Oversized dark blade, camera bugs, and slow powerful attacks.",
+      "phase": "Implemented arcade boss",
+      "implementation_status": "implemented_boss",
+      "implemented_behavior": "Final sixth story boss, 240 HP and 50% bigger: ragged black/purple crowned figure with scythe sweeps, ground waves, void volleys, rising rifts and camera hazards. Finite damage-taking windup guard, then recovery. Not selectable.",
+      "starting_weapon": "dark_blade"
+    },
+    {
+      "id": "yellow",
+      "name": "Yellow",
+      "role": "Gadget fighter",
+      "proposal": "A temporary block turret or a simple trap.",
+      "phase": "Implemented",
+      "implementation_status": "implemented_playable",
+      "starting_weapon": "staff",
+      "implemented_behavior": "Selectable small staff fighter: quick melee swings and Swarm summon, three moving doodle helpers sharing one damage hitbox. This follows the later user-supplied special-attack illustration. Also has a shared timed dodge/counter and a character-specific airborne basic attack."
+    }
+  ],
+  "source_notes": [
+    "The proposal fields preserve the original ideas. implementation_status and implemented_behavior describe the current playable build.",
+    "Characters depicted in the supplied introductory poster beyond the implemented roster are illustration, not locked playable content.",
+    "Alan Becker is the corrected reference name. Proposed as the animator/cursor role, not an extra colored fighter.",
+    "Green appeared twice in the supplied list. Keep one playable entry until a distinct second Green is identified.",
+    "The Victim wiki link is a reference associated with H4ck3r for review, not an automatically added extra fighter.",
+    "Weapon assignments and powers are game design suggestions, not statements of series canon.",
+    "The block-armored figure and several unlabeled figures in the photograph still need names from the children."
+  ]
+}

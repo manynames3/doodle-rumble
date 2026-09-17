@@ -1,0 +1,83 @@
+{
+  "pitchfork": {
+    "name": "Pitchfork",
+    "damage": 13,
+    "reach": 138,
+    "windup": 0.14,
+    "active": 0.13,
+    "recovery": 0.34,
+    "knockback": 340
+  },
+  "hammer": {
+    "name": "Large hammer",
+    "damage": 20,
+    "reach": 108,
+    "windup": 0.24,
+    "active": 0.15,
+    "recovery": 0.46,
+    "knockback": 440
+  },
+  "sword": {
+    "name": "Pixel sword",
+    "damage": 12,
+    "reach": 112,
+    "windup": 0.1,
+    "active": 0.13,
+    "recovery": 0.29,
+    "knockback": 300
+  },
+  "pickaxe": {
+    "name": "Pickaxe",
+    "damage": 16,
+    "reach": 108,
+    "windup": 0.16,
+    "active": 0.14,
+    "recovery": 0.36,
+    "knockback": 365
+  },
+  "bow": {
+    "name": "Bow",
+    "damage": 12,
+    "reach": 400,
+    "windup": 0.18,
+    "active": 0.1,
+    "recovery": 0.4,
+    "knockback": 310
+  },
+  "staff": {
+    "name": "Little staff",
+    "damage": 12,
+    "reach": 105,
+    "windup": 0.12,
+    "active": 0.12,
+    "recovery": 0.3,
+    "knockback": 310
+  },
+  "chomp": {
+    "name": "Chomp",
+    "damage": 22,
+    "reach": 125,
+    "windup": 0.2,
+    "active": 0.14,
+    "recovery": 0.42,
+    "knockback": 370
+  },
+  "dark_blade": {
+    "name": "Dark blade",
+    "damage": 26,
+    "reach": 154,
+    "windup": 0.27,
+    "active": 0.18,
+    "recovery": 0.5,
+    "knockback": 400
+  },
+  "cursor_wand": {
+    "name": "Cursor wand",
+    "damage": 18,
+    "reach": 122,
+    "windup": 0.27,
+    "active": 0.14,
+    "recovery": 0.54,
+    "knockback": 360
+  }
+}
