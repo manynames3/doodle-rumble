@@ -57,7 +57,7 @@ func seek(at: float) -> void:
 		actor.elapsed = elapsed
 		actor.phase = elapsed*3.0+i
 		actor.pose(0,{"grounded":true,"victory":shot==4,"facing":1 if i<3 else -1})
-		actor.weapon.visible = shot < 4
+		actor.weapon.visible = shot < 4 and not actor.has_packed_art()
 		if shot == 0:
 			actor.position = Vector2(220+i*37,578+i%2*9)
 			actor.visible = i == 0
@@ -81,7 +81,7 @@ func seek(at: float) -> void:
 	lord.scale = Vector2.ONE * (lerpf(2.55,0.35,smoothstep(1.0,4.8,t)) if shot == 0 else 1.17)
 	lord.modulate.a = 1.0-smoothstep(2.2,4.8,t) if shot == 0 else 1.0
 	lord.pose(0,{"grounded":true,"victory":shot==3,"facing":-1})
-	lord.weapon.visible = shot == 0
+	lord.weapon.visible = shot == 0 and not lord.has_packed_art()
 	hacker.visible = shot == 3
 	chomp.visible = shot == 3
 	hacker.position = Vector2(1090,578)

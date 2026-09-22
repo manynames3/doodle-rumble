@@ -2,12 +2,14 @@ extends Node2D
 ## Shared procedural joint rig. Root drives pose from fixed-step gameplay state.
 const FighterPose = preload("res://scripts/fighter_pose.gd")
 const WeaponArt = preload("res://scripts/weapon_art.gd")
+const CharacterArt = preload("res://scripts/character_art.gd")
 const INK = Color("060913")
 const PAPER = Color("f5f4ff")
 var fighter_id: String = "orange"
 var accent: Color = Color("f39232")
 var preview: bool = false
 var weapon: Node2D
+var packed_art
 var elapsed: float = 0.0
 var result_age: float = 0.0
 var result_kind: String = ""
@@ -55,8 +57,16 @@ func configure(definition: Dictionary) -> void:
 	if weapon_value is Dictionary:
 		weapon_name = str(weapon_value.get("id",weapon_value.get("type","pitchfork")))
 	weapon.configure(weapon_name,accent)
-	weapon.visible = fighter_id != "pac_man"
+	if packed_art == null:
+		packed_art = CharacterArt.new()
+		packed_art.name = "PackedCharacterArt"
+		add_child(packed_art)
+	packed_art.configure(fighter_id)
+	weapon.visible = fighter_id != "pac_man" and not packed_art.is_rendering()
 	queue_redraw()
+
+func has_packed_art() -> bool:
+	return packed_art != null and packed_art.is_rendering()
 
 func set_opponent_tell(message: String, progress: float = 0.0) -> void:
 	opponent_tell = message
@@ -377,6 +387,9 @@ func pose(delta: float, state: Dictionary) -> void:
 	else: weapon.draw_progress = bow_pull
 	weapon.arrow_visible = arrow_ready
 	weapon.queue_redraw()
+	if packed_art != null:
+		packed_art.pose(delta,state,phase)
+		weapon.visible = fighter_id != "pac_man" and not packed_art.is_rendering()
 	if bool(state.get("invulnerable",false)):
 		modulate.a = 0.78 if reduced else (0.64 if fmod(elapsed,0.14) < 0.07 else 1.0)
 	else:
@@ -1185,6 +1198,19 @@ func _draw_dark_lord() -> void:
 			draw_line(star-Vector2(0,3),star+Vector2(0,3),accent,1.7,true)
 
 func _draw() -> void:
+	if has_packed_art():
+		_attack_color_spill()
+		if trail >= 0.0 and not bool(current.get("reduced_motion",false)):
+			_attack_trail()
+		if fighter_id == "purple" and bool(current.get("shield_guard",false)):
+			_purple_shield()
+		if fighter_id == "pac_man" and opponent_tell != "":
+			_pacman_tell_marks(Vector2(2,-66),Vector2(47,47),bool(current.get("reduced_motion",false)))
+		if fighter_id == "h4ck3r" and str(current.get("boss_cast","")) != "":
+			_hacker_command_marks(head+Vector2(0,-9),head)
+		if fighter_id == "dark_lord":
+			_dark_cast_marks(str(current.get("boss_cast","")),float(current.get("boss_charge",0.0)))
+		return
 	if fighter_id == "pac_man":
 		_draw_pacman()
 		_draw_result_marks()

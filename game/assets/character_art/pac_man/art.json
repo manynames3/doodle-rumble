@@ -1,0 +1,353 @@
+{
+  "schema": 1,
+  "id": "pac_man",
+  "role": "boss",
+  "local_height": 112,
+  "idle_alpha_height": 1134,
+  "frames": {
+    "canonical": {
+      "path": "res://assets/character_art/pac_man/canonical.png",
+      "source": "character/canonical/pacman_canonical_hero.png",
+      "offset": [
+        -673.0,
+        -1218.0
+      ],
+      "source_per_pixel": 1.4441964285714286,
+      "alpha_bbox": [
+        128,
+        135,
+        1382,
+        1315
+      ],
+      "runtime_size": [
+        896,
+        845
+      ]
+    },
+    "idle": {
+      "path": "res://assets/character_art/pac_man/idle.png",
+      "source": "character/movement/pacman_ground_idle.png",
+      "offset": [
+        -673.0,
+        -1204.0
+      ],
+      "source_per_pixel": 1.4441964285714286,
+      "alpha_bbox": [
+        128,
+        149,
+        1382,
+        1283
+      ],
+      "runtime_size": [
+        896,
+        813
+      ]
+    },
+    "run_start": {
+      "path": "res://assets/character_art/pac_man/run_start.png",
+      "source": "character/movement/pacman_ground_run_anticipation.png",
+      "offset": [
+        -721.0,
+        -1125.0
+      ],
+      "source_per_pixel": 1.59375,
+      "alpha_bbox": [
+        128,
+        145,
+        1516,
+        1250
+      ],
+      "runtime_size": [
+        896,
+        718
+      ]
+    },
+    "run": {
+      "path": "res://assets/character_art/pac_man/run.png",
+      "source": "character/movement/pacman_ground_run_full_speed.png",
+      "offset": [
+        -731.0,
+        -1126.0
+      ],
+      "source_per_pixel": 1.6316964285714286,
+      "alpha_bbox": [
+        128,
+        128,
+        1550,
+        1234
+      ],
+      "runtime_size": [
+        896,
+        702
+      ]
+    },
+    "jump_takeoff": {
+      "path": "res://assets/character_art/pac_man/jump_takeoff.png",
+      "source": "character/jump/pacman_jump_takeoff.png",
+      "offset": [
+        -673.0,
+        -1204.0
+      ],
+      "source_per_pixel": 1.4866071428571428,
+      "alpha_bbox": [
+        128,
+        149,
+        1420,
+        1333
+      ],
+      "runtime_size": [
+        896,
+        823
+      ]
+    },
+    "jump_apex": {
+      "path": "res://assets/character_art/pac_man/jump_apex.png",
+      "source": "character/jump/pacman_jump_apex.png",
+      "offset": [
+        -673.0,
+        -1204.0
+      ],
+      "source_per_pixel": 1.4441964285714286,
+      "alpha_bbox": [
+        128,
+        149,
+        1382,
+        1309
+      ],
+      "runtime_size": [
+        896,
+        831
+      ]
+    },
+    "jump_landing": {
+      "path": "res://assets/character_art/pac_man/jump_landing.png",
+      "source": "character/jump/pacman_jump_landing.png",
+      "offset": [
+        -733.0,
+        -1069.0
+      ],
+      "source_per_pixel": 1.5859375,
+      "alpha_bbox": [
+        128,
+        182,
+        1509,
+        1184
+      ],
+      "runtime_size": [
+        896,
+        657
+      ]
+    },
+    "attack_windup": {
+      "path": "res://assets/character_art/pac_man/attack_windup.png",
+      "source": "character/attack/pacman_attack_anticipation.png",
+      "offset": [
+        -673.0,
+        -1225.0
+      ],
+      "source_per_pixel": 1.4910714285714286,
+      "alpha_bbox": [
+        128,
+        128,
+        1424,
+        1333
+      ],
+      "runtime_size": [
+        896,
+        835
+      ]
+    },
+    "attack_recover": {
+      "path": "res://assets/character_art/pac_man/attack_recover.png",
+      "source": "character/attack/pacman_attack_follow_through.png",
+      "offset": [
+        -723.0,
+        -1035.0
+      ],
+      "source_per_pixel": 1.6707589285714286,
+      "alpha_bbox": [
+        193,
+        137,
+        1650,
+        1130
+      ],
+      "runtime_size": [
+        896,
+        618
+      ]
+    },
+    "heavy_windup": {
+      "path": "res://assets/character_art/pac_man/heavy_windup.png",
+      "source": "character/heavy_smash/pacman_heavy_smash_anticipation.png",
+      "offset": [
+        -726.0,
+        -1134.0
+      ],
+      "source_per_pixel": 1.6205357142857142,
+      "alpha_bbox": [
+        128,
+        128,
+        1540,
+        1242
+      ],
+      "runtime_size": [
+        896,
+        712
+      ]
+    },
+    "heavy_impact": {
+      "path": "res://assets/character_art/pac_man/heavy_impact.png",
+      "source": "character/heavy_smash/pacman_heavy_smash_impact.png",
+      "offset": [
+        -788.0,
+        -1031.0
+      ],
+      "source_per_pixel": 1.7566964285714286,
+      "alpha_bbox": [
+        128,
+        141,
+        1662,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        598
+      ]
+    },
+    "special_impact": {
+      "path": "res://assets/character_art/pac_man/special_impact.png",
+      "source": "character/attack/pacman_attack_bite_impact.png",
+      "offset": [
+        -707.0,
+        -1160.0
+      ],
+      "source_per_pixel": 1.5602678571428572,
+      "alpha_bbox": [
+        128,
+        133,
+        1486,
+        1273
+      ],
+      "runtime_size": [
+        896,
+        756
+      ]
+    },
+    "basic_impact": {
+      "path": "res://assets/character_art/pac_man/basic_impact.png",
+      "source": "character/attack/pacman_attack_bite_impact.png",
+      "offset": [
+        -707.0,
+        -1160.0
+      ],
+      "source_per_pixel": 1.5602678571428572,
+      "alpha_bbox": [
+        128,
+        133,
+        1486,
+        1273
+      ],
+      "runtime_size": [
+        896,
+        756
+      ]
+    }
+  },
+  "effects": {
+    "swing_trail": {
+      "path": "res://assets/character_art/pac_man/effect_swing_trail.png",
+      "source": "effects/pacman_effect_swing_trail.png",
+      "offset": [
+        -788.0,
+        -1044.0
+      ],
+      "source_per_pixel": 1.7388392857142858,
+      "alpha_bbox": [
+        128,
+        128,
+        1646,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        612
+      ]
+    },
+    "impact_burst": {
+      "path": "res://assets/character_art/pac_man/effect_impact_burst.png",
+      "source": "effects/pacman_effect_impact_burst.png",
+      "offset": [
+        -768.0,
+        -1071.0
+      ],
+      "source_per_pixel": 1.6863839285714286,
+      "alpha_bbox": [
+        128,
+        128,
+        1599,
+        1179
+      ],
+      "runtime_size": [
+        896,
+        647
+      ]
+    },
+    "debris": {
+      "path": "res://assets/character_art/pac_man/effect_debris.png",
+      "source": "effects/pacman_effect_debris.png",
+      "offset": [
+        -788.0,
+        -1035.0
+      ],
+      "source_per_pixel": 1.7477678571428572,
+      "alpha_bbox": [
+        128,
+        137,
+        1654,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        604
+      ]
+    },
+    "speed_lines": {
+      "path": "res://assets/character_art/pac_man/effect_speed_lines.png",
+      "source": "effects/pacman_effect_speed_lines.png",
+      "offset": [
+        -765.0,
+        -1015.0
+      ],
+      "source_per_pixel": 1.7176339285714286,
+      "alpha_bbox": [
+        151,
+        157,
+        1650,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        603
+      ]
+    },
+    "dust": {
+      "path": "res://assets/character_art/pac_man/effect_dust.png",
+      "source": "effects/pacman_effect_dust.png",
+      "offset": [
+        -788.0,
+        -1035.0
+      ],
+      "source_per_pixel": 1.7477678571428572,
+      "alpha_bbox": [
+        128,
+        137,
+        1654,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        604
+      ]
+    }
+  }
+}

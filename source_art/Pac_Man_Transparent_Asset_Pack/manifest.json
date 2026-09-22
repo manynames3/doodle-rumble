@@ -1,0 +1,895 @@
+{
+  "pack": "Pac_Man_Transparent_Asset_Pack",
+  "tool_or_ability": "bite ability",
+  "asset_count": 34,
+  "generation_tool": "built-in image_gen",
+  "source_policy": "Fresh raster generation using the supplied Doodle Rumble references; no poster pixels cropped into production assets.",
+  "transparent_background": true,
+  "transparent_safety_border_px": 128,
+  "assets": [
+    {
+      "filename": "character/canonical/pacman_canonical_hero.png",
+      "purpose": "canonical hero anchor",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-2b18c973-5509-4581-a0e9-cc2ba6f794dd.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        135,
+        1382,
+        1315
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/pacman_turnaround_front.png",
+      "purpose": "turnaround front",
+      "width": 1561,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-6def0c6f-e8c1-4885-838c-7ec3024174e4.png",
+      "native_generated_source_resolution": [
+        1305,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        135,
+        1381,
+        1333
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/pacman_turnaround_3q.png",
+      "purpose": "turnaround 3/4 front",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-b23b1e65-70d5-468a-a3e0-972bf1e9f939.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        218,
+        179,
+        1366,
+        1333
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/pacman_turnaround_side.png",
+      "purpose": "turnaround side",
+      "width": 1531,
+      "height": 1490,
+      "mode": "RGBA",
+      "source_file": "exec-ee9d75a7-e712-42a0-bf91-bc9dbbf29285.png",
+      "native_generated_source_resolution": [
+        1275,
+        1234
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1338,
+        1345
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/pacman_turnaround_3q_back.png",
+      "purpose": "turnaround 3/4 back",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-e1a6e2c3-60d5-404b-8582-123de942b2c7.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        137,
+        1380,
+        1333
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/pacman_turnaround_back.png",
+      "purpose": "turnaround back",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-03a76ed5-212d-4c6f-9a85-11d1195a79f2.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        242,
+        164,
+        1380,
+        1277
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/movement/pacman_ground_idle.png",
+      "purpose": "movement idle",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-449a5c07-cbdc-4ec9-94dc-c380eb390fed.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        149,
+        1382,
+        1283
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/movement/pacman_ground_run_anticipation.png",
+      "purpose": "movement run anticipation",
+      "width": 1658,
+      "height": 1378,
+      "mode": "RGBA",
+      "source_file": "exec-fab98578-dceb-467c-8f53-3f6a57c8c5bd.png",
+      "native_generated_source_resolution": [
+        1402,
+        1122
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        145,
+        1516,
+        1250
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/movement/pacman_ground_run_full_speed.png",
+      "purpose": "movement full-speed run",
+      "width": 1678,
+      "height": 1362,
+      "mode": "RGBA",
+      "source_file": "exec-499cf04d-dc07-43c0-8839-4a5bab1f6bde.png",
+      "native_generated_source_resolution": [
+        1422,
+        1106
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1550,
+        1234
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/jump/pacman_jump_takeoff.png",
+      "purpose": "jump takeoff",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-3d1d35aa-526d-4e03-ac32-669459666455.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        149,
+        1420,
+        1333
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/jump/pacman_jump_apex.png",
+      "purpose": "jump apex",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-200c95e0-d3ca-4032-b1bc-68c07f5deda9.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        149,
+        1382,
+        1309
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/jump/pacman_jump_landing.png",
+      "purpose": "jump landing",
+      "width": 1682,
+      "height": 1359,
+      "mode": "RGBA",
+      "source_file": "exec-ec90eb7d-d82b-4794-b0bd-b75f74394a55.png",
+      "native_generated_source_resolution": [
+        1426,
+        1103
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        182,
+        1509,
+        1184
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/attack/pacman_attack_anticipation.png",
+      "purpose": "attack anticipation",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-579c4fba-122a-49e7-994b-4dcdccf04298.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1424,
+        1333
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/attack/pacman_attack_bite_impact.png",
+      "purpose": "bite impact",
+      "width": 1630,
+      "height": 1401,
+      "mode": "RGBA",
+      "source_file": "exec-3de22910-aeac-467c-afa6-0bb5fcfd4e28.png",
+      "native_generated_source_resolution": [
+        1374,
+        1145
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        133,
+        1486,
+        1273
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/attack/pacman_attack_follow_through.png",
+      "purpose": "attack follow-through",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-a5c66e65-f120-4667-aafb-7e14699d68c7.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        193,
+        137,
+        1650,
+        1130
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/heavy_smash/pacman_heavy_smash_anticipation.png",
+      "purpose": "heavy-smash anticipation",
+      "width": 1668,
+      "height": 1370,
+      "mode": "RGBA",
+      "source_file": "exec-90f2dc98-96a7-4f0b-b9b0-eb5a592dddc5.png",
+      "native_generated_source_resolution": [
+        1412,
+        1114
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1540,
+        1242
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/heavy_smash/pacman_heavy_smash_impact.png",
+      "purpose": "heavy-smash impact",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-edc43559-4ef1-489e-b19a-c9a3828d9bd7.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        141,
+        1662,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/pacman_head_front.png",
+      "purpose": "head detail front",
+      "width": 1561,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-5be34d11-97bd-4810-b4d4-07cc7ec9b5a8.png",
+      "native_generated_source_resolution": [
+        1305,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        161,
+        1379,
+        1283
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/pacman_head_3q.png",
+      "purpose": "head detail 3/4",
+      "width": 1561,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-0ca61dbd-a5b1-4a64-9826-6a25fe86eb9e.png",
+      "native_generated_source_resolution": [
+        1305,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        145,
+        1381,
+        1287
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/pacman_head_side.png",
+      "purpose": "head detail side",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-dc5ade12-3202-4cc3-bed9-c8bd7fc8559b.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        151,
+        149,
+        1418,
+        1301
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/pacman_head_back.png",
+      "purpose": "head detail back",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-486250fa-3a4e-44d3-a94e-38e6865c6612.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        222,
+        135,
+        1379,
+        1277
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "ability/views/pacman_tool_front.png",
+      "purpose": "bite ability front view",
+      "width": 1531,
+      "height": 1490,
+      "mode": "RGBA",
+      "source_file": "exec-5857bbb0-93be-4ba6-a157-7c86f66978e1.png",
+      "native_generated_source_resolution": [
+        1275,
+        1234
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        193,
+        145,
+        1379,
+        1310
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "ability/views/pacman_tool_3q.png",
+      "purpose": "bite ability 3/4 view",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-cb08ab01-d6b9-46ce-a13a-ed3bce5b864c.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        165,
+        156,
+        1382,
+        1333
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "ability/views/pacman_tool_side.png",
+      "purpose": "bite ability side view",
+      "width": 1562,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-2c1c50e1-dfef-48b5-a77f-6569c17b45e0.png",
+      "native_generated_source_resolution": [
+        1306,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1338,
+        1333
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "ability/views/pacman_tool_back.png",
+      "purpose": "bite ability back view",
+      "width": 1563,
+      "height": 1459,
+      "mode": "RGBA",
+      "source_file": "exec-07717d6e-f30a-45cb-a906-40645d15063a.png",
+      "native_generated_source_resolution": [
+        1307,
+        1203
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        147,
+        1432,
+        1331
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "ability/views/pacman_tool_top_bottom.png",
+      "purpose": "bite ability top/bottom view",
+      "width": 1280,
+      "height": 1792,
+      "mode": "RGBA",
+      "source_file": "exec-934984a8-6e3d-4990-a2ac-73886867cc9e.png",
+      "native_generated_source_resolution": [
+        1024,
+        1536
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        152,
+        1116,
+        1664
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "ability/details/pacman_tool_detail_01.png",
+      "purpose": "bite ability detail 1",
+      "width": 1568,
+      "height": 1455,
+      "mode": "RGBA",
+      "source_file": "exec-019342b5-5b7c-4439-9c5c-143860b727ca.png",
+      "native_generated_source_resolution": [
+        1312,
+        1199
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        145,
+        1440,
+        1311
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "ability/details/pacman_tool_detail_02.png",
+      "purpose": "bite ability detail 2",
+      "width": 1569,
+      "height": 1454,
+      "mode": "RGBA",
+      "source_file": "exec-2c4b91f7-9f63-47e0-b625-a206dbcdf9dc.png",
+      "native_generated_source_resolution": [
+        1313,
+        1198
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1403,
+        1297
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "ability/details/pacman_tool_detail_03.png",
+      "purpose": "bite ability detail 3",
+      "width": 1588,
+      "height": 1437,
+      "mode": "RGBA",
+      "source_file": "exec-08beb411-c569-4c02-a993-2b1126d9854d.png",
+      "native_generated_source_resolution": [
+        1332,
+        1181
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        147,
+        1382,
+        1291
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/pacman_effect_swing_trail.png",
+      "purpose": "bite arc",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-92a26cae-4ed6-4060-a27f-dab3253df7ae.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1646,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/pacman_effect_impact_burst.png",
+      "purpose": "impact burst",
+      "width": 1752,
+      "height": 1307,
+      "mode": "RGBA",
+      "source_file": "exec-f0452071-2b54-4073-9240-25ab7f1680ca.png",
+      "native_generated_source_resolution": [
+        1496,
+        1051
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1599,
+        1179
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/pacman_effect_debris.png",
+      "purpose": "pellets",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-8f79e19e-f328-41a5-8d1a-d769318553bf.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        137,
+        1654,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/pacman_effect_speed_lines.png",
+      "purpose": "speed lines",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-5aff5b8a-557e-4bfa-a375-2b3f67e2b30d.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        151,
+        157,
+        1650,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/pacman_effect_dust.png",
+      "purpose": "dust",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-59073f02-22e9-45fa-95ea-458b9f328354.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        137,
+        1654,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    }
+  ]
+}

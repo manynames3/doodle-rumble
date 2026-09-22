@@ -1,0 +1,334 @@
+{
+  "schema": 1,
+  "id": "h4ck3r",
+  "role": "boss",
+  "local_height": 160,
+  "idle_alpha_height": 1387,
+  "frames": {
+    "canonical": {
+      "path": "res://assets/character_art/h4ck3r/canonical.png",
+      "source": "character/canonical/h4ck3r_canonical_hero.png",
+      "offset": [
+        -614.0,
+        -1326.0
+      ],
+      "source_per_pixel": 1.5030902348578492,
+      "alpha_bbox": [
+        128,
+        146,
+        1304,
+        1452
+      ],
+      "runtime_size": [
+        809,
+        896
+      ]
+    },
+    "idle": {
+      "path": "res://assets/character_art/h4ck3r/idle.png",
+      "source": "character/movement/h4ck3r_ground_idle.png",
+      "offset": [
+        -572.5,
+        -1407.0
+      ],
+      "source_per_pixel": 1.5937961595273265,
+      "alpha_bbox": [
+        128,
+        165,
+        1167,
+        1552
+      ],
+      "runtime_size": [
+        677,
+        896
+      ]
+    },
+    "run_start": {
+      "path": "res://assets/character_art/h4ck3r/run_start.png",
+      "source": "character/movement/h4ck3r_ground_run_anticipation.png",
+      "offset": [
+        -672.5,
+        -1196.0
+      ],
+      "source_per_pixel": 1.5011160714285714,
+      "alpha_bbox": [
+        128,
+        157,
+        1433,
+        1333
+      ],
+      "runtime_size": [
+        896,
+        810
+      ]
+    },
+    "run": {
+      "path": "res://assets/character_art/h4ck3r/run.png",
+      "source": "character/movement/h4ck3r_ground_run_full_speed.png",
+      "offset": [
+        -788.0,
+        -1031.0
+      ],
+      "source_per_pixel": 1.7299107142857142,
+      "alpha_bbox": [
+        128,
+        141,
+        1638,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        608
+      ]
+    },
+    "jump_takeoff": {
+      "path": "res://assets/character_art/h4ck3r/jump_takeoff.png",
+      "source": "character/jump/h4ck3r_jump_takeoff.png",
+      "offset": [
+        -614.0,
+        -1336.0
+      ],
+      "source_per_pixel": 1.5141800246609125,
+      "alpha_bbox": [
+        128,
+        136,
+        1316,
+        1452
+      ],
+      "runtime_size": [
+        811,
+        896
+      ]
+    },
+    "jump_apex": {
+      "path": "res://assets/character_art/h4ck3r/jump_apex.png",
+      "source": "character/jump/h4ck3r_jump_apex.png",
+      "offset": [
+        -608.5,
+        -1357.0
+      ],
+      "source_per_pixel": 1.5193508114856429,
+      "alpha_bbox": [
+        128,
+        128,
+        1305,
+        1449
+      ],
+      "runtime_size": [
+        801,
+        896
+      ]
+    },
+    "jump_landing": {
+      "path": "res://assets/character_art/h4ck3r/jump_landing.png",
+      "source": "character/jump/h4ck3r_jump_landing.png",
+      "offset": [
+        -676.0,
+        -1216.0
+      ],
+      "source_per_pixel": 1.5078125,
+      "alpha_bbox": [
+        128,
+        131,
+        1439,
+        1327
+      ],
+      "runtime_size": [
+        896,
+        820
+      ]
+    },
+    "attack_windup": {
+      "path": "res://assets/character_art/h4ck3r/attack_windup.png",
+      "source": "character/attack/h4ck3r_attack_anticipation.png",
+      "offset": [
+        -676.0,
+        -1219.0
+      ],
+      "source_per_pixel": 1.5089285714285714,
+      "alpha_bbox": [
+        128,
+        128,
+        1440,
+        1327
+      ],
+      "runtime_size": [
+        896,
+        821
+      ]
+    },
+    "attack_recover": {
+      "path": "res://assets/character_art/h4ck3r/attack_recover.png",
+      "source": "character/attack/h4ck3r_attack_follow_through.png",
+      "offset": [
+        -615.0,
+        -1333.0
+      ],
+      "source_per_pixel": 1.50920245398773,
+      "alpha_bbox": [
+        128,
+        137,
+        1318,
+        1450
+      ],
+      "runtime_size": [
+        815,
+        896
+      ]
+    },
+    "heavy_windup": {
+      "path": "res://assets/character_art/h4ck3r/heavy_windup.png",
+      "source": "character/heavy_smash/h4ck3r_heavy_smash_anticipation.png",
+      "offset": [
+        -682.5,
+        -1207.0
+      ],
+      "source_per_pixel": 1.5234375,
+      "alpha_bbox": [
+        128,
+        128,
+        1453,
+        1315
+      ],
+      "runtime_size": [
+        896,
+        805
+      ]
+    },
+    "heavy_impact": {
+      "path": "res://assets/character_art/h4ck3r/heavy_impact.png",
+      "source": "character/heavy_smash/h4ck3r_heavy_smash_impact.png",
+      "offset": [
+        -676.0,
+        -1219.0
+      ],
+      "source_per_pixel": 1.5055803571428572,
+      "alpha_bbox": [
+        128,
+        128,
+        1437,
+        1327
+      ],
+      "runtime_size": [
+        896,
+        823
+      ]
+    },
+    "special_impact": {
+      "path": "res://assets/character_art/h4ck3r/special_impact.png",
+      "source": "character/attack/h4ck3r_attack_system_scan_impact.png",
+      "offset": [
+        -676.0,
+        -1179.0
+      ],
+      "source_per_pixel": 1.5022321428571428,
+      "alpha_bbox": [
+        128,
+        168,
+        1434,
+        1327
+      ],
+      "runtime_size": [
+        896,
+        798
+      ]
+    }
+  },
+  "effects": {
+    "swing_trail": {
+      "path": "res://assets/character_art/h4ck3r/effect_swing_trail.png",
+      "source": "effects/h4ck3r_effect_swing_trail.png",
+      "offset": [
+        -788.0,
+        -1044.0
+      ],
+      "source_per_pixel": 1.7522321428571428,
+      "alpha_bbox": [
+        128,
+        128,
+        1658,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        607
+      ]
+    },
+    "impact_burst": {
+      "path": "res://assets/character_art/h4ck3r/effect_impact_burst.png",
+      "source": "effects/h4ck3r_effect_impact_burst.png",
+      "offset": [
+        -703.5,
+        -1171.0
+      ],
+      "source_per_pixel": 1.5703125,
+      "alpha_bbox": [
+        128,
+        128,
+        1495,
+        1279
+      ],
+      "runtime_size": [
+        896,
+        758
+      ]
+    },
+    "debris": {
+      "path": "res://assets/character_art/h4ck3r/effect_debris.png",
+      "source": "effects/h4ck3r_effect_debris.png",
+      "offset": [
+        -788.0,
+        -1044.0
+      ],
+      "source_per_pixel": 1.7589285714285714,
+      "alpha_bbox": [
+        128,
+        128,
+        1664,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        605
+      ]
+    },
+    "speed_lines": {
+      "path": "res://assets/character_art/h4ck3r/effect_speed_lines.png",
+      "source": "effects/h4ck3r_effect_speed_lines.png",
+      "offset": [
+        -763.0,
+        -1028.0
+      ],
+      "source_per_pixel": 1.7087053571428572,
+      "alpha_bbox": [
+        153,
+        144,
+        1644,
+        1138
+      ],
+      "runtime_size": [
+        896,
+        605
+      ]
+    },
+    "dust": {
+      "path": "res://assets/character_art/h4ck3r/effect_dust.png",
+      "source": "effects/h4ck3r_effect_dust.png",
+      "offset": [
+        -770.0,
+        -1048.0
+      ],
+      "source_per_pixel": 1.703125,
+      "alpha_bbox": [
+        128,
+        149,
+        1614,
+        1177
+      ],
+      "runtime_size": [
+        896,
+        627
+      ]
+    }
+  }
+}

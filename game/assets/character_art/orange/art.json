@@ -1,0 +1,334 @@
+{
+  "schema": 1,
+  "id": "orange",
+  "role": "playable",
+  "local_height": 150,
+  "idle_alpha_height": 1358,
+  "frames": {
+    "canonical": {
+      "path": "res://assets/character_art/orange/canonical.png",
+      "source": "character/canonical/orange_canonical_hero.png",
+      "offset": [
+        -656.5,
+        -1167.0
+      ],
+      "source_per_pixel": 1.5111607142857142,
+      "alpha_bbox": [
+        169,
+        142,
+        1483,
+        1289
+      ],
+      "runtime_size": [
+        896,
+        785
+      ]
+    },
+    "idle": {
+      "path": "res://assets/character_art/orange/idle.png",
+      "source": "character/movement/orange_ground_idle.png",
+      "offset": [
+        -559.5,
+        -1394.0
+      ],
+      "source_per_pixel": 1.5599435825105783,
+      "alpha_bbox": [
+        153,
+        147,
+        1219,
+        1505
+      ],
+      "runtime_size": [
+        709,
+        896
+      ]
+    },
+    "run_start": {
+      "path": "res://assets/character_art/orange/run_start.png",
+      "source": "character/movement/orange_ground_run_anticipation.png",
+      "offset": [
+        -725.0,
+        -1023.0
+      ],
+      "source_per_pixel": 1.6729910714285714,
+      "alpha_bbox": [
+        191,
+        149,
+        1650,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        623
+      ]
+    },
+    "run": {
+      "path": "res://assets/character_art/orange/run.png",
+      "source": "character/movement/orange_ground_run_full_speed.png",
+      "offset": [
+        -764.0,
+        -1009.0
+      ],
+      "source_per_pixel": 1.6808035714285714,
+      "alpha_bbox": [
+        152,
+        163,
+        1618,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        612
+      ]
+    },
+    "jump_takeoff": {
+      "path": "res://assets/character_art/orange/jump_takeoff.png",
+      "source": "character/jump/orange_jump_takeoff.png",
+      "offset": [
+        -623.5,
+        -1249.0
+      ],
+      "source_per_pixel": 1.4155995343422585,
+      "alpha_bbox": [
+        128,
+        202,
+        1304,
+        1431
+      ],
+      "runtime_size": [
+        859,
+        896
+      ]
+    },
+    "jump_apex": {
+      "path": "res://assets/character_art/orange/jump_apex.png",
+      "source": "character/jump/orange_jump_apex.png",
+      "offset": [
+        -583.5,
+        -1319.0
+      ],
+      "source_per_pixel": 1.4753476611883691,
+      "alpha_bbox": [
+        161,
+        147,
+        1288,
+        1429
+      ],
+      "runtime_size": [
+        791,
+        896
+      ]
+    },
+    "jump_landing": {
+      "path": "res://assets/character_art/orange/jump_landing.png",
+      "source": "character/jump/orange_jump_landing.png",
+      "offset": [
+        -644.5,
+        -1161.0
+      ],
+      "source_per_pixel": 1.4642857142857142,
+      "alpha_bbox": [
+        181,
+        147,
+        1453,
+        1288
+      ],
+      "runtime_size": [
+        896,
+        807
+      ]
+    },
+    "attack_windup": {
+      "path": "res://assets/character_art/orange/attack_windup.png",
+      "source": "character/attack/orange_attack_anticipation.png",
+      "offset": [
+        -673.5,
+        -1159.0
+      ],
+      "source_per_pixel": 1.4899553571428572,
+      "alpha_bbox": [
+        152,
+        149,
+        1447,
+        1224
+      ],
+      "runtime_size": [
+        896,
+        748
+      ]
+    },
+    "attack_recover": {
+      "path": "res://assets/character_art/orange/attack_recover.png",
+      "source": "character/attack/orange_attack_follow_through.png",
+      "offset": [
+        -723.0,
+        -1023.0
+      ],
+      "source_per_pixel": 1.6707589285714286,
+      "alpha_bbox": [
+        193,
+        149,
+        1650,
+        1133
+      ],
+      "runtime_size": [
+        896,
+        613
+      ]
+    },
+    "heavy_windup": {
+      "path": "res://assets/character_art/orange/heavy_windup.png",
+      "source": "character/heavy_smash/orange_heavy_smash_anticipation.png",
+      "offset": [
+        -664.5,
+        -1159.0
+      ],
+      "source_per_pixel": 1.4888392857142858,
+      "alpha_bbox": [
+        161,
+        149,
+        1455,
+        1272
+      ],
+      "runtime_size": [
+        896,
+        781
+      ]
+    },
+    "heavy_impact": {
+      "path": "res://assets/character_art/orange/heavy_impact.png",
+      "source": "character/heavy_smash/orange_heavy_smash_impact.png",
+      "offset": [
+        -626.0,
+        -1296.0
+      ],
+      "source_per_pixel": 1.4218181818181819,
+      "alpha_bbox": [
+        128,
+        149,
+        1261,
+        1383
+      ],
+      "runtime_size": [
+        825,
+        896
+      ]
+    },
+    "special_impact": {
+      "path": "res://assets/character_art/orange/special_impact.png",
+      "source": "character/attack/orange_attack_spin_slash_impact.png",
+      "offset": [
+        -788.0,
+        -1044.0
+      ],
+      "source_per_pixel": 1.7433035714285714,
+      "alpha_bbox": [
+        128,
+        128,
+        1650,
+        1126
+      ],
+      "runtime_size": [
+        896,
+        595
+      ]
+    }
+  },
+  "effects": {
+    "swing_trail": {
+      "path": "res://assets/character_art/orange/effect_swing_trail.png",
+      "source": "effects/orange_effect_swing_trail.png",
+      "offset": [
+        -788.0,
+        -1021.0
+      ],
+      "source_per_pixel": 1.7477678571428572,
+      "alpha_bbox": [
+        128,
+        151,
+        1654,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        596
+      ]
+    },
+    "impact_burst": {
+      "path": "res://assets/character_art/orange/effect_impact_burst.png",
+      "source": "effects/orange_effect_impact_burst.png",
+      "offset": [
+        -697.5,
+        -1171.0
+      ],
+      "source_per_pixel": 1.5558035714285714,
+      "alpha_bbox": [
+        128,
+        137,
+        1482,
+        1288
+      ],
+      "runtime_size": [
+        896,
+        766
+      ]
+    },
+    "debris": {
+      "path": "res://assets/character_art/orange/effect_debris.png",
+      "source": "effects/orange_effect_debris.png",
+      "offset": [
+        -763.0,
+        -1035.0
+      ],
+      "source_per_pixel": 1.7176339285714286,
+      "alpha_bbox": [
+        153,
+        137,
+        1652,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        614
+      ]
+    },
+    "speed_lines": {
+      "path": "res://assets/character_art/orange/effect_speed_lines.png",
+      "source": "effects/orange_effect_speed_lines.png",
+      "offset": [
+        -765.0,
+        -1009.0
+      ],
+      "source_per_pixel": 1.7176339285714286,
+      "alpha_bbox": [
+        151,
+        163,
+        1650,
+        1128
+      ],
+      "runtime_size": [
+        896,
+        585
+      ]
+    },
+    "dust": {
+      "path": "res://assets/character_art/orange/effect_dust.png",
+      "source": "effects/orange_effect_dust.png",
+      "offset": [
+        -788.0,
+        -1023.0
+      ],
+      "source_per_pixel": 1.7433035714285714,
+      "alpha_bbox": [
+        128,
+        149,
+        1650,
+        1128
+      ],
+      "runtime_size": [
+        896,
+        585
+      ]
+    }
+  }
+}

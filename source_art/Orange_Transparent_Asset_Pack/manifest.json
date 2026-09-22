@@ -1,0 +1,895 @@
+{
+  "pack": "Orange_Transparent_Asset_Pack",
+  "tool_or_ability": "trident",
+  "asset_count": 34,
+  "generation_tool": "built-in image_gen",
+  "source_policy": "Fresh raster generation using the supplied Doodle Rumble references; no poster pixels cropped into production assets.",
+  "transparent_background": true,
+  "transparent_safety_border_px": 128,
+  "assets": [
+    {
+      "filename": "character/canonical/orange_canonical_hero.png",
+      "purpose": "canonical hero anchor",
+      "width": 1611,
+      "height": 1417,
+      "mode": "RGBA",
+      "source_file": "exec-a754235a-e391-4d83-83f0-2aae741f6570.png",
+      "native_generated_source_resolution": [
+        1355,
+        1161
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        169,
+        142,
+        1483,
+        1289
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/orange_turnaround_front.png",
+      "purpose": "turnaround front",
+      "width": 1401,
+      "height": 1630,
+      "mode": "RGBA",
+      "source_file": "exec-75a74a63-fde8-44f1-b4a2-18b968aa6b89.png",
+      "native_generated_source_resolution": [
+        1145,
+        1374
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        173,
+        165,
+        1235,
+        1476
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/orange_turnaround_3q.png",
+      "purpose": "turnaround 3/4 front",
+      "width": 1630,
+      "height": 1401,
+      "mode": "RGBA",
+      "source_file": "exec-a6655f2a-22f2-4b95-a46d-e151d9f1f325.png",
+      "native_generated_source_resolution": [
+        1374,
+        1145
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        155,
+        167,
+        1458,
+        1219
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/orange_turnaround_side.png",
+      "purpose": "turnaround side",
+      "width": 1630,
+      "height": 1401,
+      "mode": "RGBA",
+      "source_file": "exec-f4fd8e8b-a4d7-457f-93d7-51291e1e2819.png",
+      "native_generated_source_resolution": [
+        1374,
+        1145
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        147,
+        1496,
+        1247
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/orange_turnaround_3q_back.png",
+      "purpose": "turnaround 3/4 back",
+      "width": 1611,
+      "height": 1416,
+      "mode": "RGBA",
+      "source_file": "exec-b1cc4b43-b93e-4996-871c-0e911c0fb1bc.png",
+      "native_generated_source_resolution": [
+        1355,
+        1160
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        145,
+        1479,
+        1288
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/orange_turnaround_back.png",
+      "purpose": "turnaround back",
+      "width": 1379,
+      "height": 1657,
+      "mode": "RGBA",
+      "source_file": "exec-da984f3e-de1c-4c5d-8922-bf850b748939.png",
+      "native_generated_source_resolution": [
+        1123,
+        1401
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        165,
+        1229,
+        1511
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/movement/orange_ground_idle.png",
+      "purpose": "movement idle",
+      "width": 1385,
+      "height": 1649,
+      "mode": "RGBA",
+      "source_file": "exec-e314c654-ad83-4cbe-97d9-ae80080a4fbf.png",
+      "native_generated_source_resolution": [
+        1129,
+        1393
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        153,
+        147,
+        1219,
+        1505
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/movement/orange_ground_run_anticipation.png",
+      "purpose": "movement run anticipation",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-0081cc23-8600-4167-9570-e84b9dbb0b9f.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        191,
+        149,
+        1650,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/movement/orange_ground_run_full_speed.png",
+      "purpose": "movement full-speed run",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-eeb53549-d4e7-4529-b6b1-239085834fec.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        152,
+        163,
+        1618,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/jump/orange_jump_takeoff.png",
+      "purpose": "jump takeoff",
+      "width": 1463,
+      "height": 1559,
+      "mode": "RGBA",
+      "source_file": "exec-fb097c81-9c87-40e6-894f-136bddfb6647.png",
+      "native_generated_source_resolution": [
+        1207,
+        1303
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        202,
+        1304,
+        1431
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/jump/orange_jump_apex.png",
+      "purpose": "jump apex",
+      "width": 1449,
+      "height": 1574,
+      "mode": "RGBA",
+      "source_file": "exec-4c210fc9-09a0-4af3-8f2e-392ca69dc752.png",
+      "native_generated_source_resolution": [
+        1193,
+        1318
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        161,
+        147,
+        1288,
+        1429
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/jump/orange_jump_landing.png",
+      "purpose": "jump landing",
+      "width": 1611,
+      "height": 1416,
+      "mode": "RGBA",
+      "source_file": "exec-7c5428b9-65aa-4a43-9f5c-8a69cb1506df.png",
+      "native_generated_source_resolution": [
+        1355,
+        1160
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        181,
+        147,
+        1453,
+        1288
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/attack/orange_attack_anticipation.png",
+      "purpose": "attack anticipation",
+      "width": 1611,
+      "height": 1416,
+      "mode": "RGBA",
+      "source_file": "exec-0496c2b1-58ac-4a04-9e18-8075108adf3e.png",
+      "native_generated_source_resolution": [
+        1355,
+        1160
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        152,
+        149,
+        1447,
+        1224
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/attack/orange_attack_spin_slash_impact.png",
+      "purpose": "spin_slash impact",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-c688179c-2c79-43e0-afd6-acd1c25847cc.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1650,
+        1126
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/attack/orange_attack_follow_through.png",
+      "purpose": "attack follow-through",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-21d10eed-ba0b-4a0a-a465-84afc4b1b30d.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        193,
+        149,
+        1650,
+        1133
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/heavy_smash/orange_heavy_smash_anticipation.png",
+      "purpose": "heavy-smash anticipation",
+      "width": 1611,
+      "height": 1416,
+      "mode": "RGBA",
+      "source_file": "exec-d2e2509e-9b1e-4864-b2dd-85fdc0258293.png",
+      "native_generated_source_resolution": [
+        1355,
+        1160
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        161,
+        149,
+        1455,
+        1272
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/heavy_smash/orange_heavy_smash_impact.png",
+      "purpose": "heavy-smash impact",
+      "width": 1468,
+      "height": 1553,
+      "mode": "RGBA",
+      "source_file": "exec-73e24132-c451-4dda-b0a8-448f74956ab5.png",
+      "native_generated_source_resolution": [
+        1212,
+        1297
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        149,
+        1261,
+        1383
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/orange_head_front.png",
+      "purpose": "head detail front",
+      "width": 1510,
+      "height": 1510,
+      "mode": "RGBA",
+      "source_file": "exec-ca5cd113-5804-4205-81d5-70f747f1e092.png",
+      "native_generated_source_resolution": [
+        1254,
+        1254
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        187,
+        180,
+        1344,
+        1326
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/orange_head_3q.png",
+      "purpose": "head detail 3/4",
+      "width": 1611,
+      "height": 1416,
+      "mode": "RGBA",
+      "source_file": "exec-7c4d1720-35a3-450c-a2ea-cdae9195ebb0.png",
+      "native_generated_source_resolution": [
+        1355,
+        1160
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        258,
+        137,
+        1398,
+        1264
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/orange_head_side.png",
+      "purpose": "head detail side",
+      "width": 1611,
+      "height": 1416,
+      "mode": "RGBA",
+      "source_file": "exec-975a9469-8129-4551-a94d-c422f67f3cc2.png",
+      "native_generated_source_resolution": [
+        1355,
+        1160
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        258,
+        147,
+        1292,
+        1248
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/orange_head_back.png",
+      "purpose": "head detail back",
+      "width": 1611,
+      "height": 1416,
+      "mode": "RGBA",
+      "source_file": "exec-3737a4b2-cf26-4212-88ba-1e151bb3eaaa.png",
+      "native_generated_source_resolution": [
+        1355,
+        1160
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        306,
+        248,
+        1292,
+        1248
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/views/orange_tool_front.png",
+      "purpose": "trident front view",
+      "width": 1280,
+      "height": 1792,
+      "mode": "RGBA",
+      "source_file": "exec-741721dc-1e9b-4f61-9cf7-672f3c66e080.png",
+      "native_generated_source_resolution": [
+        1024,
+        1536
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        193,
+        161,
+        1138,
+        1608
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/views/orange_tool_3q.png",
+      "purpose": "trident 3/4 view",
+      "width": 1469,
+      "height": 1552,
+      "mode": "RGBA",
+      "source_file": "exec-c082a968-6534-4d7e-97cb-374e4f9575c9.png",
+      "native_generated_source_resolution": [
+        1213,
+        1296
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        176,
+        142,
+        1331,
+        1392
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/views/orange_tool_side.png",
+      "purpose": "trident side view",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-c883de7d-b891-4099-addc-7ba3c2ed27ca.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        281,
+        162,
+        1626,
+        1090
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/views/orange_tool_back.png",
+      "purpose": "trident back view",
+      "width": 1414,
+      "height": 1615,
+      "mode": "RGBA",
+      "source_file": "exec-9850309d-8dcb-46a3-a198-be8839632464.png",
+      "native_generated_source_resolution": [
+        1158,
+        1359
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        221,
+        161,
+        1272,
+        1438
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/views/orange_tool_top_bottom.png",
+      "purpose": "trident top/bottom view",
+      "width": 1401,
+      "height": 1630,
+      "mode": "RGBA",
+      "source_file": "exec-79163290-52e0-4c37-ade7-d36a2bcc7fb9.png",
+      "native_generated_source_resolution": [
+        1145,
+        1374
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        177,
+        165,
+        1257,
+        1443
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/details/orange_tool_detail_01.png",
+      "purpose": "trident detail 1",
+      "width": 1611,
+      "height": 1416,
+      "mode": "RGBA",
+      "source_file": "exec-6a6a9ce6-84aa-4f34-b506-09d5a5610641.png",
+      "native_generated_source_resolution": [
+        1355,
+        1160
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        329,
+        155,
+        1431,
+        1272
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/details/orange_tool_detail_02.png",
+      "purpose": "trident detail 2",
+      "width": 1486,
+      "height": 1534,
+      "mode": "RGBA",
+      "source_file": "exec-d009b7fa-3c81-42a2-b6aa-03cd4634fa1e.png",
+      "native_generated_source_resolution": [
+        1230,
+        1278
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        169,
+        142,
+        1338,
+        1385
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/details/orange_tool_detail_03.png",
+      "purpose": "trident detail 3",
+      "width": 1480,
+      "height": 1541,
+      "mode": "RGBA",
+      "source_file": "exec-36adb8cb-57ba-44d4-ba67-76bc6cdacf3e.png",
+      "native_generated_source_resolution": [
+        1224,
+        1285
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        169,
+        148,
+        1332,
+        1387
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/orange_effect_swing_trail.png",
+      "purpose": "spin trail",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-67dc4bbc-c61e-4b72-9357-6461f5588a93.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        151,
+        1654,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/orange_effect_impact_burst.png",
+      "purpose": "impact burst",
+      "width": 1611,
+      "height": 1416,
+      "mode": "RGBA",
+      "source_file": "exec-04432784-6947-46aa-ac87-df76f70de3b6.png",
+      "native_generated_source_resolution": [
+        1355,
+        1160
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        137,
+        1482,
+        1288
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/orange_effect_debris.png",
+      "purpose": "debris",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-f8f02a7e-3535-4c08-83a5-81cb97b2acfe.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        153,
+        137,
+        1652,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/orange_effect_speed_lines.png",
+      "purpose": "speed lines",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-2d3606ab-2b3d-4f6c-b2ce-e9d28ae4a07b.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        151,
+        163,
+        1650,
+        1128
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/orange_effect_dust.png",
+      "purpose": "dust",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-9ae9d973-a252-4edc-8f67-945cf52a6ad4.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        149,
+        1650,
+        1128
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    }
+  ]
+}

@@ -12,7 +12,7 @@ import zipfile
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--version", default="0.6.7")
+    parser.add_argument("--version", default="0.6.8")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     if not re.fullmatch(r"\d+\.\d+\.\d+", args.version):
@@ -62,7 +62,7 @@ def main():
         shutil.copy2(project / f"docs/TESTING_{args.version.replace('.', '_')}.md", stage / "TESTING.md")
         subprocess.run(["ditto", "-c", "-k", "--sequesterRsrc", "--keepParent", str(stage), str(mac_zip)], check=True)
 
-    excluded = {".git", ".godot", "builds", "__pycache__", "__MACOSX", "test-logs"}
+    excluded = {".git", ".godot", ".repowise", ".codex", ".claude", ".vscode", "builds", "__pycache__", "__MACOSX", "test-logs"}
     with zipfile.ZipFile(source_zip, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         for file in sorted(project.rglob("*")):
             relative = file.relative_to(project)
@@ -74,7 +74,7 @@ def main():
                 continue
             if relative.parts[:2] == ("docs", "test-results") and relative.parts[2] != "v" + args.version.replace(".", ""):
                 continue
-            if file.name in {".DS_Store", "export_credentials.cfg"} or file.name.startswith(".env"):
+            if file.name in {".DS_Store", ".mcp.json", "AGENTS.md", "export_credentials.cfg"} or file.name.startswith(".env"):
                 continue
             if file.suffix in {".pem", ".p12", ".key", ".tmp", ".bak"}:
                 continue

@@ -1,0 +1,334 @@
+{
+  "schema": 1,
+  "id": "yellow",
+  "role": "playable",
+  "local_height": 140,
+  "idle_alpha_height": 1246,
+  "frames": {
+    "canonical": {
+      "path": "res://assets/character_art/yellow/canonical.png",
+      "source": "character/canonical/yellow_canonical_hero.png",
+      "offset": [
+        -634.5,
+        -1205.0
+      ],
+      "source_per_pixel": 1.4241071428571428,
+      "alpha_bbox": [
+        161,
+        157,
+        1397,
+        1311
+      ],
+      "runtime_size": [
+        896,
+        838
+      ]
+    },
+    "idle": {
+      "path": "res://assets/character_art/yellow/idle.png",
+      "source": "character/movement/yellow_ground_idle.png",
+      "offset": [
+        -632.0,
+        -1284.0
+      ],
+      "source_per_pixel": 1.4351320321469576,
+      "alpha_bbox": [
+        128,
+        149,
+        1338,
+        1395
+      ],
+      "runtime_size": [
+        871,
+        896
+      ]
+    },
+    "run_start": {
+      "path": "res://assets/character_art/yellow/run_start.png",
+      "source": "character/movement/yellow_ground_run_anticipation.png",
+      "offset": [
+        -788.0,
+        -1037.0
+      ],
+      "source_per_pixel": 1.7578125,
+      "alpha_bbox": [
+        128,
+        135,
+        1663,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        601
+      ]
+    },
+    "run": {
+      "path": "res://assets/character_art/yellow/run.png",
+      "source": "character/movement/yellow_ground_run_full_speed.png",
+      "offset": [
+        -788.0,
+        -1023.0
+      ],
+      "source_per_pixel": 1.7522321428571428,
+      "alpha_bbox": [
+        128,
+        149,
+        1658,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        595
+      ]
+    },
+    "jump_takeoff": {
+      "path": "res://assets/character_art/yellow/jump_takeoff.png",
+      "source": "character/jump/yellow_jump_takeoff.png",
+      "offset": [
+        -667.5,
+        -1235.0
+      ],
+      "source_per_pixel": 1.4810267857142858,
+      "alpha_bbox": [
+        128,
+        128,
+        1415,
+        1343
+      ],
+      "runtime_size": [
+        896,
+        847
+      ]
+    },
+    "jump_apex": {
+      "path": "res://assets/character_art/yellow/jump_apex.png",
+      "source": "character/jump/yellow_jump_apex.png",
+      "offset": [
+        -627.5,
+        -1315.0
+      ],
+      "source_per_pixel": 1.489311163895487,
+      "alpha_bbox": [
+        128,
+        128,
+        1342,
+        1423
+      ],
+      "runtime_size": [
+        842,
+        896
+      ]
+    },
+    "jump_landing": {
+      "path": "res://assets/character_art/yellow/jump_landing.png",
+      "source": "character/jump/yellow_jump_landing.png",
+      "offset": [
+        -667.5,
+        -1235.0
+      ],
+      "source_per_pixel": 1.4787946428571428,
+      "alpha_bbox": [
+        128,
+        128,
+        1413,
+        1343
+      ],
+      "runtime_size": [
+        896,
+        849
+      ]
+    },
+    "attack_windup": {
+      "path": "res://assets/character_art/yellow/attack_windup.png",
+      "source": "character/attack/yellow_attack_anticipation.png",
+      "offset": [
+        -707.0,
+        -1165.0
+      ],
+      "source_per_pixel": 1.578125,
+      "alpha_bbox": [
+        128,
+        128,
+        1502,
+        1273
+      ],
+      "runtime_size": [
+        896,
+        751
+      ]
+    },
+    "attack_recover": {
+      "path": "res://assets/character_art/yellow/attack_recover.png",
+      "source": "character/attack/yellow_attack_follow_through.png",
+      "offset": [
+        -690.0,
+        -1194.0
+      ],
+      "source_per_pixel": 1.5401785714285714,
+      "alpha_bbox": [
+        128,
+        128,
+        1468,
+        1288
+      ],
+      "runtime_size": [
+        896,
+        779
+      ]
+    },
+    "heavy_windup": {
+      "path": "res://assets/character_art/yellow/heavy_windup.png",
+      "source": "character/heavy_smash/yellow_heavy_smash_anticipation.png",
+      "offset": [
+        -699.0,
+        -1179.0
+      ],
+      "source_per_pixel": 1.5591517857142858,
+      "alpha_bbox": [
+        128,
+        128,
+        1485,
+        1287
+      ],
+      "runtime_size": [
+        896,
+        769
+      ]
+    },
+    "heavy_impact": {
+      "path": "res://assets/character_art/yellow/heavy_impact.png",
+      "source": "character/heavy_smash/yellow_heavy_smash_impact.png",
+      "offset": [
+        -788.0,
+        -1044.0
+      ],
+      "source_per_pixel": 1.7589285714285714,
+      "alpha_bbox": [
+        128,
+        128,
+        1664,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        605
+      ]
+    },
+    "special_impact": {
+      "path": "res://assets/character_art/yellow/special_impact.png",
+      "source": "character/attack/yellow_attack_swarm_summon_impact.png",
+      "offset": [
+        -642.5,
+        -1216.0
+      ],
+      "source_per_pixel": 1.4263392857142858,
+      "alpha_bbox": [
+        153,
+        147,
+        1391,
+        1325
+      ],
+      "runtime_size": [
+        896,
+        854
+      ]
+    }
+  },
+  "effects": {
+    "swing_trail": {
+      "path": "res://assets/character_art/yellow/effect_swing_trail.png",
+      "source": "effects/yellow_effect_swing_trail.png",
+      "offset": [
+        -788.0,
+        -1044.0
+      ],
+      "source_per_pixel": 1.7433035714285714,
+      "alpha_bbox": [
+        128,
+        128,
+        1650,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        610
+      ]
+    },
+    "impact_burst": {
+      "path": "res://assets/character_art/yellow/effect_impact_burst.png",
+      "source": "effects/yellow_effect_impact_burst.png",
+      "offset": [
+        -667.5,
+        -1214.0
+      ],
+      "source_per_pixel": 1.4665178571428572,
+      "alpha_bbox": [
+        128,
+        149,
+        1402,
+        1343
+      ],
+      "runtime_size": [
+        896,
+        841
+      ]
+    },
+    "debris": {
+      "path": "res://assets/character_art/yellow/effect_debris.png",
+      "source": "effects/yellow_effect_debris.png",
+      "offset": [
+        -788.0,
+        -1034.0
+      ],
+      "source_per_pixel": 1.7477678571428572,
+      "alpha_bbox": [
+        128,
+        138,
+        1654,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        603
+      ]
+    },
+    "speed_lines": {
+      "path": "res://assets/character_art/yellow/effect_speed_lines.png",
+      "source": "effects/yellow_effect_speed_lines.png",
+      "offset": [
+        -788.0,
+        -1039.0
+      ],
+      "source_per_pixel": 1.7477678571428572,
+      "alpha_bbox": [
+        128,
+        133,
+        1654,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        606
+      ]
+    },
+    "dust": {
+      "path": "res://assets/character_art/yellow/effect_dust.png",
+      "source": "effects/yellow_effect_dust.png",
+      "offset": [
+        -699.0,
+        -1023.0
+      ],
+      "source_per_pixel": 1.6439732142857142,
+      "alpha_bbox": [
+        217,
+        149,
+        1650,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        634
+      ]
+    }
+  }
+}

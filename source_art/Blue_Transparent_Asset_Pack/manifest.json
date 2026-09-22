@@ -1,0 +1,895 @@
+{
+  "pack": "Blue_Transparent_Asset_Pack",
+  "tool_or_ability": "block blast tool",
+  "asset_count": 34,
+  "generation_tool": "built-in image_gen",
+  "source_policy": "Fresh raster generation using the supplied Doodle Rumble references; no poster pixels cropped into production assets.",
+  "transparent_background": true,
+  "transparent_safety_border_px": 128,
+  "assets": [
+    {
+      "filename": "character/canonical/blue_canonical_hero.png",
+      "purpose": "canonical hero anchor",
+      "width": 1551,
+      "height": 1470,
+      "mode": "RGBA",
+      "source_file": "exec-948fcc5e-c4c1-41e8-9b6c-172b262cd1b5.png",
+      "native_generated_source_resolution": [
+        1295,
+        1214
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        178,
+        1407,
+        1342
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/blue_turnaround_front.png",
+      "purpose": "turnaround front",
+      "width": 1411,
+      "height": 1618,
+      "mode": "RGBA",
+      "source_file": "exec-52a88fe0-0db7-460d-bcde-5f007d4c4e46.png",
+      "native_generated_source_resolution": [
+        1155,
+        1362
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        130,
+        139,
+        1247,
+        1424
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/blue_turnaround_3q.png",
+      "purpose": "turnaround 3/4 front",
+      "width": 1471,
+      "height": 1551,
+      "mode": "RGBA",
+      "source_file": "exec-e35b3c96-36a8-49b2-b925-6001773b83b9.png",
+      "native_generated_source_resolution": [
+        1215,
+        1295
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        149,
+        1331,
+        1389
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/blue_turnaround_side.png",
+      "purpose": "turnaround side",
+      "width": 1606,
+      "height": 1421,
+      "mode": "RGBA",
+      "source_file": "exec-7afaf36a-2760-41c1-842d-78208fda4303.png",
+      "native_generated_source_resolution": [
+        1350,
+        1165
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        149,
+        1424,
+        1293
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/blue_turnaround_3q_back.png",
+      "purpose": "turnaround 3/4 back",
+      "width": 1478,
+      "height": 1543,
+      "mode": "RGBA",
+      "source_file": "exec-49da8123-8a73-4a4c-8356-3142ff9a4021.png",
+      "native_generated_source_resolution": [
+        1222,
+        1287
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        147,
+        1336,
+        1399
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/turnaround/blue_turnaround_back.png",
+      "purpose": "turnaround back",
+      "width": 1471,
+      "height": 1551,
+      "mode": "RGBA",
+      "source_file": "exec-8adacf81-2487-485e-b2e9-aefa05d47ccf.png",
+      "native_generated_source_resolution": [
+        1215,
+        1295
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        149,
+        1264,
+        1391
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/movement/blue_ground_idle.png",
+      "purpose": "movement idle",
+      "width": 1470,
+      "height": 1551,
+      "mode": "RGBA",
+      "source_file": "exec-55c331f1-608e-4cae-b9b2-2753ab8a821c.png",
+      "native_generated_source_resolution": [
+        1214,
+        1295
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        149,
+        1295,
+        1385
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/movement/blue_ground_run_anticipation.png",
+      "purpose": "movement run anticipation",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-1d30a74a-e05d-40ce-97ac-abc9807c3d22.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        161,
+        1650,
+        1128
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/movement/blue_ground_run_full_speed.png",
+      "purpose": "movement full-speed run",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-443b536d-929a-4a1c-bb1e-113507a844e9.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        189,
+        145,
+        1618,
+        1114
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/jump/blue_jump_takeoff.png",
+      "purpose": "jump takeoff",
+      "width": 1551,
+      "height": 1471,
+      "mode": "RGBA",
+      "source_file": "exec-5f643abf-d205-40b2-91b8-8f8b9554c91e.png",
+      "native_generated_source_resolution": [
+        1295,
+        1215
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        194,
+        149,
+        1372,
+        1306
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/jump/blue_jump_apex.png",
+      "purpose": "jump apex",
+      "width": 1439,
+      "height": 1585,
+      "mode": "RGBA",
+      "source_file": "exec-7c630150-9d24-453c-b991-593541ec5b58.png",
+      "native_generated_source_resolution": [
+        1183,
+        1329
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        183,
+        1262,
+        1447
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/jump/blue_jump_landing.png",
+      "purpose": "jump landing",
+      "width": 1471,
+      "height": 1551,
+      "mode": "RGBA",
+      "source_file": "exec-5a2d008d-5cf2-4da0-a61c-7d94df4ac1f8.png",
+      "native_generated_source_resolution": [
+        1215,
+        1295
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        147,
+        1331,
+        1397
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/attack/blue_attack_anticipation.png",
+      "purpose": "attack anticipation",
+      "width": 1693,
+      "height": 1351,
+      "mode": "RGBA",
+      "source_file": "exec-36218c67-b18d-4c3b-acb3-af669ce4e6d0.png",
+      "native_generated_source_resolution": [
+        1437,
+        1095
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1565,
+        1199
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/attack/blue_attack_block_blast_impact.png",
+      "purpose": "block_blast impact",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-6cdb7ed2-6773-45f0-9652-f2cad2dad5d4.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        233,
+        160,
+        1608,
+        1128
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/attack/blue_attack_follow_through.png",
+      "purpose": "attack follow-through",
+      "width": 1631,
+      "height": 1400,
+      "mode": "RGBA",
+      "source_file": "exec-a7195cc8-789d-44eb-8f91-242d57050138.png",
+      "native_generated_source_resolution": [
+        1375,
+        1144
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        178,
+        1474,
+        1272
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/heavy_smash/blue_heavy_smash_anticipation.png",
+      "purpose": "heavy-smash anticipation",
+      "width": 1471,
+      "height": 1551,
+      "mode": "RGBA",
+      "source_file": "exec-29da45d4-59cc-44a3-a974-a447ced9fc73.png",
+      "native_generated_source_resolution": [
+        1215,
+        1295
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        145,
+        149,
+        1313,
+        1391
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/heavy_smash/blue_heavy_smash_impact.png",
+      "purpose": "heavy-smash impact",
+      "width": 1551,
+      "height": 1471,
+      "mode": "RGBA",
+      "source_file": "exec-601f226c-73d6-47e3-ab94-91dce4f6b327.png",
+      "native_generated_source_resolution": [
+        1295,
+        1215
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        169,
+        1391,
+        1343
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/blue_head_front.png",
+      "purpose": "head detail front",
+      "width": 1561,
+      "height": 1461,
+      "mode": "RGBA",
+      "source_file": "exec-eacb7586-2dcd-4957-8661-b6ecf0e5285f.png",
+      "native_generated_source_resolution": [
+        1305,
+        1205
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        240,
+        181,
+        1371,
+        1277
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/blue_head_3q.png",
+      "purpose": "head detail 3/4",
+      "width": 1539,
+      "height": 1482,
+      "mode": "RGBA",
+      "source_file": "exec-214dd325-eb99-4e4e-b829-adfb33e39d7d.png",
+      "native_generated_source_resolution": [
+        1283,
+        1226
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        195,
+        208,
+        1333,
+        1298
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/blue_head_side.png",
+      "purpose": "head detail side",
+      "width": 1568,
+      "height": 1455,
+      "mode": "RGBA",
+      "source_file": "exec-ea1aee1d-66c8-40b5-8ecd-a13173fea0b3.png",
+      "native_generated_source_resolution": [
+        1312,
+        1199
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        225,
+        149,
+        1364,
+        1287
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "character/head_details/blue_head_back.png",
+      "purpose": "head detail back",
+      "width": 1587,
+      "height": 1438,
+      "mode": "RGBA",
+      "source_file": "exec-36d4514d-63f5-41c4-b1a9-e0e8805e6b10.png",
+      "native_generated_source_resolution": [
+        1331,
+        1182
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        180,
+        1413,
+        1270
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/views/blue_tool_front.png",
+      "purpose": "block blast tool front view",
+      "width": 1474,
+      "height": 1547,
+      "mode": "RGBA",
+      "source_file": "exec-a27876df-f044-4162-91a8-c7b86ce7a219.png",
+      "native_generated_source_resolution": [
+        1218,
+        1291
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1305,
+        1363
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/views/blue_tool_3q.png",
+      "purpose": "block blast tool 3/4 view",
+      "width": 1471,
+      "height": 1551,
+      "mode": "RGBA",
+      "source_file": "exec-720997e9-2566-47b5-937f-9613bd61eae1.png",
+      "native_generated_source_resolution": [
+        1215,
+        1295
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        163,
+        176,
+        1297,
+        1383
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/views/blue_tool_side.png",
+      "purpose": "block blast tool side view",
+      "width": 1484,
+      "height": 1537,
+      "mode": "RGBA",
+      "source_file": "exec-c4ff242c-673e-4220-bb16-3528ee2c887e.png",
+      "native_generated_source_resolution": [
+        1228,
+        1281
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        175,
+        1340,
+        1377
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/views/blue_tool_back.png",
+      "purpose": "block blast tool back view",
+      "width": 1704,
+      "height": 1342,
+      "mode": "RGBA",
+      "source_file": "exec-e0427aaa-7f57-4772-baec-a67d18a96bfd.png",
+      "native_generated_source_resolution": [
+        1448,
+        1086
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        169,
+        129,
+        1548,
+        1214
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/views/blue_tool_top_bottom.png",
+      "purpose": "block blast tool top/bottom view",
+      "width": 1280,
+      "height": 1792,
+      "mode": "RGBA",
+      "source_file": "exec-319135d9-220f-4104-ac9b-a91e336dd33e.png",
+      "native_generated_source_resolution": [
+        1024,
+        1536
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        175,
+        144,
+        1106,
+        1644
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/details/blue_tool_detail_01.png",
+      "purpose": "block blast tool detail 1",
+      "width": 1482,
+      "height": 1539,
+      "mode": "RGBA",
+      "source_file": "exec-06b176cb-dd31-4bb2-a530-dfb1769bbf7f.png",
+      "native_generated_source_resolution": [
+        1226,
+        1283
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        147,
+        1332,
+        1350
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/details/blue_tool_detail_02.png",
+      "purpose": "block blast tool detail 2",
+      "width": 1470,
+      "height": 1551,
+      "mode": "RGBA",
+      "source_file": "exec-b775c397-4abb-4c8b-a018-c3c5a0580a89.png",
+      "native_generated_source_resolution": [
+        1214,
+        1295
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        194,
+        175,
+        1289,
+        1395
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "weapon/details/blue_tool_detail_03.png",
+      "purpose": "block blast tool detail 3",
+      "width": 1482,
+      "height": 1539,
+      "mode": "RGBA",
+      "source_file": "exec-802cec07-e795-4a2b-aa32-1a7734128554.png",
+      "native_generated_source_resolution": [
+        1226,
+        1283
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        128,
+        128,
+        1354,
+        1393
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/blue_effect_swing_trail.png",
+      "purpose": "block trail",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-b004a80a-34e2-4fba-8c3c-a124d3d92885.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        177,
+        128,
+        1663,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/blue_effect_impact_burst.png",
+      "purpose": "impact burst",
+      "width": 1635,
+      "height": 1397,
+      "mode": "RGBA",
+      "source_file": "exec-c3ea84ec-d796-42e8-968f-f2c80fc216f3.png",
+      "native_generated_source_resolution": [
+        1379,
+        1141
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        156,
+        136,
+        1485,
+        1269
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/blue_effect_debris.png",
+      "purpose": "debris",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-e9569104-c859-4da4-963f-87cef0a73842.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        141,
+        134,
+        1660,
+        1152
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/blue_effect_speed_lines.png",
+      "purpose": "speed lines",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-ce91b00b-9071-4575-9cce-8de6e57857ce.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        163,
+        161,
+        1646,
+        1128
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    },
+    {
+      "filename": "effects/blue_effect_dust.png",
+      "purpose": "dust",
+      "width": 1792,
+      "height": 1280,
+      "mode": "RGBA",
+      "source_file": "exec-c95445c2-4418-4c23-b8d5-e77c0cbf4bfc.png",
+      "native_generated_source_resolution": [
+        1536,
+        1024
+      ],
+      "transparent_safety_border_px": 128,
+      "alpha_bbox": [
+        193,
+        149,
+        1650,
+        1128
+      ],
+      "corner_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "quality_control": "isolated PNG with transparent padding; no poster/sheet background included"
+    }
+  ]
+}

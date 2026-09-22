@@ -5,6 +5,7 @@ var fighter_id: String = "orange"
 var tint := Color("ff9e28")
 var is_selected: bool = false
 var texture: Texture2D
+var transparent_character_art: bool = false
 var elapsed: float = 0.0
 var engagement: float = 0.0
 var asset_retry: float = 0.0
@@ -24,6 +25,7 @@ func _ready() -> void:
 func configure(id: String, color: Color, selected: bool) -> void:
 	if fighter_id != id:
 		texture = null
+		transparent_character_art = false
 	fighter_id = id
 	tint = color
 	is_selected = selected
@@ -34,21 +36,27 @@ func configure(id: String, color: Color, selected: bool) -> void:
 func _try_load_art() -> void:
 	if texture != null:
 		return
-	var path: String = "res://assets/selection/%s_action.png" % fighter_id
+	var pack_path: String = "res://assets/character_art/%s/canonical.png" % fighter_id
+	texture = _read_texture(pack_path)
+	transparent_character_art = texture != null
+	if texture == null:
+		texture = _read_texture("res://assets/selection/%s_action.png" % fighter_id)
+	if texture != null: queue_redraw()
+	asset_retry = 1.0
+
+func _read_texture(path: String) -> Texture2D:
 	# Exported resources use Godot's importer. Raw PNGs also work during authoring.
 	var raw_exists: bool = FileAccess.file_exists(path)
 	var has_import: bool = FileAccess.file_exists(path+".import")
 	if ResourceLoader.exists(path,"Texture2D") and (has_import or not raw_exists):
 		var candidate = load(path)
 		if candidate is Texture2D:
-			texture = candidate
-	if texture == null and raw_exists:
+			return candidate
+	if raw_exists:
 		var picture := Image.load_from_file(path)
 		if picture != null and not picture.is_empty():
-			texture = ImageTexture.create_from_image(picture)
-	if texture != null:
-		queue_redraw()
-	asset_retry = 1.0
+			return ImageTexture.create_from_image(picture)
+	return null
 
 func _reduced_motion() -> bool:
 	var settings := get_node_or_null("/root/Settings")
@@ -137,15 +145,26 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO,size),Color("121629"))
 	if texture != null:
 		var dimensions: Vector2 = texture.get_size()
-		var art_size := Vector2(size.x,size.y) if gallery_mode else Vector2(size.y,size.y)
-		var cover: float = maxf(art_size.x/dimensions.x,art_size.y/dimensions.y)
-		var zoom: float = 1.0 if reduced else 1.0+engagement*(0.014+sin(elapsed*0.42)*0.002)
-		var source_size: Vector2 = art_size/(cover*zoom)
-		var pan := Vector2.ZERO
-		if not reduced:
-			pan = Vector2(sin(elapsed*0.31),cos(elapsed*0.27))*dimensions*0.002*engagement
-		var source := Rect2((dimensions-source_size)*0.5+pan,source_size)
-		draw_texture_rect_region(texture,Rect2(Vector2.ZERO,art_size),source)
+		if transparent_character_art:
+			var field: Vector2 = size if gallery_mode else Vector2(size.y,size.y)
+			draw_rect(Rect2(Vector2.ZERO,field),Color(tint.darkened(0.87)))
+			for index in range(6):
+				var slant := float(index)*field.x/5.0
+				draw_line(Vector2(slant-48,field.y),Vector2(slant+67,0),Color(tint,0.06+0.015*float(index%2)),5.0,true)
+			var pulse: float = 1.0 if reduced else 1.0+engagement*(0.018+sin(elapsed*0.8)*0.004)
+			var fit: float = minf((field.x-18.0)/dimensions.x,(field.y-18.0)/dimensions.y)*pulse
+			var destination := Rect2((field-dimensions*fit)*0.5,dimensions*fit)
+			draw_texture_rect(texture,destination,false)
+		else:
+			var art_size := Vector2(size.x,size.y) if gallery_mode else Vector2(size.y,size.y)
+			var cover: float = maxf(art_size.x/dimensions.x,art_size.y/dimensions.y)
+			var zoom: float = 1.0 if reduced else 1.0+engagement*(0.014+sin(elapsed*0.42)*0.002)
+			var source_size: Vector2 = art_size/(cover*zoom)
+			var pan := Vector2.ZERO
+			if not reduced:
+				pan = Vector2(sin(elapsed*0.31),cos(elapsed*0.27))*dimensions*0.002*engagement
+			var source := Rect2((dimensions-source_size)*0.5+pan,source_size)
+			draw_texture_rect_region(texture,Rect2(Vector2.ZERO,art_size),source)
 		if not active:
 			draw_rect(Rect2(Vector2.ZERO,size),Color(0.015,0.02,0.04,0.07))
 	else:

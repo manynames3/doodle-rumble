@@ -1,0 +1,334 @@
+{
+  "schema": 1,
+  "id": "dark_lord",
+  "role": "boss",
+  "local_height": 162,
+  "idle_alpha_height": 1536,
+  "frames": {
+    "canonical": {
+      "path": "res://assets/character_art/dark_lord/canonical.png",
+      "source": "character/canonical/darklord_canonical_hero.png",
+      "offset": [
+        -632.5,
+        -1304.0
+      ],
+      "source_per_pixel": 1.4770857814336076,
+      "alpha_bbox": [
+        128,
+        128,
+        1345,
+        1412
+      ],
+      "runtime_size": [
+        851,
+        896
+      ]
+    },
+    "idle": {
+      "path": "res://assets/character_art/dark_lord/idle.png",
+      "source": "character/movement/darklord_ground_idle.png",
+      "offset": [
+        -520.0,
+        -1556.0
+      ],
+      "source_per_pixel": 1.7591973244147157,
+      "alpha_bbox": [
+        140,
+        128,
+        1152,
+        1664
+      ],
+      "runtime_size": [
+        598,
+        896
+      ]
+    },
+    "run_start": {
+      "path": "res://assets/character_art/dark_lord/run_start.png",
+      "source": "character/movement/darklord_ground_run_anticipation.png",
+      "offset": [
+        -676.0,
+        -1219.0
+      ],
+      "source_per_pixel": 1.4977678571428572,
+      "alpha_bbox": [
+        128,
+        128,
+        1430,
+        1327
+      ],
+      "runtime_size": [
+        896,
+        827
+      ]
+    },
+    "run": {
+      "path": "res://assets/character_art/dark_lord/run.png",
+      "source": "character/movement/darklord_ground_run_full_speed.png",
+      "offset": [
+        -632.5,
+        -1304.0
+      ],
+      "source_per_pixel": 1.477803738317757,
+      "alpha_bbox": [
+        128,
+        128,
+        1353,
+        1412
+      ],
+      "runtime_size": [
+        856,
+        896
+      ]
+    },
+    "jump_takeoff": {
+      "path": "res://assets/character_art/dark_lord/jump_takeoff.png",
+      "source": "character/jump/darklord_jump_takeoff.png",
+      "offset": [
+        -592.5,
+        -1394.0
+      ],
+      "source_per_pixel": 1.5778688524590163,
+      "alpha_bbox": [
+        128,
+        128,
+        1243,
+        1502
+      ],
+      "runtime_size": [
+        732,
+        896
+      ]
+    },
+    "jump_apex": {
+      "path": "res://assets/character_art/dark_lord/jump_apex.png",
+      "source": "character/jump/darklord_jump_apex.png",
+      "offset": [
+        -632.5,
+        -1304.0
+      ],
+      "source_per_pixel": 1.477803738317757,
+      "alpha_bbox": [
+        128,
+        128,
+        1353,
+        1412
+      ],
+      "runtime_size": [
+        856,
+        896
+      ]
+    },
+    "jump_landing": {
+      "path": "res://assets/character_art/dark_lord/jump_landing.png",
+      "source": "character/jump/darklord_jump_landing.png",
+      "offset": [
+        -676.0,
+        -1219.0
+      ],
+      "source_per_pixel": 1.5089285714285714,
+      "alpha_bbox": [
+        128,
+        128,
+        1440,
+        1327
+      ],
+      "runtime_size": [
+        896,
+        821
+      ]
+    },
+    "attack_windup": {
+      "path": "res://assets/character_art/dark_lord/attack_windup.png",
+      "source": "character/attack/darklord_attack_anticipation.png",
+      "offset": [
+        -632.5,
+        -1304.0
+      ],
+      "source_per_pixel": 1.477699530516432,
+      "alpha_bbox": [
+        128,
+        128,
+        1347,
+        1412
+      ],
+      "runtime_size": [
+        852,
+        896
+      ]
+    },
+    "attack_recover": {
+      "path": "res://assets/character_art/dark_lord/attack_recover.png",
+      "source": "character/attack/darklord_attack_follow_through.png",
+      "offset": [
+        -632.5,
+        -1304.0
+      ],
+      "source_per_pixel": 1.477803738317757,
+      "alpha_bbox": [
+        128,
+        128,
+        1353,
+        1412
+      ],
+      "runtime_size": [
+        856,
+        896
+      ]
+    },
+    "heavy_windup": {
+      "path": "res://assets/character_art/dark_lord/heavy_windup.png",
+      "source": "character/heavy_smash/darklord_heavy_smash_anticipation.png",
+      "offset": [
+        -718.0,
+        -1147.0
+      ],
+      "source_per_pixel": 1.6026785714285714,
+      "alpha_bbox": [
+        128,
+        128,
+        1524,
+        1255
+      ],
+      "runtime_size": [
+        896,
+        728
+      ]
+    },
+    "heavy_impact": {
+      "path": "res://assets/character_art/dark_lord/heavy_impact.png",
+      "source": "character/heavy_smash/darklord_heavy_smash_impact.png",
+      "offset": [
+        -693.0,
+        -1188.0
+      ],
+      "source_per_pixel": 1.546875,
+      "alpha_bbox": [
+        128,
+        128,
+        1474,
+        1296
+      ],
+      "runtime_size": [
+        896,
+        781
+      ]
+    },
+    "special_impact": {
+      "path": "res://assets/character_art/dark_lord/special_impact.png",
+      "source": "character/attack/darklord_attack_void_sigil_impact.png",
+      "offset": [
+        -707.0,
+        -1165.0
+      ],
+      "source_per_pixel": 1.578125,
+      "alpha_bbox": [
+        128,
+        128,
+        1502,
+        1273
+      ],
+      "runtime_size": [
+        896,
+        751
+      ]
+    }
+  },
+  "effects": {
+    "swing_trail": {
+      "path": "res://assets/character_art/dark_lord/effect_swing_trail.png",
+      "source": "effects/darklord_effect_swing_trail.png",
+      "offset": [
+        -870.5,
+        -944.0
+      ],
+      "source_per_pixel": 1.9430803571428572,
+      "alpha_bbox": [
+        128,
+        128,
+        1829,
+        1052
+      ],
+      "runtime_size": [
+        896,
+        496
+      ]
+    },
+    "impact_burst": {
+      "path": "res://assets/character_art/dark_lord/effect_impact_burst.png",
+      "source": "effects/darklord_effect_impact_burst.png",
+      "offset": [
+        -647.0,
+        -1274.0
+      ],
+      "source_per_pixel": 1.4444444444444444,
+      "alpha_bbox": [
+        128,
+        128,
+        1362,
+        1382
+      ],
+      "runtime_size": [
+        882,
+        896
+      ]
+    },
+    "debris": {
+      "path": "res://assets/character_art/dark_lord/effect_debris.png",
+      "source": "effects/darklord_effect_debris.png",
+      "offset": [
+        -788.0,
+        -1044.0
+      ],
+      "source_per_pixel": 1.7544642857142858,
+      "alpha_bbox": [
+        128,
+        128,
+        1660,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        606
+      ]
+    },
+    "speed_lines": {
+      "path": "res://assets/character_art/dark_lord/effect_speed_lines.png",
+      "source": "effects/darklord_effect_speed_lines.png",
+      "offset": [
+        -788.0,
+        -1044.0
+      ],
+      "source_per_pixel": 1.7589285714285714,
+      "alpha_bbox": [
+        128,
+        128,
+        1664,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        605
+      ]
+    },
+    "dust": {
+      "path": "res://assets/character_art/dark_lord/effect_dust.png",
+      "source": "effects/darklord_effect_dust.png",
+      "offset": [
+        -788.0,
+        -1027.0
+      ],
+      "source_per_pixel": 1.7455357142857142,
+      "alpha_bbox": [
+        128,
+        145,
+        1652,
+        1152
+      ],
+      "runtime_size": [
+        896,
+        600
+      ]
+    }
+  }
+}
