@@ -21,7 +21,7 @@ The art has grown alongside the game. Illustrated backgrounds set the scene; ink
 | First playable build | Four fighters, a desktop arena, solo play, training, local battles and quick rematches established the game loop. |
 | Cast and visual identity | Purple and Yellow joined Orange, Red, Green and Blue. The title poster, hand-drawn HUD, larger attacks and illustrated arenas gave the game its sketchbook-meets-computer look. |
 | A journey worth finishing | The six-stage Save Star Saga added Pac-Man, H4CK3R and Dark lord, rising difficulty, hazards, new worlds, stage-specific music, a short ending and small jokes between fights. Doodle Rally became a separate racing side game. |
-| Bringing the drawings closer | Nine transparent art packs now animate the playable cast and bosses in selection, story scenes and combat, with their own pose and effect images. |
+| Bringing the drawings closer | Nine transparent art packs now animate the playable cast and bosses in selection, story scenes and combat. The latest pass adds moving idle/run poses, clearer boss attack releases, better-fitting selection previews and visible round-result performances. |
 
 The best design test is still the original one: does it feel like the kids' drawing came alive, and do they want another round?
 
@@ -46,7 +46,7 @@ The gallery contains native 1280×720 captures from the running game. More conte
 
 | Desktop Dojo combat | Round result |
 | --- | --- |
-| ![Orange versus Blue in Desktop Dojo](docs/screenshots/04-combat-desktop-dojo.png) | ![Winner celebration and downed loser](docs/screenshots/05-round-result.png) |
+| ![Orange versus Blue in Desktop Dojo](docs/screenshots/04-combat-desktop-dojo.png) | ![Dark lord celebrating while Red lies down with spinning stars](docs/screenshots/05-round-result.png) |
 
 | Moving desk scenery | Moving quarry and glitch scenery |
 | --- | --- |
@@ -58,7 +58,7 @@ These are native captures from the running Godot project, after the nine new pac
 
 | Fighter selection | Desktop Dojo fight |
 | --- | --- |
-| ![Transparent Orange, Red, Green, Blue, Purple and Yellow art in character selection](docs/screenshots/09-transparent-fighter-selection.png) | ![Orange's packed spin art against Blue in Desktop Dojo](docs/screenshots/10-transparent-fighter-combat.png) |
+| ![Transparent Orange, Red, Green, Blue, Purple and Yellow art in character selection](docs/screenshots/09-transparent-fighter-selection.png) | ![Purple's packed guard facing Red's hammer in Desktop Dojo](docs/screenshots/10-transparent-fighter-combat.png) |
 
 | Pac-Man | H4CK3R | Dark lord |
 | --- | --- | --- |
@@ -66,9 +66,9 @@ These are native captures from the running Godot project, after the nine new pac
 
 ## Play on a Mac
 
-The public repository contains the complete Godot source. Generated `.app` bundles and ZIP archives stay out of Git history; use the v0.6.8 Mac deliverable from the project handoff for the prebuilt app, or export your own build with [docs/MAC_SETUP.md](docs/MAC_SETUP.md).
+The public repository contains the complete Godot source. Generated `.app` bundles and ZIP archives stay out of Git history; download the [v0.6.9 release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.6.9) for the prebuilt Mac app or complete Godot project, or export your own build with [docs/RELEASE_BUILD.md](docs/RELEASE_BUILD.md).
 
-To run a prebuilt app, open the extracted `Doodle_Rumble_Mac_v0.6.8` folder and double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly, then the title menu opens. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default.
+To run a prebuilt app, open the extracted `Doodle_Rumble_Mac_v0.6.9` folder and double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly, then the title menu opens. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default.
 
 The build is a Universal arm64/x86_64 app, locally ad-hoc signed and not Apple-notarized. macOS may require **System Settings → Privacy & Security → Open Anyway** after a transfer.
 
@@ -78,7 +78,7 @@ The build is a Universal arm64/x86_64 app, locally ad-hoc signed and not Apple-n
 2. Import `game/project.godot` in the Godot Project Manager.
 3. Press **F6** for the current scene or **F5** to run the project.
 
-The project has no add-ons, external accounts or runtime package dependencies. `game/` contains the playable source, scenes and runtime assets. Build/export notes are in [`docs/MAC_SETUP.md`](docs/MAC_SETUP.md).
+The project has no add-ons, external accounts or runtime package dependencies. `game/` contains the playable source, scenes and runtime assets. Build/export notes are in [`docs/RELEASE_BUILD.md`](docs/RELEASE_BUILD.md).
 
 ## Controls
 
@@ -108,9 +108,9 @@ Settings supports remapping, available controllers, music/effects volume, reduce
 
 ## Validation
 
-The v0.6.8 validation archive records **23 source suites / 2,169 checks / 0 failures** and the same **23 packaged-PCK suites / 2,169 checks / 0 failures**. It also includes native menu/combat/boss captures, a four-point Godot playback check of the re-rendered ending, code-sign verification and Mac app launch smoke testing.
+The v0.6.9 validation archive records **24 source suites / 2,251 checks / 0 failures** and the same **24 packaged-PCK suites / 2,251 checks / 0 failures**. It also includes native menu/combat/boss/result captures, a four-point Godot playback check of the rebuilt ending, code-sign verification and Mac app launch smoke testing.
 
-See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_6_8.md`](docs/TESTING_0_6_8.md) for the exact evidence. Physical controller behavior, Intel execution, transferred first launch, audio hardware and family playtesting still need verification on those devices.
+See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_6_9.md`](docs/TESTING_0_6_9.md) for the exact evidence. Physical controller behavior, Intel execution, transferred first launch, audio hardware and family playtesting still need verification on those devices.
 
 ## Repository map
 

@@ -13,7 +13,7 @@ const ART_BOTTOM := 347.0
 # Each offset centers the whole attack envelope, not just the idle fighter.
 # Keep these fixed through a cycle so the selection art never zooms or pans.
 const PRESENTATION_X := {
-	"orange": 52.0, "red": 25.0, "green": -34.0,
+	"orange": 52.0, "red": 40.0, "green": 40.0,
 	"blue": 16.0, "purple": 30.0, "yellow": 51.0
 }
 # The three swinging tools point below their fighter's feet during part of a
@@ -26,6 +26,8 @@ const SWINGING_TOOL_BOUNDS := {
 }
 var art_clip: Control
 var presentation_x := 52.0
+var presentation_scale := PRESENTATION_SCALE
+var presentation_baseline := PRESENTATION_TOP+343.0*PRESENTATION_SCALE
 
 func configure(id: String) -> void:
 	definition = Data.fighter(id)
@@ -33,6 +35,8 @@ func configure(id: String) -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	clip_contents = true
 	presentation_x = float(PRESENTATION_X.get(id,52.0))
+	presentation_scale = 0.62 if id == "red" else PRESENTATION_SCALE
+	presentation_baseline = 338.0 if id == "red" else PRESENTATION_TOP+343.0*PRESENTATION_SCALE
 	art_clip = Control.new()
 	art_clip.position = Vector2(0,ART_TOP)
 	art_clip.size = Vector2(size.x,ART_BOTTOM-ART_TOP)
@@ -42,8 +46,8 @@ func configure(id: String) -> void:
 	rig = Rig.new()
 	art_clip.add_child(rig)
 	rig.configure(definition)
-	rig.scale = Vector2.ONE * (2.0*PRESENTATION_SCALE)
-	rig.position = Vector2(presentation_x+220.0*PRESENTATION_SCALE,PRESENTATION_TOP+343.0*PRESENTATION_SCALE-ART_TOP)
+	rig.scale = Vector2.ONE * (2.0*presentation_scale)
+	rig.position = Vector2(presentation_x+220.0*presentation_scale,presentation_baseline-ART_TOP)
 	rig.preview = false
 
 func _process(delta: float) -> void:
@@ -56,6 +60,12 @@ func _process(delta: float) -> void:
 	# Combat trails are arena-sized. The fighter and weapon retain their real
 	# special pose; the page draws an equivalent trail at preview scale below.
 	rig.trail = -1.0
+	# The rig's arena-sized light pools extend beyond this page. Its packed
+	# special frame is already chosen, so suppress only the extra rig glow.
+	if rig.has_packed_art():
+		rig.current["attack_progress"] = -1.0
+		for effect in [rig.packed_art.behind,rig.packed_art.ground,rig.packed_art.debris,rig.packed_art.in_front]:
+			effect.visible = false
 	_fit_swinging_tool()
 	rig.queue_redraw()
 	queue_redraw()
@@ -87,7 +97,7 @@ func _draw() -> void:
 	# Keep contact grounding without drawing a bright character-colored rule
 	# through the feet on the selection card.
 	draw_colored_polygon(PackedVector2Array([Vector2(15,335),Vector2(size.x-18,335),Vector2(size.x-13,346),Vector2(12,346)]),Color("111527"))
-	var shadow_center := Vector2(presentation_x+220.0*PRESENTATION_SCALE,342.0)
+	var shadow_center := Vector2(presentation_x+220.0*presentation_scale,342.0)
 	var shadow := PackedVector2Array()
 	for i in range(18):
 		var angle := TAU*float(i)/18.0
@@ -95,12 +105,17 @@ func _draw() -> void:
 	draw_colored_polygon(shadow,Color("050914",0.56))
 	shadow.append(shadow[0])
 	draw_polyline(shadow,Color("050914",0.70),1.2,true)
+	# A faint sketch of the special is always visible, so the selected fighter
+	# reads as an action poster even between demonstrations. It brightens only
+	# during the actual special; reduced motion gets one steady illustrated pose.
 	var t: float = fposmod(clock,4.4)
-	if not Settings.reduced_motion and (t < 1.95 or t > 3.1): return
-	var age := (t-1.95)/1.15
+	var striking: bool = t >= 1.95 and t <= 3.1
+	var age: float = clampf((t-1.95)/1.15,0.0,1.0) if striking else 0.35
 	if Settings.reduced_motion: age = 0.35
-	var col := Color(tint,(1-age)*0.7)
-	draw_set_transform(Vector2(presentation_x,PRESENTATION_TOP),0,Vector2.ONE*PRESENTATION_SCALE)
+	var energy: float = (1.0-age)*0.7 if striking else 0.25
+	if Settings.reduced_motion: energy = 0.52
+	var col := Color(tint,energy)
+	draw_set_transform(Vector2(presentation_x,presentation_baseline-343.0*presentation_scale),0,Vector2.ONE*presentation_scale)
 	match str(definition.get("special","")):
 		"spin":
 			var center := Vector2(220,267)
@@ -109,17 +124,17 @@ func _draw() -> void:
 				for j in range(25):
 					var angle := age*TAU*1.5+float(arm)*TAU/3.0+float(j)*1.55/24.0
 					sweep.append(center+Vector2(cos(angle)*170.0,sin(angle)*58.0))
-				draw_polyline(sweep,Color(tint,(1-age)*0.12),18,true)
-				draw_polyline(sweep,Color("090d18",(1-age)*0.65),7,true)
-				draw_polyline(sweep,col,4.5,true)
-				draw_polyline(sweep,Color(tint.lightened(0.75),(1-age)*0.65),1.5,true)
+				draw_polyline(sweep,Color(tint,energy*0.25),18,true)
+				draw_polyline(sweep,Color("090d18",energy*0.85),7,true)
+				draw_polyline(sweep,Color(tint.lightened(0.38),minf(1.0,energy*1.45)),6.0,true)
+				draw_polyline(sweep,Color(tint.lightened(0.82),minf(1.0,energy*1.25)),1.8,true)
 		"dash":
 			var start := Vector2(191,252)
 			var finish := Vector2(524+age*62.0,232-age*11.0)
-			draw_line(start,finish,Color(tint,(1-age)*0.13),24,true)
-			draw_line(start,finish,Color("090d18",(1-age)*0.62),10,true)
+			draw_line(start,finish,Color(tint,energy*0.26),24,true)
+			draw_line(start,finish,Color("090d18",energy*0.85),10,true)
 			draw_line(start,finish,col,5,true)
-			draw_line(start+Vector2(22,-7),finish+Vector2(11,-7),Color(tint.lightened(0.7),(1-age)*0.64),1.8,true)
+			draw_line(start+Vector2(22,-7),finish+Vector2(11,-7),Color(tint.lightened(0.7),energy*0.9),1.8,true)
 		"fragment":
 			for i in range(8):
 				var at := Vector2(280+age*160+i*11,244+sin(i*1.7)*43)
@@ -129,12 +144,23 @@ func _draw() -> void:
 				var at := Vector2(142+i*35,347)
 				draw_line(at,at+Vector2(-9,-sin(age*PI)*60-i*2),col,5,true)
 		"signal":
-			draw_line(Vector2(285,210),Vector2(330+age*160,208),col,8,true)
+			var tip := Vector2(440+age*36,208)
+			draw_line(Vector2(288,210),tip,Color(tint,energy*0.20),21,true)
+			draw_line(Vector2(288,210),tip,Color("080c18",energy*0.88),10,true)
+			draw_line(Vector2(288,210),tip,col,5,true)
+			draw_line(tip,tip+Vector2(-26,-15),col,4,true)
+			draw_line(tip,tip+Vector2(-26,15),col,4,true)
+			for radius in [15.0,29.0]:
+				draw_arc(tip,radius,-0.85,0.85,15,Color(tint,energy*0.72),2,true)
 		"swarm":
-			for i in range(5):
-				var at := Vector2(170+age*135+sin(i*2.0)*70,240+cos(i*2.0)*62)
-				draw_circle(at,8,col,false,2,true)
-				draw_line(at+Vector2(0,8),at+Vector2(0,28),col,3,true)
-				draw_line(at+Vector2(-9,33),at+Vector2(0,22),col,3,true)
-				draw_line(at+Vector2(0,22),at+Vector2(9,33),col,3,true)
+			for i in range(3):
+				var at := Vector2(336+float(i)*52,205+float(i%2)*34)
+				var soldier := Color(tint.lightened(0.68),minf(1.0,energy*(1.55-0.15*float(i))))
+				draw_circle(at,10,Color(tint,energy*0.14))
+				draw_arc(at,10,0,TAU,16,soldier,3,true)
+				draw_line(at+Vector2(0,10),at+Vector2(0,39),soldier,3,true)
+				draw_line(at+Vector2(-12,47),at+Vector2(0,32),soldier,3,true)
+				draw_line(at+Vector2(0,32),at+Vector2(12,47),soldier,3,true)
+				draw_line(at+Vector2(-16,20),at+Vector2(15,17),soldier,3,true)
+				draw_line(at+Vector2(15,17),at+Vector2(22,10),soldier,2,true)
 	draw_set_transform(Vector2.ZERO)

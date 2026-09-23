@@ -56,7 +56,7 @@ func seek(at: float) -> void:
 		actor.position = Vector2(180+i*180,578)
 		actor.elapsed = elapsed
 		actor.phase = elapsed*3.0+i
-		actor.pose(0,{"grounded":true,"victory":shot==4,"facing":1 if i<3 else -1})
+		actor.pose(0,{"grounded":true,"victory":shot==4,"facing":1 if i<3 else -1,"presentation_time":t})
 		actor.weapon.visible = shot < 4 and not actor.has_packed_art()
 		if shot == 0:
 			actor.position = Vector2(220+i*37,578+i%2*9)
@@ -68,19 +68,21 @@ func seek(at: float) -> void:
 		if shot == 2:
 			actor.visible = i in [1,4,5]
 			actor.position = Vector2(250 + [0,0,0,0,1,2][i]*360,578)
-			actor.pose(0,{"grounded":true,"victory":true,"facing":1})
+			actor.pose(0,{"grounded":true,"victory":true,"facing":1,"presentation_time":t})
 		if shot == 3 and i == 4:
 			actor.position = Vector2(700,578)
 			actor.scale = Vector2.ONE * 1.9
 			actor.weapon.visible = false
-			actor.pose(0,{"grounded":true,"victory":true,"facing":1})
+			actor.pose(0,{"grounded":true,"victory":true,"facing":1,"presentation_time":t})
 		if shot == 4:
 			actor.position = Vector2(155+i*194+(18 if i>=3 else 0),578)
 	lord.visible = shot in [0,3]
 	lord.position = Vector2(917,584) if shot == 0 else Vector2(914,578)
 	lord.scale = Vector2.ONE * (lerpf(2.55,0.35,smoothstep(1.0,4.8,t)) if shot == 0 else 1.17)
 	lord.modulate.a = 1.0-smoothstep(2.2,4.8,t) if shot == 0 else 1.0
-	lord.pose(0,{"grounded":true,"victory":shot==3,"facing":-1})
+	lord.elapsed = elapsed
+	lord.phase = elapsed*3.0
+	lord.pose(0,{"grounded":true,"victory":shot==3,"facing":-1,"presentation_time":t})
 	lord.weapon.visible = shot == 0 and not lord.has_packed_art()
 	hacker.visible = shot == 3
 	chomp.visible = shot == 3
@@ -88,8 +90,9 @@ func seek(at: float) -> void:
 	chomp.position = Vector2(252+sin(t)*20,578)
 	for actor in [hacker,chomp]:
 		actor.scale = Vector2.ONE * 1.65
+		actor.elapsed = elapsed
 		actor.phase = elapsed*3
-		actor.pose(0,{"grounded":true,"victory":true,"facing":-1})
+		actor.pose(0,{"grounded":true,"victory":true,"facing":-1,"presentation_time":t})
 		actor.weapon.visible = false
 	queue_redraw()
 

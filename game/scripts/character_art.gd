@@ -1,5 +1,8 @@
 extends Node2D
 ## Packed RGBA pose/effect renderer. Fighter physics and attack timing stay in fighter.gd.
+const SIZE_MATCH: float = 1.22
+# Support heights of the supplied idle silhouettes after the fallen rotation.
+const FALL_FLOOR_LIFT := {"orange":37.0,"red":62.0,"green":62.0,"blue":54.0,"purple":43.0,"yellow":54.0,"pac_man":41.0,"h4ck3r":42.0,"dark_lord":49.0}
 var fighter_id: String = ""
 var frames: Dictionary = {}
 var effects: Dictionary = {}
@@ -15,6 +18,15 @@ var was_running: bool = false
 var run_age: float = 0.0
 var was_grounded: bool = true
 var landing_age: float = 1.0
+var frame_position: Vector2 = Vector2.ZERO
+var frame_factor: float = 1.0
+var visual_height: float = 145.0
+var visual_head: Vector2 = Vector2(0,-110)
+var result_kind: String = ""
+var result_age: float = 0.0
+var previous_cast: String = ""
+var release_age: float = 0.0
+var release_seen: bool = false
 
 func _ensure_nodes() -> void:
 	if body != null: return
@@ -58,9 +70,14 @@ func configure(id: String) -> void:
 	var data: Dictionary = parsed
 	frames = data.get("frames",{})
 	effects = data.get("effects",{})
-	pixels_to_local = float(data.get("local_height",145.0)) / maxf(1.0,float(data.get("idle_alpha_height",1200.0)))
+	visual_height = float(data.get("local_height",145.0)) * SIZE_MATCH
+	pixels_to_local = visual_height / maxf(1.0,float(data.get("idle_alpha_height",1200.0)))
 	available = frames.has("idle")
 	visible = available
+	shown_frame = ""
+	result_kind = ""
+	previous_cast = ""
+	release_seen = false
 	if available: _show_frame("idle")
 
 func _load_texture(path: String) -> Texture2D:
@@ -83,9 +100,10 @@ func _show_frame(key: String) -> void:
 		return
 	body.texture = texture
 	var offset: Array = frame.get("offset",[0,0])
-	body.position = Vector2(float(offset[0]),float(offset[1])) * pixels_to_local
-	var factor := pixels_to_local * float(frame.get("source_per_pixel",1.0))
-	body.scale = Vector2.ONE * factor
+	frame_position = Vector2(float(offset[0]),float(offset[1])) * pixels_to_local
+	frame_factor = pixels_to_local * float(frame.get("source_per_pixel",1.0))
+	body.position = frame_position
+	body.scale = Vector2.ONE * frame_factor
 	shown_frame = key
 
 func _set_effect(node: Sprite2D, kind: String, center: Vector2, max_side: float, opacity: float) -> void:
@@ -108,14 +126,19 @@ func _set_effect(node: Sprite2D, kind: String, center: Vector2, max_side: float,
 func is_rendering() -> bool:
 	return available and visible and body != null and body.texture != null
 
-func pose(delta: float, state: Dictionary, phase: float) -> void:
+func pose(delta: float, state: Dictionary, phase: float, absolute_result_age: float = -1.0) -> void:
 	if not available: return
 	var defeated: bool = bool(state.get("defeated",false))
 	var victory: bool = bool(state.get("victory",false))
-	# The source packs contain no result poses. The existing expressive result rig
-	# provides the celebration, fallen body, and orbiting stars in those states.
-	visible = not defeated and not victory
-	if not visible: return
+	var next_result: String = "defeated" if defeated else "victory" if victory else ""
+	if next_result != result_kind:
+		result_kind = next_result
+		result_age = 0.0
+	else:
+		result_age += delta
+	if next_result != "" and absolute_result_age >= 0.0:
+		result_age = absolute_result_age
+	visible = true
 	var reduced: bool = bool(state.get("reduced_motion",false))
 	var velocity: Vector2 = state.get("velocity",Vector2.ZERO)
 	var grounded: bool = bool(state.get("grounded",true))
@@ -133,13 +156,23 @@ func pose(delta: float, state: Dictionary, phase: float) -> void:
 	var special: bool = bool(state.get("special",false))
 	var cast: String = str(state.get("boss_cast",""))
 	var charge: float = float(state.get("boss_charge",0.0))
+	if cast != previous_cast:
+		previous_cast = cast
+		release_age = 0.0
+		release_seen = false
+	if cast != "" and charge >= 1.0:
+		if not release_seen:
+			release_seen = true
+			release_age = 0.0
+		else:
+			release_age += delta
 	var frame := "idle"
 	if not grounded:
 		frame = "jump_takeoff" if velocity.y < -180.0 else "jump_apex"
 	elif landing_age < 0.15:
 		frame = "jump_landing"
 	elif running:
-		frame = "run_start" if run_age < 0.11 else "run"
+		frame = "run_start" if run_age < 0.11 or (not reduced and fmod(run_age,0.36) < 0.14) else "run"
 	if bool(state.get("dodging",false)): frame = "run_start"
 	if bool(state.get("hurt",false)): frame = "attack_recover"
 	if attack >= 0.0:
@@ -153,17 +186,64 @@ func pose(delta: float, state: Dictionary, phase: float) -> void:
 			else: frame = "attack_recover"
 		else:
 			frame = "attack_recover"
+		# Every supplied arrow-shot frame carries a baked arrow. After the
+		# projectile releases, use the existing empty-bow running pose.
+		if fighter_id == "purple" and attack >= windup:
+			frame = "run_start"
 	if cast != "" and fighter_id in ["h4ck3r","dark_lord"]:
 		var pack_match: bool = (fighter_id == "h4ck3r" and cast == "firewall_scan") or (fighter_id == "dark_lord" and cast in ["void_orb","rift"])
-		frame = "attack_windup" if charge < 0.54 else ("special_impact" if pack_match else "attack_recover")
+		if charge < 1.0:
+			frame = "attack_windup"
+		elif pack_match:
+			frame = "special_impact" if release_age < 0.17 else "attack_recover"
+		elif attack < 0.0:
+			frame = "attack_recover"
+	if victory:
+		frame = "jump_takeoff" if not reduced and fposmod(result_age,1.15) < 0.44 else "idle"
+	elif defeated:
+		frame = "idle"
 	_show_frame(frame)
 	if not available: return
-	# Small visual deformation only. The hitbox, reach, and damage windows never move.
-	body.rotation = -0.10 if bool(state.get("hurt",false)) else 0.0
+	# All deformation is inside the art node. The fighter and hitbox stay put.
+	var angle: float = 0.0
+	var stretch: Vector2 = Vector2.ONE
+	var offset: Vector2 = Vector2.ZERO
+	if defeated:
+		var fall: float = 1.0 if reduced else smoothstep(0.0,0.32,result_age)
+		# The result spawns fighters at x=250/1000. Falling toward local +x
+		# keeps both the left fighter and mirrored right fighter inside the arena.
+		angle = 1.38 * fall
+		offset = Vector2(-13.0 * fall,-float(FALL_FLOOR_LIFT.get(fighter_id,49.0)) * fall)
+		stretch = Vector2.ONE.lerp(Vector2(0.88,0.88),fall)
+	elif victory:
+		var hop_phase: float = fposmod(result_age,1.15)
+		var hop: float = 0.0 if reduced or hop_phase >= 0.44 else sin(PI * hop_phase / 0.44) * 13.0
+		var cheer: float = 0.0 if reduced else sin(result_age * 6.8)
+		angle = -0.055 + cheer * 0.045
+		offset = Vector2(cheer * 2.0,-hop-maxf(0.0,cheer)*3.0)
+	elif bool(state.get("hurt",false)):
+		angle = -0.10
+	elif not reduced and attack < 0.0 and cast == "":
+		if running:
+			var gait: float = sin(phase * 1.1)
+			angle = clampf(velocity.x / 330.0,-1.0,1.0) * 0.045 + gait * 0.025
+			stretch = Vector2(1.0 + gait * 0.018,1.0 - gait * 0.018)
+			offset.y = -absf(sin(phase)) * 3.4
+		elif grounded:
+			angle = sin(phase * 0.55) * 0.012
+			stretch = Vector2(1.0 - sin(phase) * 0.012,1.0 + sin(phase) * 0.012)
+			offset.y = sin(phase) * 1.8
+	body.rotation = angle
+	body.scale = Vector2(frame_factor * stretch.x,frame_factor * stretch.y)
+	body.position = (frame_position * stretch).rotated(angle) + offset
+	visual_head = (Vector2(-5,-visual_height * 0.77) * stretch).rotated(angle) + offset
 	body.modulate = Color(1.0,0.87,0.87,1.0) if bool(state.get("hurt",false)) else Color.WHITE
 	var attack_active: bool = attack >= windup and attack < windup+active and attack >= 0.0
 	var burst_age: float = attack-windup
-	var boss_burst: bool = cast != "" and charge >= 0.54 and charge < 0.73
+	var boss_burst: bool = cast != "" and release_seen and release_age < 0.14
+	if defeated or victory:
+		for node in [behind,ground,debris,in_front]: node.visible = false
+		return
 	if reduced:
 		for node in [behind,ground,debris,in_front]: node.visible = false
 		return

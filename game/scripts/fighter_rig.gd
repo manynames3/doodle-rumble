@@ -5,11 +5,37 @@ const WeaponArt = preload("res://scripts/weapon_art.gd")
 const CharacterArt = preload("res://scripts/character_art.gd")
 const INK = Color("060913")
 const PAPER = Color("f5f4ff")
+
+class PackedCueOverlay extends Node2D:
+	var source: Node2D
+
+	func _draw() -> void:
+		if not is_instance_valid(source) or not source.has_packed_art(): return
+		var state: Dictionary = source.current
+		var art = source.packed_art
+		var cue_head: Vector2 = art.visual_head
+		if bool(state.get("dodging",false)):
+			var alpha: float = 0.70 if bool(state.get("dodge_invulnerable",false)) else 0.25
+			for i in range(1 if bool(state.get("reduced_motion",false)) else 3):
+				var off := Vector2(-18-i*14,2+i*3)
+				var swoosh := PackedVector2Array([cue_head+off+Vector2(-18,-12),Vector2(0,-art.visual_height*0.54)+off+Vector2(-24,0),Vector2(0,-art.visual_height*0.28)+off+Vector2(-17,4)])
+				draw_polyline(swoosh,Color(source.accent,alpha/(i+1)),2.4,true)
+		if bool(state.get("counter_ready",false)):
+			var diamond := PackedVector2Array([cue_head+Vector2(-4,-37),cue_head+Vector2(0,-44),cue_head+Vector2(5,-37),cue_head+Vector2(0,-31),cue_head+Vector2(-4,-37)])
+			draw_polyline(diamond,Color("060913"),5.0,true)
+			draw_polyline(diamond,Color("fff0ab"),2.0,true)
+		if source.fighter_id == "purple" and bool(state.get("shield_guard",false)):
+			var shield_center: Vector2 = Vector2(-48,-art.visual_height*0.51)
+			var rim: Color = Color("fff0ab") if bool(state.get("shield_perfect",false)) else source.accent.lightened(0.45)
+			draw_arc(shield_center,33.0,-2.8,2.8,28,Color(source.accent,0.17),14.0,true)
+			draw_arc(shield_center,32.0,-2.8,2.8,28,Color("060913"),5.0,true)
+			draw_arc(shield_center,32.0,-2.8,2.8,28,rim,2.5,true)
 var fighter_id: String = "orange"
 var accent: Color = Color("f39232")
 var preview: bool = false
 var weapon: Node2D
 var packed_art
+var packed_cues: PackedCueOverlay
 var elapsed: float = 0.0
 var result_age: float = 0.0
 var result_kind: String = ""
@@ -62,6 +88,12 @@ func configure(definition: Dictionary) -> void:
 		packed_art.name = "PackedCharacterArt"
 		add_child(packed_art)
 	packed_art.configure(fighter_id)
+	if packed_cues == null:
+		packed_cues = PackedCueOverlay.new()
+		packed_cues.name = "PackedCueOverlay"
+		packed_cues.z_index = 4
+		packed_cues.source = self
+		add_child(packed_cues)
 	weapon.visible = fighter_id != "pac_man" and not packed_art.is_rendering()
 	queue_redraw()
 
@@ -88,6 +120,11 @@ func pose(delta: float, state: Dictionary) -> void:
 	else:
 		result_age += delta
 	var result_pose: bool = next_result != ""
+	# Only explicit cinematic seeks use absolute time. A gameplay result enters
+	# through pose(0) too, and must begin its fall or celebration at age zero.
+	var cinematic_seek: bool = result_pose and state.has("presentation_time")
+	if cinematic_seek:
+		result_age = fposmod(float(state["presentation_time"]),5.0)
 	var hurting: bool = bool(state.get("hurt",false))
 	if hurting and not was_hurt: hurt_age = 0.0
 	elif hurting: hurt_age += delta
@@ -388,8 +425,10 @@ func pose(delta: float, state: Dictionary) -> void:
 	weapon.arrow_visible = arrow_ready
 	weapon.queue_redraw()
 	if packed_art != null:
-		packed_art.pose(delta,state,phase)
+		packed_art.pose(delta,state,phase,result_age if cinematic_seek else -1.0)
 		weapon.visible = fighter_id != "pac_man" and not packed_art.is_rendering()
+	if packed_cues != null:
+		packed_cues.queue_redraw()
 	if bool(state.get("invulnerable",false)):
 		modulate.a = 0.78 if reduced else (0.64 if fmod(elapsed,0.14) < 0.07 else 1.0)
 	else:
@@ -777,8 +816,10 @@ func _purple_shield() -> void:
 	var shield_size := Vector2(18,23)
 	var guarding: bool = bool(current.get("shield_guard",false))
 	var perfect: bool = bool(current.get("shield_perfect",false))
+	if has_packed_art():
+		shield_center = Vector2(-48,-packed_art.visual_height*0.51)
 	if guarding:
-		shield_center = back_hand+Vector2(5,-1)
+		if not has_packed_art(): shield_center = back_hand+Vector2(5,-1)
 		shield_size = Vector2(21,29)
 	elif float(current.get("attack_progress",-1.0)) >= 0.0:
 		shield_center = back_elbow+Vector2(-9,9)
@@ -1202,14 +1243,13 @@ func _draw() -> void:
 		_attack_color_spill()
 		if trail >= 0.0 and not bool(current.get("reduced_motion",false)):
 			_attack_trail()
-		if fighter_id == "purple" and bool(current.get("shield_guard",false)):
-			_purple_shield()
 		if fighter_id == "pac_man" and opponent_tell != "":
 			_pacman_tell_marks(Vector2(2,-66),Vector2(47,47),bool(current.get("reduced_motion",false)))
 		if fighter_id == "h4ck3r" and str(current.get("boss_cast","")) != "":
 			_hacker_command_marks(head+Vector2(0,-9),head)
 		if fighter_id == "dark_lord":
 			_dark_cast_marks(str(current.get("boss_cast","")),float(current.get("boss_charge",0.0)))
+		_draw_result_marks()
 		return
 	if fighter_id == "pac_man":
 		_draw_pacman()
@@ -1226,16 +1266,7 @@ func _draw() -> void:
 		_draw_hacker()
 		_draw_result_marks()
 		return
-	if bool(current.get("dodging",false)):
-		var alpha: float = 0.70 if bool(current.get("dodge_invulnerable",false)) else 0.25
-		for i in range(1 if bool(current.get("reduced_motion",false)) else 3):
-			var off := Vector2(-18-i*14,2+i*3)
-			var swoosh := PackedVector2Array([head+off+Vector2(-18,-12),shoulder+off+Vector2(-24,0),hip+off+Vector2(-17,4)])
-			draw_polyline(swoosh,Color(accent,alpha/(i+1)),2.4,true)
-	if bool(current.get("counter_ready",false)):
-		var diamond := PackedVector2Array([head+Vector2(-4,-37),head+Vector2(0,-44),head+Vector2(5,-37),head+Vector2(0,-31),head+Vector2(-4,-37)])
-		draw_polyline(diamond,INK,5,true)
-		draw_polyline(diamond,Color("fff0ab"),2,true)
+	_draw_motion_cues()
 	_limb([hip,left_knee,left_foot],true,true)
 	_limb([shoulder,back_elbow,back_hand],true)
 	_draw_boot(left_foot,true)
@@ -1309,12 +1340,27 @@ func _draw() -> void:
 			draw_line(star-Vector2(0,4),star+Vector2(0,4),Color("e3b849"),2.5,true)
 	_draw_result_marks()
 
+func _draw_motion_cues() -> void:
+	var cue_head: Vector2 = packed_art.visual_head if has_packed_art() else head
+	var cue_shoulder: Vector2 = Vector2(0,-packed_art.visual_height*0.54) if has_packed_art() else shoulder
+	var cue_hip: Vector2 = Vector2(0,-packed_art.visual_height*0.28) if has_packed_art() else hip
+	if bool(current.get("dodging",false)):
+		var alpha: float = 0.70 if bool(current.get("dodge_invulnerable",false)) else 0.25
+		for i in range(1 if bool(current.get("reduced_motion",false)) else 3):
+			var off := Vector2(-18-i*14,2+i*3)
+			var swoosh := PackedVector2Array([cue_head+off+Vector2(-18,-12),cue_shoulder+off+Vector2(-24,0),cue_hip+off+Vector2(-17,4)])
+			draw_polyline(swoosh,Color(accent,alpha/(i+1)),2.4,true)
+	if bool(current.get("counter_ready",false)):
+		var diamond := PackedVector2Array([cue_head+Vector2(-4,-37),cue_head+Vector2(0,-44),cue_head+Vector2(5,-37),cue_head+Vector2(0,-31),cue_head+Vector2(-4,-37)])
+		draw_polyline(diamond,INK,5,true)
+		draw_polyline(diamond,Color("fff0ab"),2,true)
+
 func _draw_result_marks() -> void:
 	var reduced: bool = bool(current.get("reduced_motion",false))
 	if bool(current.get("defeated",false)):
 		# Four uneven paper stars orbit just above the fallen head. Reduced motion
 		# freezes the same readable constellation in place.
-		var fallen_head: Vector2 = Vector2(-3,-28) if fighter_id == "pac_man" else head
+		var fallen_head: Vector2 = packed_art.visual_head if has_packed_art() else Vector2(-3,-28) if fighter_id == "pac_man" else head
 		var center: Vector2 = fallen_head+Vector2(0,-51 if fighter_id == "dark_lord" else -43)
 		var orbit := _sweep(center,Vector2(38,9),0.0,TAU)
 		draw_polyline(orbit,Color("f2d67b",0.22),1.25,true)
@@ -1334,7 +1380,7 @@ func _draw_result_marks() -> void:
 			draw_line(at+Vector2(-1,-2),at+Vector2(1,-3),Color("fff9d7"),1.3,true)
 	elif bool(current.get("victory",false)):
 		for i in range(3):
-			var glint: Vector2 = back_hand+Vector2(-5+float(i)*14,-16+float(i%2)*10)
+			var glint: Vector2 = packed_art.visual_head+Vector2(-26+float(i)*29,-10+float(i%2)*10) if has_packed_art() else back_hand+Vector2(-5+float(i)*14,-16+float(i%2)*10)
 			if not reduced: glint += Vector2(0,sin(result_age*5.2+float(i)*2.1)*3.0)
 			var size: float = 4.0+float(i%2)*2.0
 			draw_line(glint+Vector2(-size,0),glint+Vector2(size,0),INK,3.1,true)
@@ -1441,12 +1487,19 @@ func _hacker_command_marks(screen: Vector2, eye: Vector2) -> void:
 			var left: float = front_hand.x+44.0
 			var top: float = front_hand.y-47.0
 			var firewall := PackedVector2Array([Vector2(left,top),Vector2(left+21,top-3),Vector2(left+23,top+91),Vector2(left-1,top+88),Vector2(left,top)])
-			draw_polyline(firewall,Color(accent,0.10),15.0,true)
-			draw_polyline(firewall,INK,6.5,true)
-			draw_polyline(firewall,luminous,2.2,true)
-			for i in range(6):
-				var y: float = top+7.0+float(i)*13.5
-				draw_line(Vector2(left+3,y),Vector2(left+19,y-2),bright if i%2 == 0 else luminous,1.4,true)
+			if charge < 1.0:
+				# The narrow guide is a tell; the solid scan appears on release.
+				draw_polyline(firewall,Color(accent,0.16+charge*0.33),1.7,true)
+				for i in range(5):
+					var y: float = top+7.0+float(i)*18.0
+					draw_line(Vector2(left+5,y),Vector2(left+12,y-1),luminous,1.1,true)
+			else:
+				draw_polyline(firewall,Color(accent,0.10),15.0,true)
+				draw_polyline(firewall,INK,6.5,true)
+				draw_polyline(firewall,luminous,2.2,true)
+				for i in range(6):
+					var y: float = top+7.0+float(i)*13.5
+					draw_line(Vector2(left+3,y),Vector2(left+19,y-2),bright if i%2 == 0 else luminous,1.4,true)
 			for i in range(3):
 				var arrow: Vector2 = Vector2(left+35+float(i)*11,front_hand.y)
 				draw_line(arrow,arrow+Vector2(7,0),luminous,1.4,true)

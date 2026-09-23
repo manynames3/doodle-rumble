@@ -5,6 +5,7 @@ var fighter_id: String = "orange"
 var tint := Color("ff9e28")
 var is_selected: bool = false
 var texture: Texture2D
+var action_texture: Texture2D
 var transparent_character_art: bool = false
 var elapsed: float = 0.0
 var engagement: float = 0.0
@@ -25,6 +26,7 @@ func _ready() -> void:
 func configure(id: String, color: Color, selected: bool) -> void:
 	if fighter_id != id:
 		texture = null
+		action_texture = null
 		transparent_character_art = false
 	fighter_id = id
 	tint = color
@@ -39,8 +41,8 @@ func _try_load_art() -> void:
 	var pack_path: String = "res://assets/character_art/%s/canonical.png" % fighter_id
 	texture = _read_texture(pack_path)
 	transparent_character_art = texture != null
-	if texture == null:
-		texture = _read_texture("res://assets/selection/%s_action.png" % fighter_id)
+	action_texture = _read_texture("res://assets/selection/%s_action.png" % fighter_id)
+	if texture == null: texture = action_texture
 	if texture != null: queue_redraw()
 	asset_retry = 1.0
 
@@ -147,13 +149,33 @@ func _draw() -> void:
 		var dimensions: Vector2 = texture.get_size()
 		if transparent_character_art:
 			var field: Vector2 = size if gallery_mode else Vector2(size.y,size.y)
-			draw_rect(Rect2(Vector2.ZERO,field),Color(tint.darkened(0.87)))
-			for index in range(6):
-				var slant := float(index)*field.x/5.0
-				draw_line(Vector2(slant-48,field.y),Vector2(slant+67,0),Color(tint,0.06+0.015*float(index%2)),5.0,true)
+			# Keep the original action painting as a dim ink-and-light backdrop.
+			# The supplied transparent fighter is the only bright figure on the page.
+			if action_texture != null:
+				var action_size: Vector2 = action_texture.get_size()
+				var cover: float = maxf(field.x/action_size.x,field.y/action_size.y)
+				var source_size: Vector2 = field/cover
+				var source := Rect2((action_size-source_size)*0.5,source_size)
+				draw_texture_rect_region(action_texture,Rect2(Vector2.ZERO,field),source,Color(0.72,0.72,0.79,1.0))
+				draw_rect(Rect2(Vector2.ZERO,field),Color(0.015,0.018,0.037,0.35 if gallery_mode else 0.57))
+				if gallery_mode:
+					# The old poster has its own fighter in the middle. Sink that
+					# silhouette into the ink while its energetic edges stay visible.
+					draw_circle(field*Vector2(0.51,0.48),field.x*0.34,Color(0.01,0.013,0.027,0.39))
+			else:
+				draw_rect(Rect2(Vector2.ZERO,field),Color(tint.darkened(0.87)))
+			var flare := Vector2(field.x*0.52,field.y*0.63)
+			for ring in range(5,0,-1):
+				draw_circle(flare,field.x*(0.23+float(ring)*0.095),Color(tint,0.014 if ring > 1 else 0.045))
+			for index in range(5):
+				var slant := float(index)*field.x/4.0
+				draw_line(Vector2(slant-42,field.y),Vector2(slant+50,0),Color(tint,0.12+0.02*float(index%2)),2.0,true)
+			# The caption begins at y=134; leave an ink margin below the weapon.
+			var art_height: float = field.y-36.0 if gallery_mode else field.y-12.0
 			var pulse: float = 1.0 if reduced else 1.0+engagement*(0.018+sin(elapsed*0.8)*0.004)
-			var fit: float = minf((field.x-18.0)/dimensions.x,(field.y-18.0)/dimensions.y)*pulse
-			var destination := Rect2((field-dimensions*fit)*0.5,dimensions*fit)
+			var fit: float = minf((field.x-21.0)/dimensions.x,(art_height-9.0)/dimensions.y)*pulse
+			var destination := Rect2(Vector2((field.x-dimensions.x*fit)*0.5,(art_height-dimensions.y*fit)*0.5+8.0),dimensions*fit)
+			draw_rect(Rect2(8,art_height-7,field.x-16,4),Color(tint,0.22))
 			draw_texture_rect(texture,destination,false)
 		else:
 			var art_size := Vector2(size.x,size.y) if gallery_mode else Vector2(size.y,size.y)
