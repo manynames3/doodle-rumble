@@ -28,6 +28,9 @@ func run() -> void:
 		check(FileAccess.file_exists(manifest),id + " runtime manifest in project/PCK")
 		check(art.frames.size() >= 12,id + " mapped pose set")
 		check(art.effects.size() == 5,id + " mapped effects")
+		if id == "pac_man":
+			for key in art.frames:
+				check(str(art.frames[key].get("source","")).begins_with("derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/"),"Pac-Man "+str(key)+" uses the one-eye runtime pose")
 		for item in art.frames.values():
 			check(ResourceLoader.exists(str(item.path),"Texture2D"),id + " pose loads: " + str(item.path))
 		for item in art.effects.values():

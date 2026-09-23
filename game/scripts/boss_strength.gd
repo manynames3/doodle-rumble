@@ -1,10 +1,7 @@
 extends RefCounted
-## One outgoing-damage rule for the two final story bosses. Scale a payload
-## only when it is created; reflected projectiles keep their existing penalty.
-const MULTIPLIER := 1.25
-const EMPOWERED_IDS := ["h4ck3r", "dark_lord"]
+## Final-stage bosses have individual damage tiers. Scale once at release;
+## reflected projectiles keep their existing penalty.
+const MULTIPLIERS := {"h4ck3r":1.25,"dark_lord":1.50}
 
 static func damage(source_id: String, base_damage: int) -> int:
-	if source_id in EMPOWERED_IDS:
-		return ceili(float(base_damage) * MULTIPLIER)
-	return base_damage
+	return ceili(float(base_damage) * float(MULTIPLIERS.get(source_id,1.0)))

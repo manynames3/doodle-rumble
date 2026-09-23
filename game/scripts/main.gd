@@ -300,17 +300,21 @@ func show_title() -> void:
 
 func _boss_pattern(kind: String) -> void:
 	if state != "playing" or not is_instance_valid(second): return
-	if kind in ["void_orb","pellet_fan"]:
-		var angles = [-0.24,0.0,0.24] if kind == "void_orb" else [-0.40,0.0,0.40]
+	if kind in ["void_orb","pellet_fan","eclipse_volley"]:
+		var angles = [-0.24,0.0,0.24] if kind == "void_orb" else [-0.40,0.0,0.40] if kind == "pellet_fan" else [-0.44,-0.22,0.0,0.22,0.44]
 		for angle in angles:
 			var projectile = BossProjectile.new()
 			world.add_child(projectile)
 			projectile.configure(second,kind,second.facing,angle)
 			projectile.z_index = 6
 			projectiles.append(projectile)
-		Sound.play("boss" if kind == "void_orb" else "pickaxe")
+		Sound.play("boss" if kind in ["void_orb","eclipse_volley"] else "pickaxe")
 	elif kind == "rift":
 		_boss_hazard("dark_lord","dark_rift")
+	elif kind == "eclipse_wave":
+		_boss_hazard("dark_lord","eclipse_wave")
+	elif kind == "void_pillar":
+		_boss_hazard("dark_lord","void_pillar")
 	else:
 		_boss_hazard("dark_lord")
 

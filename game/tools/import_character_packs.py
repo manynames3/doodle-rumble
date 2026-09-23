@@ -51,8 +51,10 @@ def choose(names: set[str], pattern: str) -> str:
     return matches[0]
 
 
-def build_image(pack: Path, original: str, output: Path) -> dict:
-    with Image.open(pack / original) as opened:
+def build_image(pack: Path, original: str, output: Path,
+                override: Path | None = None) -> dict:
+    source_path = override if override is not None else pack / original
+    with Image.open(source_path) as opened:
         im = opened.convert("RGBA")
     bbox = im.getchannel("A").getbbox()
     if bbox is None:
@@ -68,12 +70,15 @@ def build_image(pack: Path, original: str, output: Path) -> dict:
         cropped = cropped.resize(target, Image.Resampling.LANCZOS)
     output.parent.mkdir(parents=True, exist_ok=True)
     cropped.save(output, optimize=True)
-    # The original pack's safety border and image center define its ground pivot.
-    # Position is in *source pixels*; the game multiplies it by local art scale.
+    # Vendor pack canvases use their documented 128px ground border. Hand-authored
+    # transparent overrides have already been tightly framed, so anchor their
+    # visible alpha bottom to the ground instead of inheriting the vendor border.
+    ground_y = float(im.height - 128) if override is None else float(bbox[3])
+    source_name = original if override is None else f"derived:{override.relative_to(ROOT).as_posix()}"
     return {
         "path": "res://assets/character_art/" + output.parent.name + "/" + output.name,
-        "source": original,
-        "offset": [left - im.width / 2.0, top - (im.height - 128.0)],
+        "source": source_name,
+        "offset": [left - im.width / 2.0, top - ground_y],
         "source_per_pixel": (right - left) / cropped.width,
         "alpha_bbox": list(bbox),
         "runtime_size": list(cropped.size),
@@ -115,8 +120,11 @@ def main() -> None:
         if fighter_id in {"red", "pac_man"}:
             image_paths["basic_impact"] = named_impact
         runtime_pack = RUNTIME / fighter_id
-        frames = {key: build_image(destination, src, runtime_pack / f"{key}.png")
-                  for key, src in image_paths.items()}
+        frames = {}
+        for key, src in image_paths.items():
+            override = SOURCE / "Pac_Man_One_Eye_Runtime_Overrides" / f"{key}.png"
+            frames[key] = build_image(destination, src, runtime_pack / f"{key}.png",
+                                      override if fighter_id == "pac_man" and override.is_file() else None)
         effects = {kind: build_image(destination,
                    choose(names, f"effects/{prefix}_effect_{kind}.png"),
                    runtime_pack / f"effect_{kind}.png")

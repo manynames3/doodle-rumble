@@ -22,6 +22,7 @@ The art has grown alongside the game. Illustrated backgrounds set the scene; ink
 | Cast and visual identity | Purple and Yellow joined Orange, Red, Green and Blue. The title poster, hand-drawn HUD, larger attacks and illustrated arenas gave the game its sketchbook-meets-computer look. |
 | A journey worth finishing | The six-stage Save Star Saga added Pac-Man, H4CK3R and Dark lord, rising difficulty, hazards, new worlds, stage-specific music, a short ending and small jokes between fights. Doodle Rally became a separate racing side game. |
 | Bringing the drawings closer | Nine transparent art packs now animate the playable cast and bosses in selection, story scenes and combat. The latest pass adds moving idle/run poses, clearer boss attack releases, better-fitting selection previews and visible round-result performances. |
+| Making the finale feel final | Pac-Man's runtime poses now keep his single-eye silhouette. Dark lord has eight telegraphed attack patterns, a stronger damage tier, and three new signature hazards with much larger purple effects. |
 
 The best design test is still the original one: does it feel like the kids' drawing came alive, and do they want another round?
 
@@ -66,9 +67,9 @@ These are native captures from the running Godot project, after the nine new pac
 
 ## Play on a Mac
 
-The public repository contains the complete Godot source. Generated `.app` bundles and ZIP archives stay out of Git history; download the [v0.6.9 release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.6.9) for the prebuilt Mac app or complete Godot project, or export your own build with [docs/RELEASE_BUILD.md](docs/RELEASE_BUILD.md).
+The public repository contains the complete Godot source. Generated `.app` bundles and ZIP archives stay out of Git history; download the [v0.6.10 release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.6.10) for the prebuilt Mac app or complete Godot project, or export your own build with [docs/RELEASE_BUILD.md](docs/RELEASE_BUILD.md).
 
-To run a prebuilt app, open the extracted `Doodle_Rumble_Mac_v0.6.9` folder and double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly, then the title menu opens. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default.
+To run a prebuilt app, open the extracted `Doodle_Rumble_Mac_v0.6.10` folder and double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly, then the title menu opens. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default.
 
 The build is a Universal arm64/x86_64 app, locally ad-hoc signed and not Apple-notarized. macOS may require **System Settings → Privacy & Security → Open Anyway** after a transfer.
 
@@ -108,15 +109,15 @@ Settings supports remapping, available controllers, music/effects volume, reduce
 
 ## Validation
 
-The v0.6.9 validation archive records **24 source suites / 2,251 checks / 0 failures** and the same **24 packaged-PCK suites / 2,251 checks / 0 failures**. It also includes native menu/combat/boss/result captures, a four-point Godot playback check of the rebuilt ending, code-sign verification and Mac app launch smoke testing.
+The v0.6.10 validation includes focused boss and packed-art checks, native fight captures of corrected one-eye Pac-Man poses and Dark lord's new attacks, plus the full source/PCK test suites and Mac app smoke tests.
 
-See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_6_9.md`](docs/TESTING_0_6_9.md) for the exact evidence. Physical controller behavior, Intel execution, transferred first launch, audio hardware and family playtesting still need verification on those devices.
+See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_6_10.md`](docs/TESTING_0_6_10.md) for the exact evidence. Physical controller behavior, Intel execution, transferred first launch, audio hardware and family playtesting still need verification on those devices.
 
 ## Repository map
 
 ```text
 game/                 Godot project, scripts, scenes, assets and tests
-source_art/           Untouched originals from all nine transparent character packs
+source_art/           Untouched originals from all nine packs plus Pac-Man eye-correction source art
 docs/screenshots/     Curated public gameplay gallery
 docs/                 Build, testing, audio, ending and provenance notes
 ```

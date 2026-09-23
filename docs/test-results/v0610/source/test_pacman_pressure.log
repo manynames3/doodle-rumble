@@ -1,0 +1,4 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PACMAN_PRESSURE_METRICS elapsed=13.33 releases={ "bite": 2, "dash": 2, "pellet_fan": 2, "leap_chomp": 2 } max_gap=2.17 player_hp=374
+PACMAN_PRESSURE_TEST_RESULT checks=26 failures=0

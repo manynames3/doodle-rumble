@@ -231,7 +231,7 @@ func test_purple_directional_guard() -> void:
 func test_purple_projectile_reflection() -> void:
 	for data in [{"kind":"arrow","caster":"purple","script":"attack_effect.gd","damage":12},
 			{"kind":"signal","caster":"h4ck3r","script":"attack_effect.gd","damage":33},
-			{"kind":"void_orb","caster":"dark_lord","script":"boss_projectile.gd","damage":30},
+			{"kind":"void_orb","caster":"dark_lord","script":"boss_projectile.gd","damage":36},
 			{"kind":"pellet_fan","caster":"pac_man","script":"boss_projectile.gd","damage":18}]:
 		for delta in [1.0/30.0,1.0/60.0,1.0/120.0]:
 			var purple = spawn("purple",500)

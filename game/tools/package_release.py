@@ -12,7 +12,7 @@ import zipfile
 
 ARCHIVE_ROOT = "Doodle_Rumble"
 EXCLUDED_SOURCE_PARTS = {
-    ".git", ".godot", ".repowise", ".codex", ".claude", ".vscode", ".idea",
+    ".git", ".godot", ".repowise", ".codex", ".claude", ".agents", ".specify", ".vscode", ".idea",
     ".cache", "__pycache__", "__macosx", "builds", "cache", "test-logs",
 }
 # These folders contain working references and planning material, rather than
@@ -45,6 +45,7 @@ REQUIRED_SOURCE_PACKS = {
     "Red_Transparent_Asset_Pack",
     "Yellow_Transparent_Asset_Pack",
 }
+RUNTIME_ART_OVERRIDES = {"Pac_Man_One_Eye_Runtime_Overrides"}
 
 def _source_archive_name(relative: Path) -> str:
     return str(Path(ARCHIVE_ROOT) / relative).replace("\\", "/")
@@ -108,7 +109,11 @@ def assert_source_archive(archive: zipfile.ZipFile, project: Path) -> None:
 
     source_art = project / "source_art"
     pack_names = {path.name for path in source_art.iterdir() if path.is_dir()}
-    assert pack_names == REQUIRED_SOURCE_PACKS, "Expected all nine original production source packs"
+    assert pack_names - RUNTIME_ART_OVERRIDES == REQUIRED_SOURCE_PACKS, "Expected all nine original production source packs"
+    for override in RUNTIME_ART_OVERRIDES:
+        override_dir = source_art / override
+        assert override_dir.is_dir(), f"Required authored runtime correction missing: {override}"
+        assert any(override_dir.glob("*.png")), f"Runtime art correction PNGs missing: {override}"
     for file in source_art.rglob("*.png"):
         assert _source_archive_name(file.relative_to(project)) in names, f"Original production PNG missing: {file}"
 
@@ -128,7 +133,7 @@ def sha256_file(file: Path) -> str:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--version", default="0.6.9")
+    parser.add_argument("--version", default="0.6.10")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     if not re.fullmatch(r"\d+\.\d+\.\d+", args.version):

@@ -6,6 +6,8 @@ const BossStrength = preload("res://scripts/boss_strength.gd")
 const INK = Color("080d1d")
 const TYPES = {
 	"dark_rift":{"color":"d783ff","width":186.0,"top":472.0,"tell":1.15,"active":0.38,"damage":20,"label":"RIFT! MOVE!"},
+	"eclipse_wave":{"color":"d05bff","width":348.0,"top":503.0,"tell":1.22,"active":0.32,"damage":22,"label":"ECLIPSE WAVE! JUMP!"},
+	"void_pillar":{"color":"b852ff","width":108.0,"top":188.0,"tell":1.28,"active":0.25,"damage":20,"label":"VOID PILLAR! MOVE!"},
 	"camera":{"color":"dcb1ff","width":76.0,"top":185.0,"tell":1.35,"active":0.27,"label":"MOVE!"},
 	"cursor_stamp":{"color":"58f5e4","width":128.0,"top":410.0,"tell":1.5,"active":0.24,"label":"CLICK! SIDESTEP!"},
 	"eraser_drop":{"color":"ff9cba","width":170.0,"top":505.0,"tell":1.6,"active":0.28,"label":"ERASER!"},
@@ -145,6 +147,46 @@ func _draw() -> void:
 						var shard = PackedVector2Array([p+Vector2(x-14,0),p+Vector2(x-9,-height*0.72),p+Vector2(x+3,-height),p+Vector2(x+15,-height*0.46),p+Vector2(x+11,0)])
 						_ink_shape(shard,Color(c.darkened(0.85),fade),Color(c,fade),2)
 						draw_line(p+Vector2(x,-5),p+Vector2(x+3,-height+13),Color(c.lightened(0.8),fade),1.5,true)
+			"eclipse_wave":
+				var p := Vector2(mark.x,594)
+				if warning:
+					draw_arc(p+Vector2(0,1),52+progress*122,PI*1.05,PI*1.95,36,Color(INK,0.9*fade),9.0,true)
+					draw_arc(p+Vector2(0,-3),53+progress*122,PI*1.05,PI*1.95,36,Color(c,0.95*fade),3.0,true)
+					for side in [-1.0,1.0]:
+						var tip := p+Vector2(side*(60+progress*105),-25-progress*24)
+						draw_line(p+Vector2(side*9,-3),tip,Color(INK,0.9*fade),6.0,true)
+						draw_line(p+Vector2(side*11,-6),tip,Color(c,fade),2.2,true)
+				else:
+					var wave := PackedVector2Array([Vector2(box.position.x,600)])
+					for i in range(25):
+						var x: float = box.position.x+float(i)*box.size.x/24.0
+						var y: float = 566.0-92.0*pow(absf(sin(float(i)*PI/12.0)),0.65)
+						wave.append(Vector2(x,y))
+					wave.append(Vector2(box.end.x,600))
+					_ink_shape(wave,Color(c.darkened(0.72),0.92*fade),Color(c,fade),4.5)
+					for i in range(4):
+						var shard_x: float = box.position.x+35.0+float(i)*86.0
+						var chip := PackedVector2Array([Vector2(shard_x-7,570),Vector2(shard_x-2,533-float(i%2)*10),Vector2(shard_x+6,550),Vector2(shard_x+8,574)])
+						_ink_shape(chip,Color("171025",fade),Color(c.lightened(0.42),fade),1.6)
+			"void_pillar":
+				var top := Vector2(mark.x,196)
+				var bottom := Vector2(mark.x,595)
+				if warning:
+					var ring: float = 20.0+progress*18.0
+					draw_arc(top,ring,0,TAU,32,Color(INK,0.9*fade),6.0,true)
+					draw_arc(top,ring,0,TAU,32,Color(c,fade),2.4,true)
+					for side in [-1.0,1.0]:
+						var a := top+Vector2(side*(8+progress*18),20)
+						var b := bottom+Vector2(side*(10+progress*29),-30)
+						draw_line(a,b,Color(INK,0.83*fade),7.0,true)
+						draw_line(a,b,Color(c,0.78*fade),2.0,true)
+				else:
+					draw_rect(Rect2(Vector2(mark.x-29,box.position.y),Vector2(58,box.size.y)),Color(INK,0.78*fade))
+					draw_rect(Rect2(Vector2(mark.x-21,box.position.y),Vector2(42,box.size.y)),Color(c,0.60*fade))
+					for i in range(6):
+						var y: float = 222.0+float(i)*61.0
+						draw_line(Vector2(mark.x-17,y),Vector2(mark.x+17,y+22),Color("f9dcff",0.78*fade),2.0,true)
+					draw_arc(top,26,0,TAU,32,Color("f7d7ff",fade),3.0,true)
 			"camera":
 				if active: draw_rect(box,Color(c,0.46))
 				draw_arc(Vector2(mark.x,579),27,-PI,0,20,Color(c,fade),3,true)

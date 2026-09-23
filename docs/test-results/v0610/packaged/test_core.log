@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS group: movement, jumping, floor, boundaries
+PASS group: all four basic attacks, duplicate-hit prevention, delta invariance
+PASS group: four specials, release events, cooldown and reuse
+PASS group: hit stun, immunity, escape, knockout and reset
+PASS group: timer, KOs, ties, best-of-three, rematch
+CORE_TEST_RESULT checks=112 failures=0

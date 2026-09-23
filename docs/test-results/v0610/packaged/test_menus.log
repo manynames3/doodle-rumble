@@ -1,0 +1,8 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS group: title journey, six fighters, retained quick-match/local selectors, menu return
+PASS group: modal focus isolation, Done/Escape close, pause state restoration
+PASS group: remap conflicts, reserved keys, cancel/reset, persistence and labels
+PASS group: comfort settings, camera motion and player-specific control prompts
+PASS group: result focus, journey continuation, retries, fighter changes and final restart
+MENU_TEST_RESULT checks=164 failures=0

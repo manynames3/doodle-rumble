@@ -3,253 +3,253 @@
   "id": "pac_man",
   "role": "boss",
   "local_height": 112,
-  "idle_alpha_height": 1134,
+  "idle_alpha_height": 494,
   "frames": {
     "canonical": {
       "path": "res://assets/character_art/pac_man/canonical.png",
-      "source": "character/canonical/pacman_canonical_hero.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/canonical.png",
       "offset": [
-        -673.0,
-        -1218.0
+        -247.5,
+        -532.0
       ],
-      "source_per_pixel": 1.4441964285714286,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        135,
-        1382,
-        1315
+        24,
+        20,
+        480,
+        532
       ],
       "runtime_size": [
-        896,
-        845
+        496,
+        532
       ]
     },
     "idle": {
       "path": "res://assets/character_art/pac_man/idle.png",
-      "source": "character/movement/pacman_ground_idle.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/idle.png",
       "offset": [
-        -673.0,
-        -1204.0
+        -243.0,
+        -497.0
       ],
-      "source_per_pixel": 1.4441964285714286,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        149,
-        1382,
-        1283
+        20,
+        3,
+        486,
+        497
       ],
       "runtime_size": [
-        896,
-        813
+        486,
+        497
       ]
     },
     "run_start": {
       "path": "res://assets/character_art/pac_man/run_start.png",
-      "source": "character/movement/pacman_ground_run_anticipation.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/run_start.png",
       "offset": [
-        -721.0,
-        -1125.0
+        -321.0,
+        -482.0
       ],
-      "source_per_pixel": 1.59375,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        145,
-        1516,
-        1250
+        10,
+        0,
+        642,
+        482
       ],
       "runtime_size": [
-        896,
-        718
+        642,
+        502
       ]
     },
     "run": {
       "path": "res://assets/character_art/pac_man/run.png",
-      "source": "character/movement/pacman_ground_run_full_speed.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/run.png",
       "offset": [
-        -731.0,
-        -1126.0
+        -324.0,
+        -509.0
       ],
-      "source_per_pixel": 1.6316964285714286,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        128,
-        1550,
-        1234
+        0,
+        0,
+        648,
+        509
       ],
       "runtime_size": [
-        896,
-        702
+        648,
+        529
       ]
     },
     "jump_takeoff": {
       "path": "res://assets/character_art/pac_man/jump_takeoff.png",
-      "source": "character/jump/pacman_jump_takeoff.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/jump_takeoff.png",
       "offset": [
-        -673.0,
-        -1204.0
+        -268.5,
+        -613.0
       ],
-      "source_per_pixel": 1.4866071428571428,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        149,
-        1420,
-        1333
+        0,
+        0,
+        537,
+        613
       ],
       "runtime_size": [
-        896,
-        823
+        537,
+        615
       ]
     },
     "jump_apex": {
       "path": "res://assets/character_art/pac_man/jump_apex.png",
-      "source": "character/jump/pacman_jump_apex.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/jump_apex.png",
       "offset": [
-        -673.0,
-        -1204.0
+        -259.5,
+        -585.0
       ],
-      "source_per_pixel": 1.4441964285714286,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        149,
-        1382,
-        1309
+        1,
+        2,
+        519,
+        585
       ],
       "runtime_size": [
-        896,
-        831
+        519,
+        585
       ]
     },
     "jump_landing": {
       "path": "res://assets/character_art/pac_man/jump_landing.png",
-      "source": "character/jump/pacman_jump_landing.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/jump_landing.png",
       "offset": [
-        -733.0,
-        -1069.0
+        -333.0,
+        -486.0
       ],
-      "source_per_pixel": 1.5859375,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        182,
-        1509,
-        1184
+        20,
+        0,
+        666,
+        486
       ],
       "runtime_size": [
-        896,
-        657
+        666,
+        502
       ]
     },
     "attack_windup": {
       "path": "res://assets/character_art/pac_man/attack_windup.png",
-      "source": "character/attack/pacman_attack_anticipation.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/attack_windup.png",
       "offset": [
-        -673.0,
-        -1225.0
+        -306.0,
+        -587.0
       ],
-      "source_per_pixel": 1.4910714285714286,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        128,
-        1424,
-        1333
+        0,
+        0,
+        605,
+        587
       ],
       "runtime_size": [
-        896,
-        835
+        612,
+        588
       ]
     },
     "attack_recover": {
       "path": "res://assets/character_art/pac_man/attack_recover.png",
-      "source": "character/attack/pacman_attack_follow_through.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/attack_recover.png",
       "offset": [
-        -723.0,
-        -1035.0
+        -355.5,
+        -565.0
       ],
-      "source_per_pixel": 1.6707589285714286,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        193,
-        137,
-        1650,
-        1130
+        0,
+        8,
+        710,
+        565
       ],
       "runtime_size": [
-        896,
-        618
+        711,
+        565
       ]
     },
     "heavy_windup": {
       "path": "res://assets/character_art/pac_man/heavy_windup.png",
-      "source": "character/heavy_smash/pacman_heavy_smash_anticipation.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/heavy_windup.png",
       "offset": [
-        -726.0,
-        -1134.0
+        -306.0,
+        -587.0
       ],
-      "source_per_pixel": 1.6205357142857142,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        128,
-        1540,
-        1242
+        0,
+        0,
+        605,
+        587
       ],
       "runtime_size": [
-        896,
-        712
+        612,
+        588
       ]
     },
     "heavy_impact": {
       "path": "res://assets/character_art/pac_man/heavy_impact.png",
-      "source": "character/heavy_smash/pacman_heavy_smash_impact.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/heavy_impact.png",
       "offset": [
-        -788.0,
-        -1031.0
+        -333.0,
+        -486.0
       ],
-      "source_per_pixel": 1.7566964285714286,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        141,
-        1662,
-        1152
+        20,
+        0,
+        666,
+        486
       ],
       "runtime_size": [
-        896,
-        598
+        666,
+        502
       ]
     },
     "special_impact": {
       "path": "res://assets/character_art/pac_man/special_impact.png",
-      "source": "character/attack/pacman_attack_bite_impact.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/special_impact.png",
       "offset": [
-        -707.0,
-        -1160.0
+        -377.5,
+        -566.0
       ],
-      "source_per_pixel": 1.5602678571428572,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        133,
-        1486,
-        1273
+        0,
+        0,
+        755,
+        566
       ],
       "runtime_size": [
-        896,
-        756
+        755,
+        566
       ]
     },
     "basic_impact": {
       "path": "res://assets/character_art/pac_man/basic_impact.png",
-      "source": "character/attack/pacman_attack_bite_impact.png",
+      "source": "derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/basic_impact.png",
       "offset": [
-        -707.0,
-        -1160.0
+        -377.5,
+        -566.0
       ],
-      "source_per_pixel": 1.5602678571428572,
+      "source_per_pixel": 1.0,
       "alpha_bbox": [
-        128,
-        133,
-        1486,
-        1273
+        0,
+        0,
+        755,
+        566
       ],
       "runtime_size": [
-        896,
-        756
+        755,
+        566
       ]
     }
   },

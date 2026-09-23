@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS group: Pac-Man bite windup, active window, recovery and single hit
+PASS group: Pac-Man rush, cooldown, escape and no idle contact damage
+PASS group: Pac-Man pattern variety, readable warnings and retaliation windows
+PACMAN_TEST_RESULT checks=29 failures=0

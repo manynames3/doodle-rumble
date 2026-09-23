@@ -1,0 +1,22 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS group: physical keyboard isolation and pause/resume
+PASS group: reachable low platforms and telegraphed hazard damage
+PASS group: three-platform route from floor to the highest desk ledge
+PASS group: all four integrated specials and projectile cleanup
+PASS group: training refill and easy AI
+DIFFICULTY_PRESSURE attacks=[6, 7, 8] first_attack_frames=[162, 133, 112]
+PASS group: actual early-stage difficulty wiring, reaction speed and attack pressure
+PASS group: round endings, timeout, tie, immediate rematch
+PASS group: six-stage journey, loss/retry, final boss patterns and single final reward
+LIVE_LOCAL fighters=["orange", "blue"] frames=971 score=[2, 0]
+LIVE_LOCAL fighters=["purple", "yellow"] frames=870 score=[2, 0]
+LIVE_LOCAL fighters=["yellow", "purple"] frames=951 score=[2, 0]
+LIVE_JOURNEY stage=1 opponent=blue attempt=1 frames=1146 score=[2, 0] hp=100/0
+LIVE_JOURNEY stage=2 opponent=red attempt=1 frames=947 score=[2, 0] hp=100/0
+LIVE_JOURNEY stage=3 opponent=green attempt=1 frames=1028 score=[2, 0] hp=76/0
+LIVE_JOURNEY stage=4 opponent=pac_man attempt=1 frames=1410 score=[2, 0] hp=38/0
+LIVE_JOURNEY stage=5 opponent=h4ck3r attempt=1 frames=2394 score=[2, 0] hp=77/0
+LIVE_JOURNEY stage=6 opponent=dark_lord attempt=1 frames=1524 score=[2, 0] hp=100/0
+LIVE_JOURNEY total_frames=8449 won_stages=6 retries=0
+GAME_TEST_RESULT checks=138 failures=0 live_rounds=18 live_retries=0

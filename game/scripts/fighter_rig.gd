@@ -1091,6 +1091,35 @@ func _dark_cast_marks(cast: String, charge: float) -> void:
 				var angle: float = float(i)*TAU/5.0+0.18
 				var root: Vector2 = focus+Vector2.from_angle(angle)*(inner+4.0)
 				_dark_shard(root,3.2+float(i%2)*2.0,angle)
+		"eclipse_volley":
+			var focus: Vector2 = back_hand+Vector2(-19,-5)
+			var radius: float = 14.0+charge*15.0
+			for ring in range(3):
+				draw_arc(focus,radius+float(ring)*7.0,-2.6+float(ring)*0.38,2.0+float(ring)*0.38,30,Color(accent,0.56-float(ring)*0.12),2.3,true)
+			for i in range(7):
+				var angle: float = float(i)*TAU/7.0+charge*0.24
+				_dark_shard(focus+Vector2.from_angle(angle)*(radius+5.0),4.0+float(i%2)*2.0,angle)
+			var tear := PackedVector2Array([focus+Vector2(-3,-radius),focus+Vector2(7,-7),focus+Vector2(-5,4),focus+Vector2(2,radius)])
+			draw_polyline(tear,INK,5.5,true)
+			draw_polyline(tear,hot,1.8,true)
+		"eclipse_wave":
+			var span: float = 46.0+charge*75.0
+			for side in [-1.0,1.0]:
+				var fissure := PackedVector2Array([Vector2(0,-3),Vector2(side*span*0.32,-14),Vector2(side*span*0.51,-6),Vector2(side*span,-24-charge*18.0)])
+				draw_polyline(fissure,Color(accent,0.22+charge*0.20),13.0,true)
+				draw_polyline(fissure,INK,5.2,true)
+				draw_polyline(fissure,violet,2.0,true)
+				_dark_shard(fissure[-1],6.0+charge*5.0,side*0.45)
+		"void_pillar":
+			var gate: Vector2 = back_hand+Vector2(-24,-2)
+			var radius: float = 13.0+charge*10.0
+			draw_circle(gate,radius+6.0,Color(accent,0.07+charge*0.07))
+			draw_arc(gate,radius,0,TAU,32,violet,2.4,true)
+			draw_arc(gate,radius*0.66,-2.6,2.3,24,hot,1.5,true)
+			for side in [-1.0,1.0]:
+				var ray := PackedVector2Array([gate+Vector2(side*4,-radius),gate+Vector2(side*10,-radius*0.25),Vector2(side*(16+charge*10),-7)])
+				draw_polyline(ray,Color(accent,0.38+charge*0.44),5.0,true)
+				draw_polyline(ray,hot,1.2,true)
 		"reaper":
 			var base: Vector2 = shoulder+Vector2(4,-3)
 			var radius: Vector2 = Vector2(108+charge*40,104+charge*34)

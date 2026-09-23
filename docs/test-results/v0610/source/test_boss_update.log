@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+BOSS_STAGE_PRESSURE pac_40s=146 hacker_40s=357
+BOSS_STAGE_PRESSURE hacker_40s=357 dark_lord_40s=593 patterns=8
+TEST_RESULT checks=101 failures=0

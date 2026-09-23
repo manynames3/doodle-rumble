@@ -12,7 +12,7 @@ Sound effects and the retained title/racing loop are synthesized in `scripts/aud
 
 Six illustrated special-attack cards were generated with the built-in image-generation tool using the user's special-attack sheet as a style reference. The finished files are `game/assets/selection/orange_action.png`, `red_action.png`, `green_action.png`, `blue_action.png`, `purple_action.png`, and `yellow_action.png`. Selection now layers the new transparent canonical fighter cutouts over these action paintings, retaining both the supplied characters and the energetic illustrated context. Godot adds live labels, selection feedback and restrained movement. The exact prompt set is in [SELECTION_ART_PROMPTS.json](SELECTION_ART_PROMPTS.json).
 
-Pac-Man is the user's requested fourth-stage opponent, before H4CK3R and Dark lord. Its original code-drawn yellow chomp creature was inspired by the supplied poster's Byte Chomp; its new transparent pack supplies the current bite art. Its bite and charge use the existing combat rules. No third-party sprite or audio recordings were copied.
+Pac-Man is the user's requested fourth-stage opponent, before H4CK3R and Dark lord. Its original code-drawn yellow chomp creature was inspired by the supplied poster's Byte Chomp; its transparent pack supplies the bite art. The v0.6.10 runtime uses separate generated pose corrections with exactly one visible eye, while retaining the supplied source pack unchanged. Its bite and charge use the existing combat rules. No third-party sprite or audio recordings were copied.
 
 The Kalam font is by Indian Type Foundry, distributed under the SIL Open Font License. Source: https://github.com/google/fonts/tree/main/ofl/kalam. License: `docs/licenses/KALAM_OFL.txt`.
 
@@ -73,3 +73,9 @@ Input: the existing `game/assets/intro_poster_v060.png`. Tool: built-in image ge
 ## v0.6.2 boss-detail pass
 
 Pac-Man's jaw, charge marks and pellets; H4CK3R's CRT cast labels, checksum shapes, firewall panel and local cyan glow; and Dark lord's ink mantle, crown, scythe and cast marks are original procedural GDScript drawings. No third-party sprites, sound recordings or new bitmap illustrations were added. The earlier chapter-badge artwork was procedural and its selector/display has been retired; chapter completion and optional stickers remain.
+
+## v0.6.10 final-boss and Pac-Man art correction
+
+Pac-Man's supplied action PNGs show two eyes. To match the requested one-eye silhouette in every gameplay state, three transparent pose atlases were generated from those PNG references and sliced into 13 per-state runtime overrides. These files live separately under `source_art/Pac_Man_One_Eye_Runtime_Overrides/`; the nine vendor asset packs remain unchanged. `import_character_packs.py` automatically uses these authored overrides and records their provenance in Pac-Man's runtime manifest. The source PNG atlases are retained alongside their cropped pose outputs for later adjustments.
+
+Dark lord's eight attack cues, projectile glyphs, eclipse wave and vertical void pillar are procedural GDScript drawings. The new signature attacks reuse the existing purple cast art, physics, telegraph and hazard systems; no attack was made more damaging by changing rendered animation timing. Doodle Rally assets and code are unchanged in this update.

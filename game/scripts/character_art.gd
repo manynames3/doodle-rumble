@@ -191,7 +191,7 @@ func pose(delta: float, state: Dictionary, phase: float, absolute_result_age: fl
 		if fighter_id == "purple" and attack >= windup:
 			frame = "run_start"
 	if cast != "" and fighter_id in ["h4ck3r","dark_lord"]:
-		var pack_match: bool = (fighter_id == "h4ck3r" and cast == "firewall_scan") or (fighter_id == "dark_lord" and cast in ["void_orb","rift"])
+		var pack_match: bool = (fighter_id == "h4ck3r" and cast == "firewall_scan") or (fighter_id == "dark_lord" and cast in ["void_orb","rift","camera","eclipse_volley","eclipse_wave","void_pillar"])
 		if charge < 1.0:
 			frame = "attack_windup"
 		elif pack_match:

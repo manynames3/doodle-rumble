@@ -1,9 +1,9 @@
 extends RefCounted
-## Final boss commands: heavy close attack, ground waves, void fan and marked rift.
+## Final boss uses eight committed attacks with readable tells and short punish windows.
 const Difficulty = preload("res://scripts/difficulty.gd")
 signal pattern_released(kind: String)
 var state = "rest"
-var time_left = 0.65
+var time_left = 0.40
 var pattern = 0
 var tell = ""
 var approach_speed: float = 1.08
@@ -11,23 +11,25 @@ var tell_duration: float = 0.65
 var recovery_duration: float = 0.46
 var difficulty_level: int = Difficulty.EASY
 var committed_facing = -1
-const PATTERNS = ["reaper","quake","void_orb","rift","camera"]
-const TELLS = ["REAPER SWEEP!","JUMP THE WAVE!","VOID VOLLEY!","RIFT INCOMING!","DODGE THE MARK!"]
+var jump_wait: float = 0.0
+const PATTERNS = ["reaper","quake","void_orb","rift","eclipse_volley","eclipse_wave","void_pillar","camera"]
+const TELLS = ["REAPER SWEEP!","JUMP THE WAVE!","VOID VOLLEY!","RIFT INCOMING!","ECLIPSE SHARDS!","JUMP THE ECLIPSE!","VOID PILLAR! MOVE!","DODGE THE MARK!"]
 
 func configure_difficulty(selected_level: int) -> void:
 	var previous_factor: float = Difficulty.rest_factor(difficulty_level)
 	difficulty_level = Difficulty.normalized_level(selected_level)
-	approach_speed = 1.08 * Difficulty.move_factor(difficulty_level)
-	recovery_duration = 0.46 * Difficulty.rest_factor(difficulty_level)
+	approach_speed = 1.22 * Difficulty.move_factor(difficulty_level)
+	recovery_duration = 0.34 * Difficulty.rest_factor(difficulty_level)
 	if state == "rest": time_left *= Difficulty.rest_factor(difficulty_level) / previous_factor
 	# Boss cast tells remain fully readable at every difficulty.
 	tell_duration = 0.65
 
 func reset() -> void:
 	state = "rest"
-	time_left = 0.65 * Difficulty.rest_factor(difficulty_level)
+	time_left = 0.40 * Difficulty.rest_factor(difficulty_level)
 	pattern = 0
 	tell = ""
+	jump_wait = 0.0
 
 func read_input(delta: float, fighter, opponent) -> Dictionary:
 	var command = {"move":0.0,"jump":false,"attack":false,"special":false,"lock_facing":false}
@@ -39,6 +41,7 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 		state = "rest"
 		time_left = 0.28
 		return command
+	jump_wait = maxf(0.0,jump_wait-delta)
 	time_left -= delta
 	var enraged = fighter.health < fighter.max_health*0.5
 	match state:
@@ -46,12 +49,16 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 			fighter.boss_cast = ""
 			if time_left <= 0:
 				state = "approach"
-				time_left = 0.95
+				time_left = 0.78
 		"approach":
 			var dx = opponent.position.x-fighter.position.x
-			var reach = fighter.weapon.reach*0.88 if pattern == 0 else 420.0
+			var dy: float = opponent.position.y-fighter.position.y
+			var reach = fighter.weapon.reach*0.88 if pattern == 0 else 470.0
 			if absf(dx) > reach and time_left > 0:
 				command.move = signf(dx)*approach_speed
+				if dy < -70.0 and absf(dx) < 510.0 and jump_wait <= 0.0 and fighter.is_on_floor():
+					command.jump = true
+					jump_wait = 1.05
 			else:
 				state = "tell"
 				time_left = tell_duration
@@ -66,11 +73,13 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 			fighter.facing = committed_facing
 			fighter.boss_charge = clampf(1-time_left/tell_duration,0,1)
 			if time_left <= 0:
-				if pattern == 0: command.attack = true
-				elif pattern == 1: command.special = true; fighter.cooldown = 0
-				else: pattern_released.emit(PATTERNS[pattern])
+				match PATTERNS[pattern]:
+					"reaper": command.attack = true
+					"quake": command.special = true; fighter.cooldown = 0
+					_: pattern_released.emit(PATTERNS[pattern])
 				state = "executing"
-				time_left = 0.55 if pattern == 2 else 1.7 if pattern>=3 else 0.1
+				var kind: String = PATTERNS[pattern]
+				time_left = 0.34 if kind == "reaper" else 0.55 if kind == "quake" else 0.58 if kind in ["void_orb","eclipse_volley"] else 1.55
 				tell = ""
 		"executing":
 			command.lock_facing = true
@@ -81,5 +90,5 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 				fighter.boss_cast = ""
 				pattern = (pattern+1)%PATTERNS.size()
 				state = "rest"
-				time_left = recovery_duration-(0.12 if enraged else 0)
+				time_left = recovery_duration-(0.10 if enraged else 0)
 	return command

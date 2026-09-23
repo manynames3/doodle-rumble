@@ -1,0 +1,14 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS group: six player dodges, direction, committed motion, edge trigger, boss exclusion
+PASS group: real-contact perfect dodge, finite evade window and vulnerable recovery at 30/60/120 Hz
+PASS group: no recovery cancel, special exclusion, one-hit counter damage and expiry
+PASS group: fresh grounded data, existing protection, Purple counter projectile payload
+PASS group: Purple front melee guard, one counter, rear vulnerability, recovery at 30/60/120 Hz
+PASS group: arrow, signal and boss shots reflect once at 30/60/120 Hz; late guard blocks
+PASS group: six grounded mobility, reach, hit strength and measured timing tradeoffs
+PASS group: melee, reflected projectile and environmental damage source attribution
+PASS group: Purple AI watches announced threats, guards rarely on easy, waits on hard, and loses to fast timing
+PASS group: six authored air variants, distinct vertical/forward geometry and cleared hitboxes
+PASS group: air damage, release and active-window invariance at 30/60/120 Hz
+COMBAT_DEPTH_TEST_RESULT checks=343 failures=0

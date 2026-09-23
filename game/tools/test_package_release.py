@@ -27,6 +27,8 @@ class SourceArchivePolicyTests(unittest.TestCase):
         self._write(project, "docs/licenses/GODOT_THIRD_PARTY.txt", "notice")
         for pack in package_release.REQUIRED_SOURCE_PACKS:
             self._write(project, f"source_art/{pack}/production.png")
+        self._write(project, "source_art/Pac_Man_One_Eye_Runtime_Overrides/canonical.png")
+        self._write(project, "source_art/Pac_Man_One_Eye_Runtime_Overrides/README.md")
         return project
 
     def test_source_archive_preserves_runnable_source_and_original_packs(self) -> None:
@@ -40,6 +42,17 @@ class SourceArchivePolicyTests(unittest.TestCase):
             self.assertIn("Doodle_Rumble/game/project.godot", names)
             self.assertIn("Doodle_Rumble/source_art/Blue_Transparent_Asset_Pack/production.png", names)
 
+    def test_source_archive_preserves_authored_runtime_art_corrections(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self._fixture_project(Path(temporary))
+            archive_path = Path(temporary) / "source.zip"
+            package_release.write_source_archive(project, archive_path, "0.6.10")
+            with zipfile.ZipFile(archive_path) as archive:
+                package_release.assert_source_archive(archive, project)
+                names = set(archive.namelist())
+            self.assertIn("Doodle_Rumble/source_art/Pac_Man_One_Eye_Runtime_Overrides/canonical.png", names)
+            self.assertIn("Doodle_Rumble/source_art/Pac_Man_One_Eye_Runtime_Overrides/README.md", names)
+
     def test_source_archive_excludes_private_reference_cache_and_credentials(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             project = self._fixture_project(Path(temporary))
@@ -51,6 +64,8 @@ class SourceArchivePolicyTests(unittest.TestCase):
                 "docs/Doodle_Rumble_Mac_Plan.docx",
                 "docs/SUPPLIED_PLAN.txt",
                 ".cache/package-state.json",
+                ".agents/private-agent-notes.md",
+                ".specify/local-work.md",
                 "cache/old-output.txt",
                 "game/export_credentials.cfg",
                 "game/.env.production",
@@ -63,7 +78,7 @@ class SourceArchivePolicyTests(unittest.TestCase):
             with zipfile.ZipFile(archive_path) as archive:
                 package_release.assert_source_archive(archive, project)
                 names = archive.namelist()
-            forbidden = ("reference/", "planning/", "private/", "doodle_rumble_mac_plan.docx", "supplied_plan.txt", ".cache/", "cache/", "credentials", ".env", ".p12", "token")
+            forbidden = ("reference/", "planning/", "private/", "doodle_rumble_mac_plan.docx", "supplied_plan.txt", ".cache/", ".agents/", ".specify/", "cache/", "credentials", ".env", ".p12", "token")
             self.assertFalse(any(any(fragment in name.casefold() for fragment in forbidden) for name in names))
 
     def test_mac_archive_rejects_appledouble_metadata(self) -> None:

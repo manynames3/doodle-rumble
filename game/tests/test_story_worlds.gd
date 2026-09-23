@@ -67,7 +67,7 @@ func run() -> void:
 	queue_test.tick(1.14,[target])
 	check(target.hits==0,"Queued boss warning never deals early damage")
 	queue_test.tick(0.02,[target])
-	check(target.hits==1 and target.damage==25,"Queued empowered boss signature still hits once")
+	check(target.hits==1 and target.damage==30,"Queued empowered boss signature still hits once")
 	queue_test.mark_target(640,0,"camera","dark_lord")
 	queue_test.clear()
 	check(queue_test.marks.is_empty() and queue_test.pending.is_empty(),"Round reset clears active and queued hazards")

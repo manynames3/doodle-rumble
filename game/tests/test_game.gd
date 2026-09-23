@@ -391,7 +391,7 @@ func test_arcade_paths_and_boss() -> void:
 				warning_visible = warning_visible or (game.enemy_warning_label.visible and game.enemy_warning_label.text == game.boss_ai.tell and game.boss_ai.tell != "")
 				saw_mark = saw_mark or not game.hazards.marks.is_empty()
 				saw_wave = saw_wave or not game.projectiles.is_empty()
-			check(tells.size() == 5,"boss cycles five readable tells")
+			check(tells.size() == 8,"boss cycles eight readable tells")
 			check(tells.size() > pac_tell_count,"final boss has more attack patterns than Pac-Man")
 			check(saw_wave and saw_mark,"boss wave and camera mark both release")
 			check(game.hazards.camera_bugs,"boss arena enables camera bug visuals")

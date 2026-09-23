@@ -45,8 +45,14 @@ func configure(fighter, effect_kind: String, direction: int, angle: float = 0) -
 		damage = 20
 		knockback = 360
 		lifetime = 1.9
+	elif kind == "eclipse_volley":
+		position = fighter.position+Vector2(direction*68,-83)*fighter.body_scale
+		radius = 18
+		damage = 15
+		knockback = 390
+		lifetime = 2.15
 	damage = BossStrength.damage(str(fighter.definition.id), damage)
-	velocity = Vector2(direction*cos(angle),sin(angle))*(520 if kind == "checksum_volley" else 470 if kind == "pellet_fan" else 390)
+	velocity = Vector2(direction*cos(angle),sin(angle))*(590 if kind == "eclipse_volley" else 520 if kind == "checksum_volley" else 470 if kind == "pellet_fan" else 390)
 
 func hitbox() -> Rect2:
 	return Rect2(position-Vector2.ONE*radius,Vector2.ONE*radius*2)
@@ -101,6 +107,24 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO,radius-3,tint)
 		draw_circle(Vector2(-3,-4),3,Color("fff5d4"))
 		draw_arc(Vector2.ZERO,radius+5,0.2,2.5,15,tint,2,true)
+	elif kind == "eclipse_volley":
+		var aim: Vector2 = velocity.normalized()
+		var normal: Vector2 = aim.orthogonal()
+		draw_line(-aim*(radius+35),-aim*4,Color(tint,0.24),10.0,true)
+		draw_line(-aim*(radius+27),-aim*5,Color("f8d5ff",0.9),2.0,true)
+		var points := PackedVector2Array()
+		for i in range(8):
+			var angle: float = float(i)*TAU/8.0-PI/8.0
+			var size: float = radius+4.0 if i%2 == 0 else radius*0.64
+			points.append(Vector2.from_angle(angle)*size)
+		draw_colored_polygon(points,ink)
+		var outline: PackedVector2Array = points.duplicate()
+		outline.append(outline[0])
+		draw_polyline(outline,Color("070713"),4.2,true)
+		draw_polyline(outline,Color(tint),2.2,true)
+		draw_arc(Vector2.ZERO,radius+10.0,-2.5,1.55,22,Color(tint,0.86),3.0,true)
+		draw_arc(Vector2.ZERO,radius+5.0,0.25,4.2,22,Color("f5d9ff",0.76),1.5,true)
+		draw_colored_polygon(PackedVector2Array([-aim*10.0+normal*4.0,aim*7.0-normal*8.0,aim*8.0+normal*7.0]),Color("f3d7ff"))
 	elif kind == "checksum_volley":
 		var points = PackedVector2Array([Vector2(-radius,-radius*0.75),Vector2(radius*0.7,-radius),Vector2(radius,radius*0.72),Vector2(-radius*0.8,radius)])
 		draw_colored_polygon(points,ink)

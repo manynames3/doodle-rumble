@@ -167,6 +167,20 @@ func run():
 	check(hacker_damage > pac_damage,"H4CK3R deals more passive-opponent pressure than preceding Pac-Man stage")
 	game.arcade_stage = 5
 	game.start_match()
+	game.countdown = 0
+	game.first.reset_at(Vector2(450,599))
+	game.second.reset_at(Vector2(770,599))
+	var dark_damage: int = 0
+	var dark_patterns := {}
+	for frame in range(2400):
+		game.first.health = 100
+		game.second.health = game.second.max_health
+		await step(1)
+		dark_damage += 100-game.first.health
+		if game.boss_ai.tell != "": dark_patterns[game.boss_ai.tell] = true
+	print("BOSS_STAGE_PRESSURE hacker_40s=%d dark_lord_40s=%d patterns=%d" % [hacker_damage,dark_damage,dark_patterns.size()])
+	check(dark_patterns.size() == 8,"Dark lord delivers all eight distinct attack patterns in the final-stage cycle")
+	check(dark_damage > hacker_damage,"Dark lord exerts more pressure than H4CK3R in the same 40-second passive test")
 	check(is_equal_approx(game.second.body_scale,game.first.body_scale*1.5),"Dark lord body is exactly fifty percent larger")
 	check(is_equal_approx(absf(game.second.rig.scale.x),game.second.body_scale),"Dark lord rig matches his physical scale")
 	check(is_equal_approx(game.second.hurtbox().size.y,game.first.hurtbox().size.y*1.5),"Dark lord hurtbox scales with his visible body")

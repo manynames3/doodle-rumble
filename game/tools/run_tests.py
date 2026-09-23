@@ -4,6 +4,7 @@ import argparse,json,re,subprocess
 p=argparse.ArgumentParser()
 p.add_argument('--godot',required=True)
 p.add_argument('--logs',default='test-logs')
+p.add_argument('--main-pack',help='Run every suite against an exported Godot resource pack, such as a Mac app PCK.')
 a=p.parse_args()
 game=Path(__file__).resolve().parents[1]
 logs=Path(a.logs).resolve();logs.mkdir(parents=True,exist_ok=True)
@@ -13,7 +14,11 @@ for suite in sorted((game/'tests').glob('test_*.gd')):
     try:
         with path.open('w') as stream:
             timing=[] if suite.stem=='test_boot_audio' else ['--fixed-fps','60']
-            result=subprocess.run([a.godot,'--headless',*timing,'--path',str(game),'--script','res://tests/'+suite.name,'--','--isolated-qa','--silent-qa'],stdout=stream,stderr=subprocess.STDOUT,timeout=120)
+            command=[a.godot,'--headless']
+            if a.main_pack:
+                command += ['--main-pack',str(Path(a.main_pack).resolve())]
+            command += [*timing,'--path',str(game),'--script','res://tests/'+suite.name,'--','--isolated-qa','--silent-qa']
+            result=subprocess.run(command,stdout=stream,stderr=subprocess.STDOUT,timeout=120)
         txt=path.read_text()
         summary=[line for line in txt.splitlines() if re.search(r'checks|failures',line,re.I)]
         ok=result.returncode==0 and not re.search(r'(SCRIPT ERROR:|^ERROR:|^WARNING:)',txt,re.M) and bool(summary)
