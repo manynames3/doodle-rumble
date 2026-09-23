@@ -132,6 +132,9 @@ func _test_controllers() -> void:
 		ordinary.rng.seed = 42
 		normal_counts.append(_count_commands(ordinary, 45.0))
 	check(normal_counts[0] < normal_counts[1] and normal_counts[1] < normal_counts[2], "ordinary AI naturally attacks more often at each difficulty")
+	var hard_vs_v0610: float = float(normal_counts[2]) / 36.0
+	check(hard_vs_v0610 >= 1.30 and hard_vs_v0610 <= 1.50, "Hard regular AI delivers 30-50 percent more attack decisions than the v0.6.10 baseline")
+	_test_hard_hit_reengagement()
 	var easy_hacker = HackerAI.new()
 	easy_hacker.configure_difficulty(0)
 	easy_hacker.reset()
@@ -181,7 +184,43 @@ func _test_controllers() -> void:
 	boss_medium.reset()
 	var boss_counts := [_count_commands(boss_easy, 45.0), _count_commands(boss_medium, 45.0), _count_commands(boss_hard, 45.0)]
 	check(boss_counts[0] < boss_counts[1] and boss_counts[1] < boss_counts[2], "Dark lord naturally attacks more often at each difficulty")
-	print("DIFFICULTY_PRESSURE ordinary=%s hacker=%s dark_lord=%s" % [str(normal_counts), str([hacker_easy_count, hacker_medium_count, hacker_hard_count]), str(boss_counts)])
+	print("DIFFICULTY_PRESSURE ordinary=%s hard_vs_v0610=%.2f hacker=%s dark_lord=%s" % [str(normal_counts), hard_vs_v0610, str([hacker_easy_count, hacker_medium_count, hacker_hard_count]), str(boss_counts)])
+
+func _test_hard_hit_reengagement() -> void:
+	var fighter = FakeFighter.new()
+	var opponent = FakeFighter.new()
+	opponent.position.x = 600
+	var gentle = AI.new()
+	gentle.configure(1)
+	gentle.configure_difficulty(Difficulty.EASY)
+	gentle.reset()
+	gentle.rest_time = 1.2
+	fighter.hurt_time = DT
+	gentle.read_input(DT,fighter,opponent)
+	check(gentle.rest_time > 1.0,"Easy retains its existing post-hit recovery pacing")
+	var hard = AI.new()
+	hard.configure(1)
+	hard.configure_difficulty(Difficulty.HARD)
+	hard.reset()
+	hard.rng.seed = 8142
+	hard.rest_time = 2.0
+	hard.think_time = 0.2
+	hard.tell_time = 0.3
+	hard.waiting_for_attack = true
+	fighter.hurt_time = 0.18
+	while fighter.hurt_time > 0.0:
+		hard.read_input(DT,fighter,opponent)
+		fighter.hurt_time = maxf(0.0,fighter.hurt_time-DT)
+	check(hard.rest_time <= 0.06 and hard.think_time == 0.0 and hard.tell_time == 0.0,"Hard clears stale wait and counts its short recovery while hit-stun plays")
+	var resumed_tell := -1.0
+	for frame in range(30):
+		hard.read_input(DT,fighter,opponent)
+		if hard.tell_time > 0.0:
+			resumed_tell = float(frame)*DT
+			break
+	check(resumed_tell >= 0.0 and resumed_tell <= 0.30,"Hard regular AI visibly re-engages within 0.30 seconds after hit-stun")
+	check(float(hard.profile.tell) >= 0.42,"Hard regular attack still has a readable warning")
+	print("HARD_AI_REENGAGEMENT tell_after_hit_seconds=%.3f" % resumed_tell)
 
 func _test_hazards() -> void:
 	var stage_intervals := [12.0, 10.0, 9.0, 8.0, 10.0, 11.0]

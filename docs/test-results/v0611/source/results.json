@@ -1,0 +1,170 @@
+[
+  {
+    "suite": "test_arena_variety",
+    "passed": true,
+    "summary": [
+      "ARENA_VARIETY_TEST_RESULT checks=64 failures=0"
+    ]
+  },
+  {
+    "suite": "test_boot_audio",
+    "passed": true,
+    "summary": [
+      "BOOT / AUDIO: 18 checks, 0 failures"
+    ]
+  },
+  {
+    "suite": "test_boss_strength",
+    "passed": true,
+    "summary": [
+      "TEST_RESULT checks=44 failures=0"
+    ]
+  },
+  {
+    "suite": "test_boss_update",
+    "passed": true,
+    "summary": [
+      "TEST_RESULT checks=101 failures=0"
+    ]
+  },
+  {
+    "suite": "test_character_art_packs",
+    "passed": true,
+    "summary": [
+      "CHARACTER_ART_PACK_TEST checks=339 failures=0"
+    ]
+  },
+  {
+    "suite": "test_combat_depth",
+    "passed": true,
+    "summary": [
+      "COMBAT_DEPTH_TEST_RESULT checks=343 failures=0"
+    ]
+  },
+  {
+    "suite": "test_controls_depth",
+    "passed": true,
+    "summary": [
+      "CONTROLS_DEPTH_TEST_RESULT checks=41 failures=0"
+    ]
+  },
+  {
+    "suite": "test_core",
+    "passed": true,
+    "summary": [
+      "CORE_TEST_RESULT checks=112 failures=0"
+    ]
+  },
+  {
+    "suite": "test_difficulty",
+    "passed": true,
+    "summary": [
+      "DIFFICULTY_TEST_RESULT checks=92 failures=0"
+    ]
+  },
+  {
+    "suite": "test_difficulty_live",
+    "passed": true,
+    "summary": [
+      "DIFFICULTY_LIVE_TEST_RESULT checks=28 failures=0"
+    ]
+  },
+  {
+    "suite": "test_ending",
+    "passed": true,
+    "summary": [
+      "TEST_RESULT checks=45 failures=0"
+    ]
+  },
+  {
+    "suite": "test_game",
+    "passed": true,
+    "summary": [
+      "GAME_TEST_RESULT checks=138 failures=0 live_rounds=18 live_retries=0"
+    ]
+  },
+  {
+    "suite": "test_menus",
+    "passed": true,
+    "summary": [
+      "MENU_TEST_RESULT checks=164 failures=0"
+    ]
+  },
+  {
+    "suite": "test_music",
+    "passed": true,
+    "summary": [
+      "MUSIC_TEST_RESULT checks=99 failures=0"
+    ]
+  },
+  {
+    "suite": "test_new_fighters",
+    "passed": true,
+    "summary": [
+      "NEW_FIGHTERS_TEST_RESULT checks=164 failures=0"
+    ]
+  },
+  {
+    "suite": "test_pacman",
+    "passed": true,
+    "summary": [
+      "PACMAN_TEST_RESULT checks=29 failures=0"
+    ]
+  },
+  {
+    "suite": "test_pacman_pressure",
+    "passed": true,
+    "summary": [
+      "PACMAN_PRESSURE_TEST_RESULT checks=26 failures=0"
+    ]
+  },
+  {
+    "suite": "test_premium_audio",
+    "passed": true,
+    "summary": [
+      "PREMIUM_AUDIO_TEST_RESULT checks=135 failures=0"
+    ]
+  },
+  {
+    "suite": "test_premium_story",
+    "passed": true,
+    "summary": [
+      "PREMIUM_STORY checks=68 failures=0"
+    ]
+  },
+  {
+    "suite": "test_racing",
+    "passed": true,
+    "summary": [
+      "RALLY INTEGRATION: 48 checks, 0 failures (six complete two-lap races)"
+    ]
+  },
+  {
+    "suite": "test_rally_library",
+    "passed": true,
+    "summary": [
+      "RALLY_LIBRARY_TEST_RESULT checks=21 failures=0"
+    ]
+  },
+  {
+    "suite": "test_rally_sim",
+    "passed": true,
+    "summary": [
+      "Rally simulation: 72 checks; 0 failures"
+    ]
+  },
+  {
+    "suite": "test_result_geometry",
+    "passed": true,
+    "summary": [
+      "RESULT_GEOMETRY_TEST checks=18 failures=0"
+    ]
+  },
+  {
+    "suite": "test_story_worlds",
+    "passed": true,
+    "summary": [
+      "TEST_RESULT checks=71 failures=0"
+    ]
+  }
+]

@@ -13,15 +13,15 @@ Install the matching **4.7.2** Godot export templates. From this repository's ro
 ```sh
 /path/to/Godot --headless --editor --path game --import --quit
 python3 game/tools/run_tests.py --godot /path/to/Godot --logs docs/test-results/local-source
-mkdir -p builds/mac-v0.6.10
+mkdir -p builds/mac-v0.6.11
 /path/to/Godot --headless --path game --export-release macOS
-codesign --verify --deep --strict "builds/mac-v0.6.10/Doodle Rumble.app"
-python3 game/tools/package_release.py --version 0.6.10
+codesign --verify --deep --strict "builds/mac-v0.6.11/Doodle Rumble.app"
+python3 game/tools/package_release.py --version 0.6.11
 ```
 
-The export preset makes a Universal Apple Silicon/Intel `.app` in `builds/mac-v0.6.10/`. The package command produces separate **Mac app** and **complete Godot project** ZIPs plus SHA-256 receipts beside this repository. The project ZIP retains all nine original production character packs and the derived Pac-Man one-eye correction assets under `source_art/`; it excludes the family's private original drawings, supplied planning document, caches, credentials and local build output. Run `python3 game/tools/test_package_release.py` to check the archive policy without making a release.
+The export preset makes a Universal Apple Silicon/Intel `.app` in `builds/mac-v0.6.11/`. The package command produces separate **Mac app** and **complete Godot project** ZIPs plus SHA-256 receipts beside this repository. The project ZIP retains all nine original production character packs and the derived Pac-Man one-eye correction assets under `source_art/`; it excludes the family's private original drawings, supplied planning document, caches, credentials and local build output. Run `python3 game/tools/test_package_release.py` to check the archive policy without making a release.
 
-Run the exported app and verify title, fighter selection, at least one full match, pause/rematch, and story progression. Also test the archive after extracting it on a separate machine before calling a build externally ready. Automated evidence and remaining device checks are recorded in `TESTING_0_6_10.md` and `BUILD_STATUS.md`.
+Run the exported app and verify title, fighter selection, at least one full match, pause/rematch, and story progression. Also test the archive after extracting it on a separate machine before calling a build externally ready. Automated evidence and remaining device checks are recorded in `TESTING_0_6_11.md` and `BUILD_STATUS.md`.
 
 ## Current Mac signing limit
 

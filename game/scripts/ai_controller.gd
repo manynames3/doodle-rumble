@@ -1,6 +1,10 @@
 extends RefCounted
 ## Journey difficulty changes decisions and pace; all attacks retain visible tells.
 const Difficulty = preload("res://scripts/difficulty.gd")
+const HARD_DECISION_PRESSURE := 1.75
+const HARD_MOVE_PRESSURE := 1.10
+const HARD_SPECIAL_PRESSURE := 1.25
+const HARD_POST_HIT_PAUSE := 0.22
 const PROFILES := [
 	{"speed":0.46,"retreat":0.28,"think_min":0.38,"think_max":0.60,"approach":0.65,"special":0.06,"tell":0.65,"rest_min":1.5,"rest_max":2.05,"jump_wait":2.8,"guard_stride":6,"guard_reaction":0.19,"guard_cooldown":5.5},
 	{"speed":0.62,"retreat":0.40,"think_min":0.22,"think_max":0.42,"approach":0.78,"special":0.16,"tell":0.50,"rest_min":1.3,"rest_max":1.7,"jump_wait":2.3,"guard_stride":4,"guard_reaction":0.15,"guard_cooldown":4.5},
@@ -31,22 +35,32 @@ func configure(difficulty: int = 1) -> void:
 	_apply_difficulty()
 
 func configure_difficulty(selected_level: int) -> void:
-	var previous_factor: float = Difficulty.rest_factor(difficulty_level)
+	var previous_factor: float = _normal_ai_rest_factor(difficulty_level)
 	difficulty_level = Difficulty.normalized_level(selected_level)
 	_apply_difficulty()
 	if not waiting_for_attack:
-		rest_time *= Difficulty.rest_factor(difficulty_level) / previous_factor
+		rest_time *= _normal_ai_rest_factor(difficulty_level) / previous_factor
+
+func _normal_ai_rest_factor(selected_level: int) -> float:
+	var hard_pressure: float = HARD_DECISION_PRESSURE if Difficulty.normalized_level(selected_level) == Difficulty.HARD else 1.0
+	return Difficulty.rest_factor(selected_level) / hard_pressure
 
 func _apply_difficulty() -> void:
 	# Duplicate before tuning so a Hard match cannot mutate a chapter's Easy
 	# baseline or flatten the increasing Blue-to-Green chapter profiles.
 	profile = PROFILES[level].duplicate()
+	# The extra Hard bonus is intentionally scoped to regular color fighters.
+	# Pac-Man, H4CK3R, and Dark lord keep their own authored controllers.
+	var hard_pressure: float = HARD_DECISION_PRESSURE if difficulty_level == Difficulty.HARD else 1.0
+	var hard_move: float = HARD_MOVE_PRESSURE if difficulty_level == Difficulty.HARD else 1.0
 	for key in ["think_min", "think_max"]:
-		profile[key] = float(profile[key]) * Difficulty.think_factor(difficulty_level)
+		profile[key] = float(profile[key]) * Difficulty.think_factor(difficulty_level) / hard_pressure
 	for key in ["rest_min", "rest_max"]:
-		profile[key] = float(profile[key]) * Difficulty.rest_factor(difficulty_level)
-	profile.speed = float(profile.speed) * Difficulty.move_factor(difficulty_level)
-	profile.approach = minf(1.0, float(profile.approach) * Difficulty.move_factor(difficulty_level))
+		profile[key] = float(profile[key]) * Difficulty.rest_factor(difficulty_level) / hard_pressure
+	profile.speed = float(profile.speed) * Difficulty.move_factor(difficulty_level) * hard_move
+	profile.approach = minf(1.0, float(profile.approach) * Difficulty.move_factor(difficulty_level) * hard_move)
+	if difficulty_level == Difficulty.HARD:
+		profile.special = minf(0.75, float(profile.special) * HARD_SPECIAL_PRESSURE)
 
 func reset() -> void:
 	rest_time = float(profile.rest_max)
@@ -79,7 +93,12 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 		# A hit interrupts the tell; recovery protection in Fighter remains authoritative.
 		tell_time = 0
 		move_choice = 0
-		rest_time = maxf(rest_time,0.4)
+		if difficulty_level == Difficulty.HARD:
+			# Let the short hit-stun elapse without adding a second, artificial pause.
+			rest_time = minf(rest_time,HARD_POST_HIT_PAUSE)
+			think_time = 0.0
+		else:
+			rest_time = maxf(rest_time,0.4)
 		return command
 	if tell_time > 0:
 		tell_time -= delta

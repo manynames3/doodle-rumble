@@ -1,0 +1,9 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+PASS group: six selectable fighters for both players, Purple/Yellow persistence and journey entry
+PASS group: Purple arrows/signal and Yellow staff/swarm through actual input in both directions
+PASS group: projectile rate independence, one-hit consumption and protected contact
+PASS group: projectile misses, jump clearance, finite range and expiry
+PASS group: new-projectile pause/resume, round/rematch cleanup and six-second reuse
+PASS group: projectile victim can move and escape during recovery protection
+NEW_FIGHTERS_TEST_RESULT checks=164 failures=0

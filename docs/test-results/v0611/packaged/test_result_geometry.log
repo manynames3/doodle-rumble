@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+RESULT_GEOMETRY orange side=1 x=237.5..464.5 foot=598.5 pass=true
+RESULT_GEOMETRY orange side=2 x=785.5..1012.5 foot=598.5 pass=true
+RESULT_GEOMETRY red side=1 x=236.3..465.9 foot=597.9 pass=true
+RESULT_GEOMETRY red side=2 x=784.1..1013.7 foot=597.9 pass=true
+RESULT_GEOMETRY green side=1 x=222.1..446.1 foot=598.8 pass=true
+RESULT_GEOMETRY green side=2 x=803.9..1027.9 foot=598.8 pass=true
+RESULT_GEOMETRY blue side=1 x=233.5..455.6 foot=598.2 pass=true
+RESULT_GEOMETRY blue side=2 x=794.4..1016.5 foot=598.2 pass=true
+RESULT_GEOMETRY purple side=1 x=232.9..459.5 foot=599.4 pass=true
+RESULT_GEOMETRY purple side=2 x=790.5..1017.1 foot=599.4 pass=true
+RESULT_GEOMETRY yellow side=1 x=238.0..431.9 foot=597.9 pass=true
+RESULT_GEOMETRY yellow side=2 x=818.1..1012.0 foot=597.9 pass=true
+RESULT_GEOMETRY pac_man side=1 x=241.6..395.1 foot=598.8 pass=true
+RESULT_GEOMETRY pac_man side=2 x=854.9..1008.4 foot=598.8 pass=true
+RESULT_GEOMETRY h4ck3r side=1 x=225.3..526.9 foot=598.9 pass=true
+RESULT_GEOMETRY h4ck3r side=2 x=723.1..1024.7 foot=598.9 pass=true
+RESULT_GEOMETRY dark_lord side=1 x=215.1..588.2 foot=599.0 pass=true
+RESULT_GEOMETRY dark_lord side=2 x=661.8..1034.9 foot=599.0 pass=true
+RESULT_GEOMETRY_TEST checks=18 failures=0

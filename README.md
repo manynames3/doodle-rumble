@@ -21,6 +21,7 @@ The art has grown alongside the game. Illustrated backgrounds set the scene; ink
 | First playable build | Four fighters, a desktop arena, solo play, training, local battles and quick rematches established the game loop. |
 | Cast and visual identity | Purple and Yellow joined Orange, Red, Green and Blue. The title poster, hand-drawn HUD, larger attacks and illustrated arenas gave the game its sketchbook-meets-computer look. |
 | A journey worth finishing | The six-stage Save Star Saga added Pac-Man, H4CK3R and Dark lord, rising difficulty, hazards, new worlds, stage-specific music, a short ending and small jokes between fights. Doodle Rally became a separate racing side game. |
+| A livelier hard setting | The regular color-fighter AI now re-engages quickly after getting hit. On Hard it makes about 31% more attack decisions in a fixed 45-second comparison, moves 10% faster and chooses specials 25% more often. |
 | Bringing the drawings closer | Nine transparent art packs now animate the playable cast and bosses in selection, story scenes and combat. The latest pass adds moving idle/run poses, clearer boss attack releases, better-fitting selection previews and visible round-result performances. |
 | Making the finale feel final | Pac-Man's runtime poses now keep his single-eye silhouette. Dark lord has eight telegraphed attack patterns, a stronger damage tier, and three new signature hazards with much larger purple effects. |
 
@@ -32,7 +33,7 @@ The best design test is still the original one: does it feel like the kids' draw
 - Distinct basic attacks and specials, including spin arcs, hammer quakes, pixel slashes, block blasts, signal shots and swarm summons.
 - Six-stage story ladder: **Blue → Red → Green → Pac-Man → H4CK3R → Dark lord**.
 - Story, Quick Match and local 2P Battle, with fighter selection and a separate readable stage-selection page.
-- Chill Doodles, Spicy Scribbles and Doodle Mayhem difficulty choices. Computer opponents attack more often and hazards become more active as the challenge rises.
+- Chill Doodles, Spicy Scribbles and Doodle Mayhem difficulty choices. Computer opponents attack more often and hazards become more active as the challenge rises; the regular color-fighter AI now presses more actively on Hard and no longer adds a long artificial pause after hit-stun.
 - Six illustrated arenas with optional hazards, reachable platforms and animated scenery.
 - 60-second rounds, best-of-three scoring, damage numbers, cooldown indicators, rematches and celebratory round results.
 - Doodle Rally, the separate imaginative racing game, with its own cars, courses, saves and music while sharing settings and controls.
@@ -67,9 +68,9 @@ These are native captures from the running Godot project, after the nine new pac
 
 ## Play on a Mac
 
-The public repository contains the complete Godot source. Generated `.app` bundles and ZIP archives stay out of Git history; download the [v0.6.10 release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.6.10) for the prebuilt Mac app or complete Godot project, or export your own build with [docs/RELEASE_BUILD.md](docs/RELEASE_BUILD.md).
+The public repository contains the complete current Godot source (v0.6.11). Generated `.app` bundles and ZIP archives stay out of Git history. The newest prebuilt Mac download is [v0.6.10](https://github.com/manynames3/doodle-rumble/releases/tag/v0.6.10); for the latest Hard-AI tuning, run the current source in Godot 4.7.2 or export it with [docs/RELEASE_BUILD.md](docs/RELEASE_BUILD.md).
 
-To run a prebuilt app, open the extracted `Doodle_Rumble_Mac_v0.6.10` folder and double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly, then the title menu opens. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default.
+To run the latest published prebuilt app, open the extracted `Doodle_Rumble_Mac_v0.6.10` folder and double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly, then the title menu opens. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default.
 
 The build is a Universal arm64/x86_64 app, locally ad-hoc signed and not Apple-notarized. macOS may require **System Settings → Privacy & Security → Open Anyway** after a transfer.
 
@@ -109,9 +110,9 @@ Settings supports remapping, available controllers, music/effects volume, reduce
 
 ## Validation
 
-The v0.6.10 validation includes focused boss and packed-art checks, native fight captures of corrected one-eye Pac-Man poses and Dark lord's new attacks, plus the full source/PCK test suites and Mac app smoke tests.
+The current v0.6.11 source validation includes full source and exported-PCK regression runs, a targeted Hard-AI re-engagement check, strict local signature verification and a 120-frame app boot. The updated local Mac app is available from the project build folder; a new downloadable archive is not attached yet.
 
-See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_6_10.md`](docs/TESTING_0_6_10.md) for the exact evidence. Physical controller behavior, Intel execution, transferred first launch, audio hardware and family playtesting still need verification on those devices.
+See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_6_11.md`](docs/TESTING_0_6_11.md) for the exact evidence. Physical controller behavior, Intel execution, transferred first launch, audio hardware and family playtesting still need verification on those devices.
 
 ## Repository map
 
