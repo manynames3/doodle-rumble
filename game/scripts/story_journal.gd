@@ -34,6 +34,7 @@ func build(owner_node) -> void:
 	host._text(preview,"Replay a tale or continue where you left off.",Rect2(12,30,616,22),16,Color("cbd0df"))
 	var note: String = "%d / 6 CHAPTERS CLEARED   ·   %d / 6 BONUS STICKERS" % [Chronicle.completed.size(),Chronicle.challenges.size()]
 	if not Chronicle.save_error.is_empty(): note = Chronicle.save_error
+	elif Chronicle.missing_fighter: note = "Doodle missing? Pick another and keep your chapters."
 	host._text(self,note,Rect2(736,544,471,30),18,Color("d6c7aa"),true)
 	var primary: Button
 	if Chronicle.active:

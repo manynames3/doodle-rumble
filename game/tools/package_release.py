@@ -133,7 +133,7 @@ def sha256_file(file: Path) -> str:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--version", default="0.6.11")
+    parser.add_argument("--version", default="0.7.5")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     if not re.fullmatch(r"\d+\.\d+\.\d+", args.version):
@@ -168,6 +168,10 @@ def main():
             "Esc pauses. F11 toggles fullscreen. Settings changes keys,\n"
             "controllers, volume and reduced motion. Guided Practice is in\n"
             "Quick Match selection. All six fighters are available immediately.\n\n"
+            "My Doodles on fighter selection opens the Doodle Workshop: draw or import\n"
+            "a paper photo, choose a weapon, try it, then Save & Fight. Six local slots.\n"
+            "Imported cutouts can keep a small white paper edge as they move and attack.\n"
+            "Turn it off with the White edge checkbox in the Import step.\n\n"
             "The Save Star Saga has six funny chapters, saved progress, bonus stickers\n"
             "and a skippable ending. Hazards default on and are optional.\n"
             "Story, racing and shared settings are saved separately.\n\n"

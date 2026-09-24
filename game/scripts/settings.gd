@@ -85,7 +85,7 @@ func _load_settings() -> void:
 	celebration_style = str(config.get_value("play", "celebration_style", "classic"))
 	if celebration_style not in ["classic", "rainbow", "sparkle"] or arcade_wins == 0:
 		celebration_style = "classic"
-	if selected_fighter not in Data.ORDER:
+	if not Data.is_playable(selected_fighter):
 		selected_fighter = "orange"
 	# Validate the saved set together, so moving a key between actions survives reload.
 	var candidate := _default_bindings()

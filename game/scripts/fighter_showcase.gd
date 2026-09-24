@@ -2,6 +2,7 @@ extends Control
 ## Live special demonstration uses the real visual rig, never a damaging fighter.
 const Rig = preload("res://scripts/fighter_rig.gd")
 var rig
+var kit_preview
 var definition: Dictionary
 var clock := 0.0
 var tint := Color.WHITE
@@ -49,6 +50,11 @@ func configure(id: String) -> void:
 	rig.scale = Vector2.ONE * (2.0*presentation_scale)
 	rig.position = Vector2(presentation_x+220.0*presentation_scale,presentation_baseline-ART_TOP)
 	rig.preview = false
+	if bool(definition.get("custom",false)):
+		kit_preview = load("res://scripts/custom_kit_preview.gd").new()
+		art_clip.add_child(kit_preview)
+		kit_preview.position = rig.position
+		kit_preview.scale = rig.scale
 
 func _process(delta: float) -> void:
 	if not is_instance_valid(rig): return
@@ -57,6 +63,10 @@ func _process(delta: float) -> void:
 	var progress: float = clampf((t-1.5)/1.3,0,1) if t >= 1.5 and t <= 2.8 else -1
 	if Settings.reduced_motion: progress = 0.5
 	rig.pose(delta,{"grounded":true,"facing":1,"reduced_motion":Settings.reduced_motion,"attack_progress":progress,"special":true,"attack_windup_ratio":0.27,"attack_active_ratio":0.42})
+	if is_instance_valid(kit_preview):
+		kit_preview.present(str(definition.kit),progress,rig.front_hand,Settings.reduced_motion)
+		if str(definition.kit) in ["bone","ball"]:
+			rig.weapon.visible = not (progress>0.28 and progress<0.94)
 	# Combat trails are arena-sized. The fighter and weapon retain their real
 	# special pose; the page draws an equivalent trail at preview scale below.
 	rig.trail = -1.0

@@ -18,4 +18,13 @@ These are native 1280×720 captures from the running Godot project, selected to 
 | `12-h4ck3r-pack.png` | H4CK3R's released system-scan art in Neon Switchyard, distinct from its earlier tell. |
 | `13-pac-man-pack.png` | Pac-Man's new bite art in Arcade Afterglow. |
 
-The private original drawing and versioned QA captures stay out of the public repository. The nine transparent production packs are retained under `source_art/`, with optimized runtime copies under `game/assets/character_art/`. Provenance and licenses are documented in [`docs/ASSET_PROVENANCE.md`](../ASSET_PROVENANCE.md).
+The Workshop gallery in `workshop/` uses captures from the running game and authored sample creations. It shows My Doodles, a custom-fighter match, articulated poses, weapon specials, and the drawing/preview pages. These files are deliberately copied into the public screenshot folder so README images do not depend on Git-ignored QA output. The private original drawing and remaining versioned QA captures stay out of the public repository. The nine transparent production packs are retained under `source_art/`, with optimized runtime copies under `game/assets/character_art/`. Provenance and licenses are documented in [`docs/ASSET_PROVENANCE.md`](../ASSET_PROVENANCE.md).
+
+| Workshop capture | What it shows |
+| --- | --- |
+| `workshop/draw.png` | Draw page with color palette, body-part guides, undo/redo and live doodle preview. |
+| `workshop/special-preview.png` | Weapon selection and animated special preview. |
+| `workshop/my-doodles.png` | Saved custom fighters beside the original roster. |
+| `workshop/custom-fighters-in-match.png` | Two custom fighters using different kits in a Desktop Dojo match. |
+| `workshop/six-poses.png` | Drawn and photo-cutout characters across idle, walk, jump, attack, victory and defeat. |
+| `workshop/custom-weapon-specials.png` | Rubber Chicken's Cluckquake and Jumbo Crayon's Rainbow Ruckus in combat. |

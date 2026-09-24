@@ -16,7 +16,7 @@ The art has grown alongside the game. Illustrated backgrounds set the scene; ink
 
 ## How it grew
 
-| When | What changed |
+| Milestone | What changed |
 | --- | --- |
 | First playable build | Four fighters, a desktop arena, solo play, training, local battles and quick rematches established the game loop. |
 | Cast and visual identity | Purple and Yellow joined Orange, Red, Green and Blue. The title poster, hand-drawn HUD, larger attacks and illustrated arenas gave the game its sketchbook-meets-computer look. |
@@ -24,12 +24,15 @@ The art has grown alongside the game. Illustrated backgrounds set the scene; ink
 | A livelier hard setting | The regular color-fighter AI now re-engages quickly after getting hit. On Hard it makes about 31% more attack decisions in a fixed 45-second comparison, moves 10% faster and chooses specials 25% more often. |
 | Bringing the drawings closer | Nine transparent art packs now animate the playable cast and bosses in selection, story scenes and combat. The latest pass adds moving idle/run poses, clearer boss attack releases, better-fitting selection previews and visible round-result performances. |
 | Making the finale feel final | Pac-Man's runtime poses now keep his single-eye silhouette. Dark lord has eight telegraphed attack patterns, a stronger damage tier, and three new signature hazards with much larger purple effects. |
+| Doodle Workshop | Draw or import a paper character, pose its head, body and limbs, preview movement, and choose from six weapon kits. Custom fighters can enter Story, Quick Match, 2P Battle and Practice, with six local save slots and an optional paper-white edge. |
+| Latest Workshop tune-up | The starter figure can now change color without recoloring a child's other marks. Imported-photo saves guide players to missing cutout shapes, and **Save fighter** stays in the Workshop while **Save & Fight!** continues to battle. |
 
 The best design test is still the original one: does it feel like the kids' drawing came alive, and do they want another round?
 
 ## What is in the game
 
-- Six playable fighters: Orange, Red, Green, Blue, Purple and Yellow.
+- Six original fighters: Orange, Red, Green, Blue, Purple and Yellow, plus six local custom-fighter slots.
+- Doodle Workshop: draw, erase, pose and animate your own fighter, or bring in a paper photo. Six custom weapon kits, editable source artwork and a white cutout edge that follows the action. New kits include Rubber Chicken's **Cluckquake** and Jumbo Crayon's **Rainbow Ruckus**.
 - Distinct basic attacks and specials, including spin arcs, hammer quakes, pixel slashes, block blasts, signal shots and swarm summons.
 - Six-stage story ladder: **Blue → Red → Green → Pac-Man → H4CK3R → Dark lord**.
 - Story, Quick Match and local 2P Battle, with fighter selection and a separate readable stage-selection page.
@@ -68,11 +71,13 @@ These are native captures from the running Godot project, after the nine new pac
 
 ## Play on a Mac
 
-The public repository contains the complete current Godot source (v0.6.11). Generated `.app` bundles and ZIP archives stay out of Git history. The newest prebuilt Mac download is [v0.6.10](https://github.com/manynames3/doodle-rumble/releases/tag/v0.6.10); for the latest Hard-AI tuning, run the current source in Godot 4.7.2 or export it with [docs/RELEASE_BUILD.md](docs/RELEASE_BUILD.md).
+The public GitHub repository includes the **v0.7.5** source and Doodle Workshop updates, including six custom weapon kits and platform-aware special attacks. Imported fighters have a working white cutout-edge switch, and custom artwork is cached as articulated pieces so detailed drawings animate smoothly in matches. Photo imports now explain unfinished cutouts; **Save fighter** saves and stays in the Workshop, while **Save & Fight!** saves and continues to battle. Generated `.app` bundles and ZIP archives stay out of Git history. The newest prebuilt GitHub download remains [v0.6.10](https://github.com/manynames3/doodle-rumble/releases/tag/v0.6.10); this repository update is source and documentation, not a new downloadable release. See [the v0.7.5 verification report](docs/TESTING_0_7_5.md) or run the project in Godot 4.7.2.
+
+The v0.7.5 Universal Mac app is available in the developer workspace, but this GitHub update publishes source and documentation only. Mac app downloads are attached to GitHub releases.
 
 To run the latest published prebuilt app, open the extracted `Doodle_Rumble_Mac_v0.6.10` folder and double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly, then the title menu opens. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default.
 
-The build is a Universal arm64/x86_64 app, locally ad-hoc signed and not Apple-notarized. macOS may require **System Settings → Privacy & Security → Open Anyway** after a transfer.
+The developer-workspace v0.7.5 build is a Universal arm64/x86_64 app, locally ad-hoc signed and not Apple-notarized. macOS may require **System Settings → Privacy & Security → Open Anyway** after a transfer.
 
 ## Run from source
 
@@ -81,6 +86,24 @@ The build is a Universal arm64/x86_64 app, locally ad-hoc signed and not Apple-n
 3. Press **F6** for the current scene or **F5** to run the project.
 
 The project has no add-ons, external accounts or runtime package dependencies. `game/` contains the playable source, scenes and runtime assets. Build/export notes are in [`docs/RELEASE_BUILD.md`](docs/RELEASE_BUILD.md).
+
+## Draw your own fighter
+
+In fighter selection, open **My Doodles → Draw a fighter**. Draw or import a paper photo, bring the parts to life, choose a weapon, then **Try in Practice** or **Save & Fight**. Everything stays on the Mac. Photo cleanup and joint placement are assisted steps; complicated drawings may need an adult’s help. See the [workshop guide](docs/DOODLE_WORKSHOP.md).
+
+### Workshop in the running game
+
+| My Doodles | A paper fighter in battle |
+| --- | --- |
+| ![Custom creations in character selection](docs/screenshots/workshop/my-doodles.png) | ![Drawn and paper-cutout fighters in Desktop Dojo](docs/screenshots/workshop/custom-fighters-in-match.png) |
+
+![The paper border follows six animated poses](docs/screenshots/workshop/six-poses.png)
+
+The v0.7.4 special-attack capture shows Cluckquake and Rainbow Ruckus on different Desktop Dojo platforms:
+
+![Rubber Chicken's Cluckquake and Jumbo Crayon's Rainbow Ruckus](docs/screenshots/workshop/custom-weapon-specials.png)
+
+These captures use authored QA drawings. Imported art is cut into movable parts; its colors are preserved, and the thin white perimeter is rebuilt around the combined pose. No cloud service generates a replacement for the child's picture. See the [Workshop capture notes](docs/screenshots/README.md) for the image set.
 
 ## Controls
 
@@ -103,6 +126,7 @@ Settings supports remapping, available controllers, music/effects volume, reduce
 | Gameplay | Fixed 60 Hz physics, reusable fighter/weapon data, deterministic hit phases, recovery protection and shared AI controllers |
 | Rendering | 2D `Node2D`/`CanvasItem` drawing, individual transparent RGBA pose/effect sprites with measured pivots, procedural ink/VFX fallbacks, layered PNG arena paintings, glows, shadows and animated UI |
 | Asset pipeline | Pillow build script preserves 306 original PNGs outside Godot and creates 155 trimmed runtime copies with per-pose pivot metadata; no Python dependency is needed to play |
+| Doodle Workshop | Editable stroke layers and imported photo cutouts, shared joint animation, composited alpha-outline shader, atomic local saves and macOS HEIC conversion |
 | Audio | Original synthesized WAV battle loops and sound effects, context crossfades, separate story/racing music and shared volume settings |
 | Ending | Godot-authored storyboard with Ogg Theora/Vorbis playback |
 | Platform | macOS Universal export for Apple Silicon and Intel |
@@ -110,9 +134,9 @@ Settings supports remapping, available controllers, music/effects volume, reduce
 
 ## Validation
 
-The current v0.6.11 source validation includes full source and exported-PCK regression runs, a targeted Hard-AI re-engagement check, strict local signature verification and a 120-frame app boot. The updated local Mac app is available from the project build folder; a new downloadable archive is not attached yet.
+Workshop verification covers library recovery, kit combat, custom-versus-custom selection, story continuation, local photo import and the animated paper perimeter. Native captures and measured rendering checks are recorded separately from headless logic tests. These source changes are pushed to GitHub; no new downloadable release is created by this update.
 
-See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_6_11.md`](docs/TESTING_0_6_11.md) for the exact evidence. Physical controller behavior, Intel execution, transferred first launch, audio hardware and family playtesting still need verification on those devices.
+See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_7_5.md`](docs/TESTING_0_7_5.md) for the latest test evidence. Physical controller behavior, Intel execution, transferred first launch, audio hardware and family playtesting still need verification on those devices.
 
 ## Repository map
 

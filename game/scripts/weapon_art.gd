@@ -7,6 +7,24 @@ var draw_progress: float = 0.0
 var arrow_visible: bool = true
 const INK = Color("070913")
 const PAPER = Color("f4f5ff")
+const WORKSHOP_BONE: Texture2D = preload("res://assets/workshop/weapons/dinosaur_bone_v2.png")
+const WORKSHOP_BAT: Texture2D = preload("res://assets/workshop/weapons/baseball_bat_v2.png")
+const WORKSHOP_PICKAXE: Texture2D = preload("res://assets/workshop/weapons/pixel_pickaxe_v2.png")
+const WORKSHOP_BALL: Texture2D = preload("res://assets/workshop/weapons/soccer_ball_v2.png")
+const WORKSHOP_CHICKEN: Texture2D = preload("res://assets/workshop/weapons/rubber_chicken_v1.png")
+const WORKSHOP_CRAYON: Texture2D = preload("res://assets/workshop/weapons/giant_crayon_v1.png")
+
+func _draw_pivoted_sprite(texture: Texture2D, source_pivot: Vector2, pixel_scale: float, source_angle: float = 0.0) -> void:
+	# Keep the hand anchor independent of transparent canvas padding. Sprite scale
+	# only affects this art; the shared combat hitboxes stay game-owned.
+	if glowing:
+		var glow_scale := pixel_scale * 1.10
+		var glow_color := Color(accent.lightened(0.55),0.18+sin(clampf(draw_progress,0.0,1.0)*PI)*0.10)
+		draw_set_transform(Vector2.ZERO,source_angle,Vector2.ONE*glow_scale)
+		draw_texture(texture,-source_pivot,glow_color)
+	draw_set_transform(Vector2.ZERO, source_angle, Vector2.ONE * pixel_scale)
+	draw_texture(texture, -source_pivot)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 func configure(weapon_kind: String, fighter_color: Color) -> void:
 	kind = weapon_kind
@@ -178,6 +196,21 @@ func _draw() -> void:
 			draw_line(Vector2(72,10),Vector2(68,26),accent,2,true)
 			for i in range(5):
 				draw_line(Vector2(-2+i*8,-3),Vector2(1+i*8,3),accent.darkened(0.08),1.5,true)
+		"custom_pick":
+			# This image is painted with the handle about 52 degrees below its tip;
+			# rotate it around the grip so the shared swing pose starts rightward.
+			_draw_pivoted_sprite(WORKSHOP_PICKAXE,Vector2(610,780),0.085,deg_to_rad(52.0))
+		"custom_bone":
+			_draw_pivoted_sprite(WORKSHOP_BONE,Vector2(320,690),0.075)
+		"custom_bat":
+			_draw_pivoted_sprite(WORKSHOP_BAT,Vector2(260,660),0.075)
+		"custom_ball":
+			draw_circle(Vector2.ZERO,25.0,Color(accent,0.12))
+			_draw_pivoted_sprite(WORKSHOP_BALL,Vector2(627,627),0.036)
+		"custom_chicken":
+			_draw_pivoted_sprite(WORKSHOP_CHICKEN,Vector2(280,790),0.075,deg_to_rad(24.0))
+		"custom_crayon":
+			_draw_pivoted_sprite(WORKSHOP_CRAYON,Vector2(285,765),0.070,deg_to_rad(27.0))
 		_:
 			_stroke([Vector2(-18,1),Vector2(66,-1)],accent,6.0)
 			_shape([Vector2(56,-22),Vector2(80,-23),Vector2(92,-33),Vector2(91,-21),Vector2(83,-12),Vector2(68,-10),Vector2(68,-3),Vector2(91,-4),Vector2(103,-14),Vector2(99,-1),Vector2(91,8),Vector2(68,9),Vector2(69,17),Vector2(86,18),Vector2(98,8),Vector2(95,22),Vector2(86,28),Vector2(58,27)],accent.lightened(0.15),3.0)

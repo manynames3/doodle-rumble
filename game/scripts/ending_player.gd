@@ -9,6 +9,8 @@ var finished = false
 var page = 0
 var skip: Button
 var is_storybook = false
+var custom_hero := ""
+var cameo_shown := false
 var _background_focus: Array[Dictionary] = []
 var _previous_focus: WeakRef
 
@@ -79,6 +81,7 @@ func _volume() -> float:
 	return Settings.master_volume*Settings.music_volume
 
 func _process(delta: float) -> void:
+	if cameo_shown: return
 	elapsed+=delta
 	if video: video.volume=_volume()
 	if music: music.volume_db=linear_to_db(maxf(0.00001,_volume()))
@@ -101,12 +104,57 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func finish() -> void:
 	if finished: return
+	if not cameo_shown and not custom_hero.is_empty() and Doodles.has(custom_hero):
+		_show_custom_celebration()
+		return
 	finished=true
 	if video: video.stop()
 	if music: music.stop()
 	Sound.set_external_music_active(false)
 	_restore_background_focus()
 	completed.emit()
+
+func _show_custom_celebration() -> void:
+	cameo_shown = true
+	if video: video.stop()
+	if music: music.stop()
+	for child in get_children():
+		if child is CanvasItem: child.hide()
+	Sound.set_external_music_active(false)
+	Sound.play("match_win")
+	var background := ColorRect.new()
+	background.size = Vector2(1280,720)
+	background.color = Color("101b30")
+	add_child(background)
+	var font = load("res://assets/fonts/Kalam-Bold.ttf")
+	var definition: Dictionary = Data.fighter(custom_hero)
+	for entry in [["YOU DREW A HERO.",76,46],["AND SAVED THE SAVE STAR!",137,25],[str(definition.name),524,36],["Drawn by you.",577,24]]:
+		var label := Label.new()
+		label.text = entry[0]
+		label.position = Vector2(150,entry[1])
+		label.size = Vector2(980,65)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.add_theme_font_override("font",font)
+		label.add_theme_font_size_override("font_size",entry[2])
+		label.add_theme_color_override("font_color",Color("ffe9b5"))
+		label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		add_child(label)
+	var actor = load("res://scripts/fighter_rig.gd").new()
+	add_child(actor)
+	actor.configure(definition)
+	actor.position = Vector2(615,512)
+	actor.scale = Vector2.ONE*1.8
+	actor.preview = true
+	actor.pose(0,{"grounded":true,"facing":1,"victory":true,"reduced_motion":Settings.reduced_motion})
+	var done := Button.new()
+	done.text = "Back to your victory  >"
+	done.position = Vector2(445,645)
+	done.size = Vector2(390,49)
+	done.add_theme_font_override("font",font)
+	done.add_theme_font_size_override("font_size",23)
+	add_child(done)
+	done.pressed.connect(finish)
+	done.grab_focus()
 
 func _exit_tree() -> void:
 	_restore_background_focus()

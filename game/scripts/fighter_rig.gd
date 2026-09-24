@@ -3,6 +3,7 @@ extends Node2D
 const FighterPose = preload("res://scripts/fighter_pose.gd")
 const WeaponArt = preload("res://scripts/weapon_art.gd")
 const CharacterArt = preload("res://scripts/character_art.gd")
+const CustomPose = preload("res://scripts/custom_pose.gd")
 const INK = Color("060913")
 const PAPER = Color("f5f4ff")
 
@@ -35,6 +36,8 @@ var accent: Color = Color("f39232")
 var preview: bool = false
 var weapon: Node2D
 var packed_art
+var custom_art
+var custom_kit := ""
 var packed_cues: PackedCueOverlay
 var elapsed: float = 0.0
 var result_age: float = 0.0
@@ -76,6 +79,16 @@ func configure(definition: Dictionary) -> void:
 		spill.rig = self
 		add_child(spill)
 	fighter_id = str(definition.get("id","orange"))
+	custom_kit = str(definition.get("kit","")) if bool(definition.get("custom",false)) else ""
+	if not custom_kit.is_empty():
+		if custom_art == null:
+			custom_art = load("res://scripts/custom_art.gd").new()
+			custom_art.name = "ChildsDrawing"
+			add_child(custom_art)
+		custom_art.configure(definition.get("custom_record",{}))
+		custom_art.show()
+	elif is_instance_valid(custom_art):
+		custom_art.hide()
 	accent = Color(str(definition.get("color","#f39232")))
 	_ensure_weapon()
 	var weapon_value = definition.get("weapon","pitchfork")
@@ -417,6 +430,9 @@ func pose(delta: float, state: Dictionary) -> void:
 		front_hand *= 0.90
 	_ensure_weapon()
 	weapon.position = front_hand
+	if not custom_kit.is_empty():
+		weapon_angle = CustomPose.apply(self,state,weapon_angle)
+		weapon.position = right_foot+Vector2(14,-10) if custom_kit == "ball" and not result_pose else front_hand
 	weapon.rotation = weapon_angle
 	weapon.scale = Vector2(0.82,-0.82) if fighter_id == "dark_lord" else Vector2.ONE
 	weapon.glowing = attack >= 0.0 and not result_pose and (bool(state.get("special",false)) or fighter_id == "h4ck3r")
@@ -427,6 +443,10 @@ func pose(delta: float, state: Dictionary) -> void:
 	if packed_art != null:
 		packed_art.pose(delta,state,phase,result_age if cinematic_seek else -1.0)
 		weapon.visible = fighter_id != "pac_man" and not packed_art.is_rendering()
+	if is_instance_valid(custom_art) and not custom_kit.is_empty():
+		custom_art.pose_from_rig(self,state)
+		weapon.z_index = 2
+		weapon.visible = not bool(state.get("weapon_hidden",false))
 	if packed_cues != null:
 		packed_cues.queue_redraw()
 	if bool(state.get("invulnerable",false)):
@@ -1268,6 +1288,11 @@ func _draw_dark_lord() -> void:
 			draw_line(star-Vector2(0,3),star+Vector2(0,3),accent,1.7,true)
 
 func _draw() -> void:
+	if is_instance_valid(custom_art) and not custom_kit.is_empty():
+		_attack_color_spill()
+		CustomPose.paint(self,current)
+		_draw_result_marks()
+		return
 	if has_packed_art():
 		_attack_color_spill()
 		if trail >= 0.0 and not bool(current.get("reduced_motion",false)):

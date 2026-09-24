@@ -124,10 +124,11 @@ func _draw() -> void:
 		var cooldown_ready: float = clampf((6.0-float(fighter.cooldown))/6.0,0.0,1.0)
 		var cooldown_rect := Rect2(67 if i == 0 else 1137,68,76,5)
 		_jagged_bar(cooldown_rect,cooldown_ready,tint,i == 1,41+i*6)
-		_head_icon(Vector2(42 if i == 0 else 1238,33),tint,str(fighter.definition.head),1.0 if i == 0 else -1.0)
+		if not bool(fighter.definition.get("custom",false)):
+			_head_icon(Vector2(42 if i == 0 else 1238,33),tint,str(fighter.definition.head),1.0 if i == 0 else -1.0)
 		_special_icon(Vector2(45 if i == 0 else 1235,67),tint,fighter.cooldown <= 0,1.0 if i == 0 else -1.0)
 		_round_pips(i,tint,int(host.rules.scores[i]))
-		if fighter.definition.id in ["orange","red","green","blue","purple","yellow"]:
+		if Data.is_playable(str(fighter.definition.id)):
 			var point := Vector2(445 if i == 0 else 820,68)
 			var ready: float = clampf(1.0-float(fighter.dodge_cooldown)/float(fighter.DODGE_COOLDOWN),0,1)
 			draw_arc(point,7.0,0.3,0.3+TAU*ready,16,tint if ready>=0.99 else CHALK,1.4,true)

@@ -1,28 +1,32 @@
 # Build and distribute Doodle Rumble
 
-This is the current build procedure for the Godot 4.7.2 project. `MAC_SETUP.md` is the archived starter plan.
+The current local build is v0.7.5. `MAC_SETUP.md` is the archived starter plan.
 
 ## Run from source
 
-Install the standard Godot 4.7.2 editor and import `game/project.godot`. Press F5 to start. The game runs offline and needs no Python packages or plug-ins. On the title screen, choose Story Mode, Quick Match, 2P Battle or Doodle Rally.
+Install the standard Godot 4.7.2 editor, open `game/project.godot`, wait for asset import, then press F5. The game runs offline and needs no runtime packages or plug-ins.
 
 ## Test and export on macOS
 
-Install the matching **4.7.2** Godot export templates. From this repository's root, replace `/path/to/Godot` with the executable in your Godot app:
+Install the matching **Godot 4.7.2 export templates**. From the repository root, replace `/path/to/Godot` with the executable in your Godot app:
 
 ```sh
 /path/to/Godot --headless --editor --path game --import --quit
 python3 game/tools/run_tests.py --godot /path/to/Godot --logs docs/test-results/local-source
-mkdir -p builds/mac-v0.6.11
+mkdir -p builds/mac-v0.7.5
 /path/to/Godot --headless --path game --export-release macOS
-codesign --verify --deep --strict "builds/mac-v0.6.11/Doodle Rumble.app"
-python3 game/tools/package_release.py --version 0.6.11
+codesign --verify --deep --strict "builds/mac-v0.7.5/Doodle Rumble.app"
+python3 game/tools/package_release.py --version 0.7.5
 ```
 
-The export preset makes a Universal Apple Silicon/Intel `.app` in `builds/mac-v0.6.11/`. The package command produces separate **Mac app** and **complete Godot project** ZIPs plus SHA-256 receipts beside this repository. The project ZIP retains all nine original production character packs and the derived Pac-Man one-eye correction assets under `source_art/`; it excludes the family's private original drawings, supplied planning document, caches, credentials and local build output. Run `python3 game/tools/test_package_release.py` to check the archive policy without making a release.
+The export preset creates a Universal Apple Silicon/Intel app in `builds/mac-v0.7.5/`. `package_release.py` creates two separate archives beside the project: the **Mac app** and the **complete Godot project**. The project archive retains the nine original character packs and derived Pac-Man eye-correction source art; it excludes private family drawings, planning files, caches, credentials and local build output. The archives have SHA-256 receipts. Run `python3 game/tools/test_package_release.py` to check the archive policy without packaging a release.
 
-Run the exported app and verify title, fighter selection, at least one full match, pause/rematch, and story progression. Also test the archive after extracting it on a separate machine before calling a build externally ready. Automated evidence and remaining device checks are recorded in `TESTING_0_6_11.md` and `BUILD_STATUS.md`.
+Run the app and check title, fighter selection, a full match, pause/rematch and story progression. Then extract and test the archives on another Mac before calling the build ready for external distribution. Current automated evidence and open device checks are in [TESTING_0_7_5.md](TESTING_0_7_5.md) and [BUILD_STATUS.md](../BUILD_STATUS.md).
 
-## Current Mac signing limit
+## Signing and distribution
 
-This machine has no Apple Developer ID signing identity. The export is **ad-hoc signed, not Developer ID signed or notarized**. It works as a local build, but macOS Gatekeeper can block a downloaded copy until a recipient allows it in **System Settings → Privacy & Security → Open Anyway**. A smooth public download needs an Apple Developer Program account, a Developer ID Application certificate, Xcode command-line tools, notarization and testing of the transferred archive. See [Godot's macOS export guide](https://docs.godotengine.org/en/4.7/tutorials/export/exporting_for_macos.html) and [Apple's notarization guide](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).
+This Mac has no Apple Developer ID signing identity. The local app is **ad-hoc signed, not Developer ID signed or notarized**. It launches here, but macOS may block an app downloaded from elsewhere until the recipient allows it in **System Settings → Privacy & Security → Open Anyway**. A smooth public download needs a Developer ID Application certificate, notarization and testing after transferring the archive. See [Godot's macOS export guide](https://docs.godotengine.org/en/4.7/tutorials/export/exporting_for_macos.html) and [Apple's notarization guide](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution).
+
+## Current local build
+
+The v0.7.5 app was exported with the official matching Godot 4.7.2 macOS template. It fixes import-save feedback and separates **Save fighter** (save and stay in the Workshop) from **Save & Fight!** (save and continue to battle). It is Universal arm64/x86_64, bundle build 23. The earlier v0.7.4 bundle is preserved. This update has not been published as a GitHub release; the complete source project is the current workspace folder.

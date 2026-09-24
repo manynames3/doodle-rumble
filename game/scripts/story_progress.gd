@@ -11,6 +11,7 @@ var completed: Array[int] = []
 var challenges: Array[int] = []
 var runs := 0
 var save_error := ""
+var missing_fighter := false
 
 func _ready() -> void:
 	load_profile()
@@ -21,9 +22,10 @@ func load_profile(path: String = SAVE_PATH) -> void:
 	if cfg.get_value("meta","version",0) != 1: return
 	var saved_stage = cfg.get_value("run","stage",0)
 	var saved_fighter = cfg.get_value("run","fighter","orange")
-	if not saved_stage is int or saved_stage < 0 or saved_stage > 5 or saved_fighter not in Data.ORDER: return
+	if not saved_stage is int or saved_stage < 0 or saved_stage > 5 or not saved_fighter is String: return
 	stage = saved_stage
-	fighter = saved_fighter
+	missing_fighter = not _playable(saved_fighter)
+	fighter = saved_fighter if not missing_fighter else "orange"
 	active = cfg.get_value("run","active",false) == true
 	hazards = cfg.get_value("run","hazards",true) != false
 	var saved_difficulty = cfg.get_value("run","difficulty_level",Difficulty.EASY)
@@ -39,6 +41,12 @@ func _valid_indices(value: Variant) -> Array[int]:
 		for item in value:
 			if item is int and item >= 0 and item < 6 and item not in result: result.append(item)
 	return result
+
+func _playable(id: String) -> bool:
+	# Recovery tools can read a profile without attaching this node.
+	var tree := Engine.get_main_loop() as SceneTree
+	var registry: Node = tree.root.get_node_or_null("Data") if tree else null
+	return registry != null and registry.is_playable(id)
 
 func save_profile(path: String = SAVE_PATH) -> bool:
 	var cfg := ConfigFile.new()
@@ -56,7 +64,8 @@ func save_profile(path: String = SAVE_PATH) -> bool:
 func begin_run(id: String, use_hazards: bool, selected_difficulty: int = Difficulty.EASY) -> void:
 	active = true
 	stage = 0
-	fighter = id if id in Data.ORDER else "orange"
+	fighter = id if _playable(id) else "orange"
+	missing_fighter = false
 	hazards = use_hazards
 	difficulty_level = Difficulty.normalized_level(selected_difficulty)
 	save_profile()
@@ -64,7 +73,8 @@ func begin_run(id: String, use_hazards: bool, selected_difficulty: int = Difficu
 func checkpoint(index: int, id: String, use_hazards: bool, selected_difficulty: int = -1) -> void:
 	active = true
 	stage = clampi(index,0,5)
-	fighter = id if id in Data.ORDER else "orange"
+	fighter = id if _playable(id) else "orange"
+	missing_fighter = false
 	hazards = use_hazards
 	if selected_difficulty >= 0: difficulty_level = Difficulty.normalized_level(selected_difficulty)
 	save_profile()

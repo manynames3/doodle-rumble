@@ -22,6 +22,7 @@ const DODGE_SPEED = 430.0
 const COUNTER_DURATION = 2.5
 const COUNTER_DAMAGE_MULTIPLIER = 1.25
 const BossStrength = preload("res://scripts/boss_strength.gd")
+const CustomKits = preload("res://scripts/custom_kits.gd")
 const SHIELD_REFLECT_START = 0.065
 const SHIELD_REFLECT_END = 0.155
 const PLAYABLE_IDS = ["orange", "red", "green", "blue", "purple", "yellow"]
@@ -67,12 +68,15 @@ var last_hit_source = null
 var last_hit_attack_serial: int = -1
 var last_hit_special: bool = false
 var last_hit_air_kind: String = ""
+var thrown_weapon_hidden: bool = false
+var active_custom_projectile_count: int = 0
+var home_run_reflected: bool = false
 
 func setup(id: String, player_slot: int, use_temporary_art: bool = false) -> void:
 	definition = Data.fighter(id)
 	max_health = int(definition.get("max_health",100))
 	body_scale = BODY_SCALE * float(definition.get("size_multiplier",1.0))
-	weapon = Data.weapon(definition.weapon)
+	weapon = CustomKits.ground(str(definition.get("kit", "pixel_pick"))) if bool(definition.get("custom",false)) else Data.weapon(definition.weapon)
 	if str(definition.get("basic_projectile", "")).is_empty():
 		weapon.reach = float(weapon.reach) * body_scale
 	slot = player_slot
@@ -124,6 +128,9 @@ func reset_at(spawn: Vector2) -> void:
 	last_hit_attack_serial = -1
 	last_hit_special = false
 	last_hit_air_kind = ""
+	thrown_weapon_hidden = false
+	active_custom_projectile_count = 0
+	home_run_reflected = false
 	is_special = false
 	emitted = false
 	if rig: rig.position = Vector2.ZERO
@@ -188,6 +195,7 @@ func tick(delta: float, command: Dictionary, opponent: Node2D) -> void:
 		elif is_active() and not is_special:
 			match str(attack_spec.get("air_kind", "")):
 				"hammer_drop": velocity.y = maxf(velocity.y, 420.0)
+				"pick_drop": velocity.y = maxf(velocity.y, 320.0)
 				"diagonal_slash": velocity.x = facing * 420.0
 				"staff_drop": velocity.y = maxf(velocity.y, 300.0)
 		if attack_time >= duration():
@@ -229,6 +237,7 @@ func update_art(delta: float) -> void:
 			"shield_progress":dodge_time / DODGE_DURATION if dodge_time >= 0 else -1.0,
 			"counter_attack":attack_time >= 0 and bool(attack_spec.get("counter",false)),
 			"air_basic_kind":str(attack_spec.get("air_kind", "")) if attack_time >= 0 else "",
+			"weapon_hidden":thrown_weapon_hidden, "custom_kit":str(definition.get("kit", "")),
 			"boss_guard":boss_guard,"boss_cast":boss_cast,"boss_charge":boss_charge,"boss_enraged":health<max_health/2.0,
 			"victory":victory, "invulnerable":invulnerable > 0, "reduced_motion":reduced_motion})
 	queue_redraw()
@@ -239,21 +248,28 @@ func duration() -> float:
 func start_attack(special: bool) -> bool:
 	if health <= 0 or hurt_time > 0 or attack_time >= 0 or dodge_time >= 0 or (special and cooldown > 0):
 		return false
+	# A thrown bone cannot also land invisible melee hits before returning.
+	if thrown_weapon_hidden:
+		return false
 	is_special = special
 	attack_spec = weapon.duplicate(true)
 	if special:
 		cooldown = SPECIAL_COOLDOWN
-		attack_spec.merge({"damage":22, "windup":0.18,"active":0.30,"recovery":0.38,"reach":155 * body_scale,"knockback":480}, true)
-		if definition.special == "shockwave":
-			attack_spec.windup = 0.30
-		if definition.special == "dash":
-			attack_spec.active = 0.24
-		if definition.special in ["signal", "swarm"]:
-			attack_spec.windup = 0.28
-			attack_spec.damage = 24 if definition.special == "signal" else 22
+		if bool(definition.get("custom",false)):
+			attack_spec.merge(CustomKits.special(str(definition.get("kit", "pixel_pick"))),true)
+			attack_spec.reach = float(attack_spec.reach) * body_scale
+		else:
+			attack_spec.merge({"damage":22, "windup":0.18,"active":0.30,"recovery":0.38,"reach":155 * body_scale,"knockback":480}, true)
+			if definition.special == "shockwave":
+				attack_spec.windup = 0.30
+			if definition.special == "dash":
+				attack_spec.active = 0.24
+			if definition.special in ["signal", "swarm"]:
+				attack_spec.windup = 0.28
+				attack_spec.damage = 24 if definition.special == "signal" else 22
 		attack_spec.damage = int(definition.get("special_damage",attack_spec.damage))
 	else:
-		if airborne_time > 0 and str(definition.get("id", "")) in PLAYABLE_IDS:
+		if airborne_time > 0 and is_playable():
 			configure_air_basic()
 		if counter_time > 0:
 			attack_spec.damage = ceili(float(attack_spec.damage) * COUNTER_DAMAGE_MULTIPLIER)
@@ -267,6 +283,7 @@ func start_attack(special: bool) -> bool:
 			attack_spec.projectile_damage = int(attack_spec.damage)
 	attack_time = 0
 	attack_serial += 1
+	home_run_reflected = false
 	hit_targets.clear()
 	emitted = false
 	attacked.emit(self, special)
@@ -275,7 +292,7 @@ func start_attack(special: bool) -> bool:
 func start_dodge(move_input: float = 0.0, opponent: Node2D = null) -> bool:
 	if health <= 0 or victory or hurt_time > 0 or attack_time >= 0 or dodge_time >= 0 or dodge_cooldown > 0:
 		return false
-	if not (str(definition.get("id", "")) in PLAYABLE_IDS):
+	if not is_playable():
 		return false
 	if absf(move_input) > 0.15:
 		dodge_direction = 1 if move_input > 0 else -1
@@ -300,8 +317,19 @@ func shield_guard_active() -> bool:
 func shield_reflect_window() -> bool:
 	return shield_guard_active() and dodge_time >= SHIELD_REFLECT_START and dodge_time < SHIELD_REFLECT_END
 
+func is_playable() -> bool:
+	return bool(definition.get("custom",false)) or str(definition.get("id", "")) in PLAYABLE_IDS
+
+func home_run_reflect_window() -> bool:
+	return is_special and str(definition.get("special", "")) == "home_run" and is_active() and not home_run_reflected
+
 func configure_air_basic() -> void:
 	# All shapes and timings are authoritative attack data; the rig reads air_kind.
+	if bool(definition.get("custom",false)):
+		var air = CustomKits.air(str(definition.get("kit", "pixel_pick")))
+		air.reach = float(air.reach) * body_scale
+		attack_spec.merge(air,true)
+		return
 	match str(definition.id):
 		"orange":
 			attack_spec.merge({"air_kind":"fork_sweep", "damage":10, "reach":125.0 * body_scale,
@@ -340,7 +368,7 @@ func hurtbox() -> Rect2:
 func hitbox() -> Rect2:
 	if not is_active():
 		return Rect2()
-	if is_special and definition.special in ["shockwave", "fragment", "signal", "swarm"]:
+	if is_special and definition.special in ["shockwave", "fragment", "signal", "swarm", "ore_pop", "fossil_fetch", "swerve_shot", "cluckquake", "rainbow_ruckus"]:
 		return Rect2() # Their separate moving hitboxes are created at release.
 	if not is_special and not str(definition.get("basic_projectile", "")).is_empty():
 		return Rect2() # A bow release creates an arrow, never an extra melee hit.
@@ -367,6 +395,12 @@ func try_hit(target) -> bool:
 
 func take_hit(amount: int, direction: int, force: float = 350, launch_y: float = -245.0, source = null) -> bool:
 	if health <= 0 or invulnerable > 0:
+		return false
+	# The bat's announced active frames can return one physical incoming shot.
+	# Projectile.reflect_from owns the one-reflection limit and changes ownership.
+	if home_run_reflect_window() and direction == -facing and source != null and source.has_method("reflect_from") and source.reflect_from(self):
+		home_run_reflected = true
+		guarded.emit(self,true)
 		return false
 	if dodge_invulnerable():
 		# Purple's dodge is a short, directional shield. A shot caught on its early

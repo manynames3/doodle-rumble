@@ -48,6 +48,8 @@ var mode = "solo"
 var arena_kind = "desktop"
 var selected = ["orange","blue"]
 var selecting_player = 0
+var selection_tab := "original"
+var workshop_practice: Dictionary = {}
 var arcade_stage = 0
 var journey_stage_won: bool = false
 var journey_rewarded: bool = false
@@ -176,7 +178,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN else DisplayServer.WINDOW_MODE_FULLSCREEN)
 		get_viewport().set_input_as_handled()
 		return
-	if state in ["racing","story"]:
+	if state in ["racing","story","workshop"]:
 		return
 	if event.is_action_pressed("pause") or (state in ["select","stage_select","journal"] and event.is_action_pressed("ui_cancel")):
 		if state == "playing": pause_game()
@@ -256,7 +258,9 @@ func _portrait(parent: Node, id: String, at: Vector2, size_scale: float = 1.0, f
 	rig.scale = Vector2(size_scale * facing,size_scale)
 	parent.add_child(rig)
 	rig.configure(Data.fighter(id))
-	rig.preview = true
+	# HUD portraits are tiny and stationary. Animating a second full rig for
+	# each combatant doubles custom-art compositing during every match.
+	rig.preview = false
 	rig.pose(0,{"grounded":true,"facing":facing,"reduced_motion":Settings.reduced_motion})
 	return rig
 
@@ -276,6 +280,7 @@ func _poster(parent: Node, dim: float = 0.0) -> void:
 		parent.add_child(shade)
 
 func show_title() -> void:
+	workshop_practice.clear()
 	Sound.set_music_context("title")
 	get_tree().paused = false
 	state = "title"
@@ -292,7 +297,7 @@ func show_title() -> void:
 	menu.build([
 		["Story Mode",show_story_hub,"Six battles. One big adventure. Choose your doodle."],
 		["Quick Match",func(): selecting_player = 0; open_selection("solo"),"Choose two fighters and a stage for a quick rumble."],
-		["2P Battle",func(): selecting_player = 0; open_selection("local"),"Two players, six doodles, one great showdown."],
+		["2P Battle",func(): selecting_player = 0; open_selection("local"),"Two players, your doodles, one great showdown."],
 		["Doodle Rally",start_racing,"Take your imagination for a spin."],
 		["Settings",open_settings,"Make the sound, motion and controls your own."],
 		["Quit",quit_game,"Your next adventure will be waiting."]
@@ -354,8 +359,12 @@ func start_racing() -> void:
 func _hide_fighters() -> void:
 	if is_instance_valid(first): first.hide()
 	if is_instance_valid(second): second.hide()
-	for projectile in projectiles: projectile.queue_free()
+	for projectile in projectiles: _discard_projectile(projectile)
 	projectiles.clear()
+
+func _discard_projectile(projectile) -> void:
+	if projectile.has_method("cleanup"): projectile.cleanup()
+	projectile.queue_free()
 
 func new_journey_selection() -> void:
 	arcade_stage = 0
@@ -383,8 +392,10 @@ func journey_list() -> String:
 	return "  >  ".join(names)
 
 func open_selection(new_mode: String = "arcade") -> void:
+	workshop_practice.clear()
 	mode = new_mode
-	if mode != "arcade" and selected[1] not in Data.ORDER:
+	if not Data.is_playable(selected[0]): selected[0] = "orange"
+	if mode != "arcade" and not Data.is_playable(selected[1]):
 		selected[1] = "blue"
 	if mode == "arcade": selecting_player = 0
 	state = "select"
@@ -395,6 +406,39 @@ func open_selection(new_mode: String = "arcade") -> void:
 	var selection = load("res://scripts/selection_screen.gd").new()
 	ui.add_child(selection)
 	selection.build(self)
+
+func open_workshop(id: String = "") -> void:
+	state = "workshop"
+	get_tree().paused = false
+	_hide_fighters()
+	hazards.clear()
+	_clear_ui()
+	var workshop = load("res://scripts/doodle_workshop.gd").new()
+	ui.add_child(workshop)
+	workshop.cancelled.connect(func(): selection_tab="custom"; open_selection(mode))
+	workshop.saved.connect(func(saved_id: String):
+		selected[selecting_player] = saved_id
+		Settings.selected_fighter = selected[0]
+		Settings.save_settings()
+		selection_tab = "custom"
+		if mode in ["solo","local"]: open_stage_selection()
+		elif mode == "arcade": continue_journey()
+		else: start_match())
+	workshop.practice_requested.connect(func(saved_id: String):
+		workshop_practice = {"id":saved_id,"mode":mode,"player":selecting_player,"selected":selected.duplicate()}
+		selected = [saved_id,"blue"]
+		mode = "training"
+		start_match())
+	workshop.build(self,Doodles.get_record(id) if Doodles.has(id) else Doodles.new_record())
+
+func return_to_workshop() -> void:
+	if workshop_practice.is_empty(): return
+	var context := workshop_practice.duplicate(true)
+	workshop_practice.clear()
+	mode = context.mode
+	selecting_player = int(context.player)
+	selected = context.selected.duplicate()
+	open_workshop(str(context.id))
 
 func open_stage_selection() -> void:
 	if mode not in ["solo","local"]:
@@ -456,6 +500,7 @@ func resume_story() -> void:
 	journey_rewarded = false
 	fresh_journey = false
 	selecting_player = 0
+	selection_tab = "custom" if Doodles.has(selected[0]) else "original"
 	open_selection("arcade")
 
 func replay_chapter(index: int) -> void:
@@ -498,7 +543,8 @@ func start_match() -> void:
 		ai.configure(int(entry.ai_level))
 	else:
 		ai.configure(1)
-	if mode != "arcade" and selected[1] not in Data.ORDER:
+	if not Data.is_playable(selected[0]): selected[0] = "orange"
+	if mode != "arcade" and not Data.is_playable(selected[1]):
 		selected[1] = "blue"
 	journey_stage_won = false
 	match_stats = {"air":false,"counter":false,"special_hits":0,"special_serials":[],"healthy":false}
@@ -544,7 +590,7 @@ func _reset_round() -> void:
 	juice.words.clear()
 	juice.marks.clear()
 	shake = 0.0
-	for projectile in projectiles: projectile.queue_free()
+	for projectile in projectiles: _discard_projectile(projectile)
 	projectiles.clear()
 	first.show()
 	second.show()
@@ -614,8 +660,11 @@ func build_hud() -> void:
 	for i in range(2):
 		var x = 66 if i == 0 else 824
 		var fighter = first if i == 0 else second
+		if bool(fighter.definition.get("custom",false)):
+			_portrait(ui,str(fighter.definition.id),Vector2(38 if i==0 else 1240,66),0.28,1 if i==0 else -1)
 		var identity = "  /  YOU" if i == 0 and mode != "local" else "  /  P%d" % (i+1) if mode == "local" else "  /  DUMMY" if mode == "training" else ""
 		var name_label = _text(ui,fighter.definition.name.to_upper() + identity,Rect2(x,12,390,26),19)
+		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		name_label.add_theme_font_override("font",HandFont)
 		if i == 1: name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		health_bars.append(_progress(ui,Rect2(x,39,390,18),Color(fighter.definition.color),fighter.max_health))
@@ -653,6 +702,9 @@ func build_hud() -> void:
 			build_hud()
 		var reset = _button(ui,"Reset",Rect2(1120,87,63,28),reset_match,Color("090a11df"))
 		reset.add_theme_font_size_override("font_size",13)
+		if not workshop_practice.is_empty():
+			var back = _button(ui,"Back to workshop",Rect2(958,87,154,28),return_to_workshop,Color("090a11df"))
+			back.add_theme_font_size_override("font_size",13)
 	hint_label = _text(notes,"",Rect2(20,93,450,27),13,Color("f0dfaa"))
 	hint_label.add_theme_font_override("font",HandFont)
 	hint_label.add_theme_color_override("font_outline_color",Color("101329"))
@@ -740,11 +792,13 @@ func _physics_process(delta: float) -> void:
 	first.try_hit(second)
 	second.try_hit(first)
 	for projectile in projectiles.duplicate():
+		if projectile.has_method("set_platforms"):
+			projectile.set_platforms(_projectile_platforms())
 		var target = second if projectile.owner_fighter == first else first
 		if projectile.tick(delta,target):
 			juice.burst(projectile.position,projectile.tint)
 			projectiles.erase(projectile)
-			projectile.queue_free()
+			_discard_projectile(projectile)
 	hazards.tick(delta,[first,second])
 	if optional_hazards and (mode in ["solo","local","arcade"]):
 		hazard_clock -= delta
@@ -794,11 +848,25 @@ func _process(delta: float) -> void:
 
 func _on_attack(fighter, special: bool) -> void:
 	var cue: String = str(fighter.definition.special) if special and fighter.definition.special in ["signal","swarm"] else "special" if special else "boss" if fighter.definition.id == "dark_lord" else "swing" if fighter.definition.id == "pac_man" else "signal" if fighter.definition.id == "h4ck3r" else str(fighter.definition.weapon)
+	if bool(fighter.definition.get("custom",false)):
+		cue = str(fighter.definition.special if special else fighter.definition.weapon)
 	Sound.play(cue)
 	if fighter == first and special: practice_special = true
 
+func _projectile_platforms() -> Array:
+	var platforms: Array = ArenaLayout.get_platforms(arena_kind,selected[1]=="dark_lord").duplicate()
+	if arena_kind == "quarry" and interactions.bridge_gone>0:
+		platforms.remove_at(ArenaLayout.QUARRY_BRIDGE_INDEX)
+	return platforms
+
 func _on_release(fighter, kind: String) -> void:
-	if kind == "shockwave":
+	if kind in ["ore_pop","fossil_fetch","swerve_shot","cluckquake","rainbow_ruckus"]:
+		var projectile = load("res://scripts/custom_projectile.gd").new()
+		world.add_child(projectile)
+		projectile.configure(fighter,kind,fighter.facing,_projectile_platforms())
+		projectile.z_index = 6
+		projectiles.append(projectile)
+	elif kind == "shockwave":
 		for direction in [-1,1]:
 			var projectile = Projectile.new()
 			world.add_child(projectile)
@@ -879,7 +947,7 @@ func _finish_round() -> void:
 	second.velocity = Vector2.ZERO
 	first.facing = 1
 	second.facing = -1
-	for projectile in projectiles: projectile.queue_free()
+	for projectile in projectiles: _discard_projectile(projectile)
 	projectiles.clear()
 	hazards.clear()
 	first.victory = rules.last_winner == 0
@@ -907,6 +975,7 @@ func play_ending() -> void:
 	if is_instance_valid(ending_player): return
 	state = "ending"
 	ending_player = load("res://scripts/ending_player.gd").new()
+	ending_player.custom_hero = selected[0] if Doodles.has(selected[0]) else ""
 	ending_player.completed.connect(func():
 		ending_player.queue_free()
 		ending_player = null
@@ -1018,8 +1087,23 @@ func open_settings() -> void:
 		elif state == "stage_select": open_stage_selection()
 		elif state == "journal": show_story_hub())
 
-func quit_game() -> void:
+func quit_game(discard_draft: bool = false) -> void:
 	if quitting: return
+	if state == "workshop" and not discard_draft:
+		for child in ui.get_children():
+			if child.has_signal("practice_requested") and child.dirty:
+				var confirm = child.get_node_or_null("ConfirmQuitDraft")
+				if confirm == null:
+					confirm = ConfirmationDialog.new()
+					confirm.name = "ConfirmQuitDraft"
+					confirm.title = "Keep drawing?"
+					confirm.dialog_text = "Your latest changes have not been saved. Quit and leave them behind?"
+					confirm.ok_button_text = "Quit without saving"
+					confirm.cancel_button_text = "Keep drawing"
+					child.add_child(confirm)
+					confirm.confirmed.connect(func(): quit_game(true))
+				confirm.popup_centered()
+				return
 	quitting = true
 	Sound.shutdown()
 	await get_tree().create_timer(0.1,true).timeout

@@ -103,7 +103,14 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 	if tell_time > 0:
 		tell_time -= delta
 		if tell_time <= 0:
-			command.special = fighter.cooldown <= 0 and rng.randf() < float(profile.special)
+			var custom: bool = bool(fighter.definition.get("custom",false))
+			var basic_reach: float = float(fighter.weapon.reach) + 16.0
+			var prefer_kit_special: bool = custom and absf(dx) > basic_reach
+			# Cluckquake is intentionally a close-range burst; its AI should not
+			# wait until the opponent is beyond the chicken's longer melee reach.
+			if custom and str(fighter.definition.get("kit","")) == "rubber_chicken":
+				prefer_kit_special = absf(dx) >= 70.0 and absf(dx) <= _special_range(fighter)
+			command.special = fighter.cooldown <= 0 and (prefer_kit_special or rng.randf() < float(profile.special))
 			command.attack = not command.special
 			rest_time = rng.randf_range(float(profile.rest_min),float(profile.rest_max))
 			waiting_for_attack = true
@@ -120,10 +127,22 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 	if dy < -70 and absf(dx) < 370 and jump_wait <= 0 and fighter.is_on_floor():
 		command.jump = true
 		jump_wait = float(profile.jump_wait)
-	if absf(dx) < float(fighter.weapon.reach) + 16 and absf(dy) < 92 and rest_time <= 0 and fighter.attack_time < 0 and fighter.hurt_time <= 0:
+	var basic_ready: bool = absf(dx) < float(fighter.weapon.reach) + 16.0 and absf(dy) < 92.0
+	var kit_special_ready: bool = bool(fighter.definition.get("custom",false)) and fighter.cooldown <= 0 and absf(dx) < _special_range(fighter) and absf(dy) < 155.0
+	if (basic_ready or kit_special_ready) and rest_time <= 0 and fighter.attack_time < 0 and fighter.hurt_time <= 0:
 		tell_time = float(profile.tell)
 		command.move = 0
 	return command
+
+func _special_range(fighter) -> float:
+	match str(fighter.definition.get("kit","")):
+		"pixel_pick": return 350.0
+		"bone": return 335.0
+		"bat": return float(fighter.weapon.reach) + 45.0
+		"ball": return 560.0
+		"rubber_chicken": return 190.0
+		"giant_crayon": return 360.0
+	return float(fighter.weapon.reach) + 16.0
 
 func _purple_guard_read(delta: float, fighter, opponent, command: Dictionary) -> bool:
 	if str(fighter.definition.get("id","")) != "purple": return false
@@ -153,7 +172,7 @@ func _purple_guard_read(delta: float, fighter, opponent, command: Dictionary) ->
 	if absf(dx) < 12.0 or opponent.facing != -signf(dx) or fighter.facing != signf(dx):
 		return false
 	var kind: String = str(opponent.definition.get("basic_projectile", "")) if not opponent.is_special else str(opponent.definition.get("special", ""))
-	var projectile: bool = kind in ["arrow","signal","swarm","fragment","shockwave"]
+	var projectile: bool = kind in ["arrow","signal","swarm","fragment","shockwave","fossil_fetch","swerve_shot"]
 	var reach: float = 600.0 if projectile else float(opponent.attack_spec.get("reach",0.0))+75.0
 	if absf(dx) > reach:
 		return false
@@ -164,7 +183,7 @@ func _purple_guard_read(delta: float, fighter, opponent, command: Dictionary) ->
 	guard_pending_projectile = projectile
 	guard_reaction = float(profile.guard_reaction)
 	if projectile:
-		var shot_speed: float = {"arrow":640.0,"signal":760.0,"swarm":360.0,"fragment":530.0,"shockwave":520.0}.get(kind,500.0)
+		var shot_speed: float = {"arrow":640.0,"signal":760.0,"swarm":360.0,"fragment":530.0,"shockwave":520.0,"fossil_fetch":640.0,"swerve_shot":510.0}.get(kind,500.0)
 		var until_release: float = maxf(0.0,float(opponent.attack_spec.get("windup",0.0))-opponent.attack_time)
 		guard_reaction = maxf(guard_reaction,until_release+maxf(0.0,absf(dx)-100.0)/shot_speed-0.20)
 	else:

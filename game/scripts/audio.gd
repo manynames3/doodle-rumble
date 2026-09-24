@@ -49,6 +49,18 @@ func _ready() -> void:
 	_sounds["pickaxe"] = _melody([784.0, 1174.66, 587.33], 0.065)
 	_sounds["bow"] = _tone(0.13, 950.0, 330.0, 0.32, 0.10)
 	_sounds["staff"] = _tone(0.12, 520.0, 270.0, 0.30, 0.06)
+	_sounds["custom_pick"] = _melody([659.25,987.77,1318.51],0.044)
+	_sounds["custom_bone"] = _tone(0.20,340.0,135.0,0.42,0.19)
+	_sounds["custom_bat"] = _tone(0.22,185.0,72.0,0.52,0.30)
+	_sounds["custom_ball"] = _melody([440.0,659.25,523.25],0.050)
+	_sounds["custom_chicken"] = _tone(0.18,1050.0,360.0,0.40,0.24)
+	_sounds["custom_crayon"] = _melody([587.33,698.46,880.0],0.055)
+	_sounds["ore_pop"] = _melody([392.0,523.25,783.99],0.084)
+	_sounds["fossil_fetch"] = _melody([330.0,440.0,330.0],0.10)
+	_sounds["home_run"] = _tone(0.33,220.0,72.0,0.59,0.37)
+	_sounds["swerve_shot"] = _melody([523.25,783.99,587.33],0.09)
+	_sounds["cluckquake"] = _melody([1046.5,392.0,880.0,330.0],0.060)
+	_sounds["rainbow_ruckus"] = _melody([523.25,659.25,783.99,1046.5,880.0],0.065)
 	_sounds["signal"] = _melody([659.25, 987.77, 1318.51], 0.075)
 	_sounds["swarm"] = _melody([523.25, 659.25, 783.99], 0.08)
 	_sounds["chomp"] = _melody([330.0, 185.0, 440.0, 165.0], 0.045)
@@ -354,6 +366,12 @@ func _impact_stream(weapon: String, heavy: bool, material: String) -> AudioStrea
 		"chomp": Vector3(155, 0.18, 0.19),
 		"dark_blade": Vector3(260, 0.68, 0.30),
 		"cursor_wand": Vector3(585, 0.75, 0.10),
+		"custom_pick": Vector3(760, 0.82, 0.22),
+		"custom_bone": Vector3(340, 0.36, 0.19),
+		"custom_bat": Vector3(180, 0.24, 0.38),
+		"custom_ball": Vector3(530, 0.54, 0.11),
+		"custom_chicken": Vector3(920, 0.34, 0.24),
+		"custom_crayon": Vector3(610, 0.61, 0.10),
 	}
 	var profile: Vector3 = profiles.get(weapon, Vector3(300, 0.4, 0.25))
 	var duration := 0.245 if heavy else 0.17

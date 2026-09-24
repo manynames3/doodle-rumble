@@ -29,6 +29,7 @@ textures/vram_compression/import_s3tc_bptc=true
 common/physics_ticks_per_second=60
 
 [autoload]
+Doodles="*res://scripts/custom_library.gd"
 Data="*res://scripts/roster.gd"
 Settings="*res://scripts/settings.gd"
 Sound="*res://scripts/audio.gd"
