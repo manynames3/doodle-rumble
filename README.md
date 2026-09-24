@@ -72,9 +72,9 @@ These are native captures from the running Godot project, after the nine new pac
 
 ## Play on a Mac
 
-The latest public downloadable Mac build is **v0.7.6**. It includes the Doodle Workshop, six custom weapon kits, platform-aware specials, and the latest visual/performance pass. The current source adds a follow-up Workshop fix for independent color controls and clearer photo-cutout guidance; that source update is not included in the v0.7.6 Mac app. Custom character art is cached as articulated pieces and reused between selection and matches. The Mac download and complete Godot project are available from the [v0.7.6 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.6). See the [v0.7.6 verification report](docs/TESTING_0_7_6.md) or run the current project in Godot 4.7.2.
+The latest public downloadable Mac build is **v0.7.6**. It includes the Doodle Workshop, six custom weapon kits, platform-aware specials, and the latest visual/performance pass. The current source and a local, not-yet-published **v0.7.7** Mac export add independent Fighter/Pen colors and clearer photo-cutout guidance. The local app is in this project checkout at `builds/mac-v0.7.7/Doodle Rumble.app`; it has not been uploaded as a GitHub release. The public Mac download and complete Godot project are available from the [v0.7.6 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.6). See the [v0.7.7 verification report](docs/TESTING_0_7_7.md) or run the current project in Godot 4.7.2.
 
-Download and extract `Doodle_Rumble_Mac_v0.7.6.zip`, then double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly before the title menu. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default. The separate `Doodle_Rumble_Project_v0.7.6.zip` contains the complete Godot project for editing or running from source.
+For the public build, download and extract `Doodle_Rumble_Mac_v0.7.6.zip`, then double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly before the title menu. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default. The separate `Doodle_Rumble_Project_v0.7.6.zip` contains the complete Godot project for editing or running from source. The local v0.7.7 export includes the Workshop fixes but is not yet available from the public release page.
 
 This Universal arm64/x86_64 build is ad-hoc signed and not Apple-notarized. macOS may require **System Settings → Privacy & Security → Open Anyway** after a transfer.
 
@@ -137,9 +137,9 @@ Settings supports remapping, available controllers, music/effects volume, reduce
 
 ## Validation
 
-Workshop verification covers library recovery, kit combat, custom-versus-custom selection, story continuation, local photo import and the animated paper perimeter. Native captures and measured rendering checks are recorded separately from headless logic tests. These source changes are pushed to GitHub; no new downloadable release is created by this update.
+Workshop verification covers library recovery, kit combat, custom-versus-custom selection, story continuation, local photo import and the animated paper perimeter. Native captures and measured rendering checks are recorded separately from headless logic tests. These source changes are pushed to GitHub. A local v0.7.7 Universal Mac app was exported and smoke-tested, but no new downloadable GitHub release has been created.
 
-See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_7_6.md`](docs/TESTING_0_7_6.md) for the latest test evidence. The project owner reports that family playtesting is complete; physical controller behavior, Intel execution, transferred first launch and external audio hardware still need verification.
+See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_7_7.md`](docs/TESTING_0_7_7.md) for the latest test evidence. The project owner reports that family playtesting is complete; physical controller behavior, Intel execution, transferred first launch and external audio hardware still need verification.
 
 ## Repository map
 
