@@ -20,6 +20,8 @@ These are native 1280×720 captures from the running Godot project, selected to 
 
 The Workshop gallery in `workshop/` uses captures from the running game and authored sample creations. It shows My Doodles, a custom-fighter match, articulated poses, weapon specials, and the drawing/preview pages. These files are deliberately copied into the public screenshot folder so README images do not depend on Git-ignored QA output. The private original drawing and remaining versioned QA captures stay out of the public repository. The nine transparent production packs are retained under `source_art/`, with optimized runtime copies under `game/assets/character_art/`. Provenance and licenses are documented in [`docs/ASSET_PROVENANCE.md`](../ASSET_PROVENANCE.md).
 
+The new color and photo-import screenshots use a synthetic sample figure, not a family photo. They show the two independent color palettes and how the entire source remains visible while the player traces six body-part cutouts.
+
 | Workshop capture | What it shows |
 | --- | --- |
 | `workshop/draw.png` | Draw page with color palette, body-part guides, undo/redo and live doodle preview. |
@@ -28,3 +30,5 @@ The Workshop gallery in `workshop/` uses captures from the running game and auth
 | `workshop/custom-fighters-in-match.png` | Two custom fighters using different kits in a Desktop Dojo match. |
 | `workshop/six-poses.png` | Drawn and photo-cutout characters across idle, walk, jump, attack, victory and defeat. |
 | `workshop/custom-weapon-specials.png` | Rubber Chicken's Cluckquake and Jumbo Crayon's Rainbow Ruckus in combat. |
+| `workshop/fighter-and-pen-colors.png` | Separate, clearly labeled Fighter and Pen palettes on the Draw page. |
+| `workshop/photo-cutout-progress.png` | Full source photo stays visible while the first of six manually traced cutouts is selected. |

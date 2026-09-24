@@ -25,7 +25,7 @@ The art has grown alongside the game. Illustrated backgrounds set the scene; ink
 | Bringing the drawings closer | Nine transparent art packs now animate the playable cast and bosses in selection, story scenes and combat. The latest pass adds moving idle/run poses, clearer boss attack releases, better-fitting selection previews and visible round-result performances. |
 | Making the finale feel final | Pac-Man's runtime poses now keep his single-eye silhouette. Dark lord has eight telegraphed attack patterns, a stronger damage tier, and three new signature hazards with much larger purple effects. |
 | Doodle Workshop | Draw or import a paper character, pose its head, body and limbs, preview movement, and choose from six weapon kits. Custom fighters can enter Story, Quick Match, 2P Battle and Practice, with six local save slots and an optional paper-white edge. |
-| Latest Workshop tune-up | The starter figure can now change color without recoloring a child's other marks. Imported-photo saves guide players to missing cutout shapes, and **Save fighter** stays in the Workshop while **Save & Fight!** continues to battle. |
+| Workshop color and photo clarity | The starter figure and drawing pen now have separate color palettes. Photo import removes page white but does not recognize limbs; it keeps the whole source photo visible until all six usable cutouts are traced and labels joint dots as bend markers. Tiny outlines are rejected and sent back for repair. |
 | Poster-to-gameplay pass | Fighters are more prominent in the arena, top HUD marks use rougher ink, and opening control prompts fade so the fight owns the screen. Three story worlds now include harmless, scene-themed jump routes. Custom art is cached across selection and combat instead of building both detailed fighters at once. |
 
 The best design test is still the original one: does it feel like the kids' drawing came alive, and do they want another round?
@@ -72,7 +72,7 @@ These are native captures from the running Godot project, after the nine new pac
 
 ## Play on a Mac
 
-The **v0.7.6** source and matching Mac build include the Doodle Workshop, six custom weapon kits, platform-aware specials, and the latest visual/performance pass. Custom character art is cached as articulated pieces and reused between selection and matches. The Mac download and complete Godot project are available from the [v0.7.6 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.6). See the [v0.7.6 verification report](docs/TESTING_0_7_6.md) or run the project in Godot 4.7.2.
+The latest public downloadable Mac build is **v0.7.6**. It includes the Doodle Workshop, six custom weapon kits, platform-aware specials, and the latest visual/performance pass. The current source adds a follow-up Workshop fix for independent color controls and clearer photo-cutout guidance; that source update is not included in the v0.7.6 Mac app. Custom character art is cached as articulated pieces and reused between selection and matches. The Mac download and complete Godot project are available from the [v0.7.6 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.6). See the [v0.7.6 verification report](docs/TESTING_0_7_6.md) or run the current project in Godot 4.7.2.
 
 Download and extract `Doodle_Rumble_Mac_v0.7.6.zip`, then double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly before the title menu. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default. The separate `Doodle_Rumble_Project_v0.7.6.zip` contains the complete Godot project for editing or running from source.
 
@@ -88,7 +88,7 @@ The project has no add-ons, external accounts or runtime package dependencies. `
 
 ## Draw your own fighter
 
-In fighter selection, open **My Doodles → Draw a fighter**. Draw or import a paper photo, bring the parts to life, choose a weapon, then **Try in Practice** or **Save & Fight**. Everything stays on the Mac. Photo cleanup and joint placement are assisted steps; complicated drawings may need an adult’s help. See the [workshop guide](docs/DOODLE_WORKSHOP.md).
+In fighter selection, open **My Doodles → Draw a fighter**. Draw or import a paper photo, bring the parts to life, choose a weapon, then **Try in Practice** or **Save & Fight**. Everything stays on the Mac. Draw mode keeps **Fighter color** separate from **Pen color**. Photo import removes page white; it does not automatically find body parts. Trace the head, body, arms and legs, then move the joint dots to the bends. The complete photo stays in preview until all six outlines are usable. Complicated drawings may need an adult’s help. See the [workshop guide](docs/DOODLE_WORKSHOP.md).
 
 ### Workshop in the running game
 
@@ -97,6 +97,10 @@ In fighter selection, open **My Doodles → Draw a fighter**. Draw or import a p
 | ![Custom creations in character selection](docs/screenshots/workshop/my-doodles.png) | ![Drawn and paper-cutout fighters in Desktop Dojo](docs/screenshots/workshop/custom-fighters-in-match.png) |
 
 ![The paper border follows six animated poses](docs/screenshots/workshop/six-poses.png)
+
+| Separate Workshop colors | Whole-photo cutout progress |
+| --- | --- |
+| ![Separate Fighter and Pen color palettes](docs/screenshots/workshop/fighter-and-pen-colors.png) | ![The photo import keeps the source drawing visible and shows six-part tracing progress](docs/screenshots/workshop/photo-cutout-progress.png) |
 
 The v0.7.4 special-attack capture shows Cluckquake and Rainbow Ruckus on different Desktop Dojo platforms:
 

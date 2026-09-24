@@ -2,6 +2,13 @@
 
 Updated 2026-09-24. Godot 4.7.2 / GDScript. This build is prepared on an Apple M1 Mac.
 
+## Follow-up source changes after v0.7.6
+
+- Photo import now explains that it removes page white but does not auto-detect limbs. The complete original photo stays in the preview until all six body-part cutouts are valid, rather than showing a misleading fragment after the first partial outline.
+- Cutout validation rejects very small, narrow, malformed or untriangulatable outlines. Save redirects the player to the first bad outline and explains how to trace that whole part. The footer and instructions now match whether **Trace cutouts** or **Move joints** is selected.
+- Draw mode has separate **Fighter** and **Pen** color palettes. Changing the fighter color only recolors starter-body marks; the pen independently colors new strokes. Both colors survive saves and undo/redo, and older creations without a saved pen color keep their previous palette behavior.
+- Targeted Workshop regression: **53 checks, zero failures**. The full source suite passed **30 suites / 2,786 checks** before the last footer clarification and extra regression assertion; the final targeted Workshop run passed afterward. Native screenshots were inspected. The public/downloaded Mac app remains v0.7.6 and does not yet include this follow-up.
+
 ## This update
 
 - The match presentation now gives fighters 15% more screen presence without changing their collision capsules, weapon reach, attack timing, or damage. The HUD uses rougher ink swatches, and tutorial/control prompts clear after the opening seconds so the arena takes over.
@@ -28,6 +35,9 @@ Updated 2026-09-24. Godot 4.7.2 / GDScript. This build is prepared on an Apple M
 - Launch by double-clicking **Doodle Rumble.app**. From source, open `game/project.godot` in Godot 4.7.2 and press F5.
 
 ## Known limits
+
+- The photo workflow is manual: page-white cleanup does not separate a drawing into limbs automatically. The child traces each of six body parts; overlapping or faint photos may still need adult help.
+- The new source changes are not in a newly exported or signed Mac app. Run `game/project.godot` from the current source in Godot 4.7.2 to use them; the v0.7.6 downloadable app retains the earlier Workshop behavior.
 
 - This Mac has no Developer ID certificate. The app is ad-hoc signed and not notarized, so Gatekeeper may require **System Settings → Privacy & Security → Open Anyway** after download. This is a locally tested build, not a notarized public storefront release.
 - Intel execution, transfer to another Mac, physical controller assignment/disconnect, keyboard rollover, sleep/wake, and external speaker/headphone behavior were not verified here.

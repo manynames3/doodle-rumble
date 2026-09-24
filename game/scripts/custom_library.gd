@@ -75,7 +75,7 @@ func has(id: String) -> bool:
 
 func new_record() -> Dictionary:
 	var id := _fresh_id()
-	return {"id":id, "name":"My Doodle", "color":"#f6a047", "kit":"pixel_pick",
+	return {"id":id, "name":"My Doodle", "color":"#f6a047", "pen_color":"#f6a047", "kit":"pixel_pick",
 		"strokes":starter_strokes(), "joints":default_joints(), "photo_path":"",
 		"photo_parts":{}, "source_path":"", "photo_settings":{"paper_edge":true}}
 
@@ -272,6 +272,8 @@ func _sanitize(raw: Variant, loading: bool) -> Dictionary:
 	name = name.substr(0, 32)
 	var color: String = str(raw.get("color", "#f6a047"))
 	if not Color.html_is_valid(color): color = "#f6a047"
+	var pen_color: String = str(raw.get("pen_color", color))
+	if not Color.html_is_valid(pen_color): pen_color = color
 	var kit: String = str(raw.get("kit", "pixel_pick"))
 	if kit not in KITS: kit = "pixel_pick"
 	var joints: Dictionary = default_joints()
@@ -326,7 +328,7 @@ func _sanitize(raw: Variant, loading: bool) -> Dictionary:
 	if strokes.is_empty() and (photo_path.is_empty() or photo_parts.is_empty()):
 		if not loading: last_error = "Draw a fighter or finish cutting out a photo before saving."
 		return {}
-	return {"id":id,"name":name,"color":color,"kit":kit,"strokes":strokes,"joints":joints,
+	return {"id":id,"name":name,"color":color,"pen_color":pen_color,"kit":kit,"strokes":strokes,"joints":joints,
 		"photo_path":photo_path,"photo_parts":photo_parts,"source_path":source_path,"photo_settings":settings}
 
 static func _point(value: Variant) -> Array:

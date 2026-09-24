@@ -28,34 +28,43 @@ func _check() -> void:
 	workshop.build(null)
 	var initial_strokes: int = workshop.record.get("strokes",[]).size()
 	_expect(workshop.record.get("joints",{}).size() == 11,"starter record has missing joints")
-	_expect("#" + workshop.selected_color.to_html(false) == workshop.record.color,"selected palette color matches the starter figure")
+	_expect("#" + workshop.fighter_color.to_html(false) == workshop.record.color and "#" + workshop.selected_color.to_html(false) == workshop.record.pen_color,"base fighter and pen colors load independently")
+	var chip_counts: Dictionary = {}
+	for child in workshop.get_children():
+		if child is Button and child.tooltip_text in ["Navy","Coral","Orange","Green","Blue","Purple","Pink","Cream"]:
+			chip_counts[child.tooltip_text] = int(chip_counts.get(child.tooltip_text,0))+1
+	var both_palettes := true
+	for color_name in ["Navy","Coral","Orange","Green","Blue","Purple","Pink","Cream"]:
+		both_palettes = both_palettes and int(chip_counts.get(color_name,0)) >= 2
+	_expect(both_palettes,"draw screen has separate full fighter-color and pen-color palettes")
 	workshop._starter()
 	_expect(workshop.record.get("strokes",[]).size() == 6,"starter has six body parts")
-	workshop._select_color(3)
+	workshop._select_fighter_color(3)
 	var green_base := true
 	for stroke in workshop.record.strokes:
 		green_base = green_base and bool(stroke.get("base_figure",false)) and stroke.color == "#69aa71"
-	_expect(green_base and workshop.record.color == "#69aa71","palette recolors every starter part and marks its game-owned ink")
+	_expect(green_base and workshop.record.color == "#69aa71" and workshop.record.pen_color == "#f6a047","fighter palette recolors the base without changing the pen")
 	workshop._undo()
 	var undo_base := true
 	for stroke in workshop.record.strokes:
 		undo_base = undo_base and stroke.color == "#f6a047"
-	_expect(undo_base and workshop.selected_color.to_html(false) == Color("#f6a047").to_html(false),"undo restores the previous starter color and palette selection")
+	_expect(undo_base and workshop.fighter_color.to_html(false) == Color("#f6a047").to_html(false) and workshop.selected_color.to_html(false) == Color("#f6a047").to_html(false),"undo restores both independent palette selections")
 	workshop._do_redo()
-	_expect(workshop.record.strokes[0].color == "#69aa71" and workshop.selected_color.to_html(false) == Color("#69aa71").to_html(false),"redo restores the recolored starter")
+	_expect(workshop.record.strokes[0].color == "#69aa71" and workshop.fighter_color.to_html(false) == Color("#69aa71").to_html(false) and workshop.selected_color.to_html(false) == Color("#f6a047").to_html(false),"redo restores fighter color without changing pen color")
 	workshop._undo()
 	_expect(workshop.record.get("strokes",[]).size() == initial_strokes,"undo restores prior strokes")
 	workshop._do_redo()
 	_expect(workshop.record.get("strokes",[]).size() == 6,"redo restores starter")
 	workshop._toggle_details()
 	workshop.selected_part = "head"
+	workshop._select_pen_color(4)
 	workshop._canvas._start_at(Vector2(90,190))
 	workshop._canvas._move_to(Vector2(120,190))
 	workshop._canvas._finish()
 	var detail: Dictionary = workshop.record.strokes[-1]
 	_expect(detail.part == "head" and detail.get("detail",false),"detail attaches to selected part")
-	workshop._select_color(4)
-	_expect(detail.color == "#69aa71" and workshop.record.strokes[0].color == "#56a5c5","changing fighter color leaves the child's own marks untouched")
+	workshop._select_fighter_color(5)
+	_expect(detail.color == "#56a5c5" and workshop.record.strokes[0].color == "#9875c7" and workshop.record.pen_color == "#56a5c5","pen color colors new details while fighter color only changes base marks")
 	workshop._toggle_eraser()
 	workshop._canvas._start_at(Vector2(105,190))
 	workshop._canvas._finish()
@@ -124,11 +133,12 @@ func _check() -> void:
 	for stroke in retrieved.get("strokes",[]):
 		if bool(stroke.get("base_figure",false)) and stroke.get("color","") == retrieved.get("color",""):
 			saved_base_parts += 1
-	_expect(saved_base_parts == 6,"library preserves the recolorable starter-part markers and color")
+	_expect(saved_base_parts == 6 and retrieved.pen_color == "#56a5c5","library preserves base color, pen color, and recolorable starter-part markers")
 	_expect(FileAccess.get_sha256(png) == FileAccess.get_sha256(str(retrieved.get("source_path",""))),"owned source matches original bytes")
 	var legacy_record: Dictionary = workshop.record.duplicate(true)
 	legacy_record.strokes = Library.starter_strokes()
 	legacy_record.color = "#69aa71"
+	legacy_record.erase("pen_color")
 	for stroke in legacy_record.strokes:
 		stroke.erase("base_figure")
 		stroke.color = "#f6a047"
@@ -138,7 +148,7 @@ func _check() -> void:
 	var legacy_recolored := true
 	for stroke in legacy_workshop.record.strokes:
 		legacy_recolored = legacy_recolored and bool(stroke.get("base_figure",false)) and stroke.color == "#69aa71"
-	_expect(legacy_recolored,"older saved starter fighters recover their chosen base color")
+	_expect(legacy_recolored and legacy_workshop.selected_color.to_html(false) == Color("#69aa71").to_html(false),"older saves without a pen color keep their former palette behavior")
 	legacy_workshop.free()
 	var imported_record: Dictionary = library.new_record()
 	imported_record.strokes = []
@@ -160,6 +170,21 @@ func _check() -> void:
 	reopened.build(null,roundtrip)
 	_expect(reopened.source_mode == "import" and reopened._source_square != null and reopened._matte_image != null,"imported editor reopens with owned source and matte")
 	_expect(float(reopened.record.photo_settings.get("sensitivity",-1.0)) == 0.8 and reopened.record.photo_settings.get("corners",[]).size() == 4,"reopened editor retains cleanup controls")
+	reopened._go_step(1)
+	_expect(reopened.status.contains("Trace the whole Head") and not reopened.status.contains("Move the dots"),"photo import footer explains tracing instead of repeating the joint instruction")
+	_expect(reopened._cutout_progress() == 1 and not reopened._preview_uses_rig,"a partial photo cutout keeps the whole photo preview instead of showing a misleading sliver")
+	reopened.record.photo_parts = {"body":[[230,110],[235,110],[235,300],[230,300]]}
+	_expect(reopened._cutout_progress() == 0 and reopened._first_bad_cutout() == "body","a narrow outline is rejected and selected for repair before unrelated missing parts")
+	reopened.record.photo_parts = {
+		"head":[[180,35],[320,35],[320,165],[180,165]],
+		"body":[[200,150],[310,150],[310,310],[200,310]],
+		"left_arm":[[120,150],[215,150],[215,255],[120,255]],
+		"right_arm":[[295,150],[390,150],[390,255],[295,255]],
+		"left_leg":[[185,285],[245,285],[245,465],[185,465]],
+		"right_leg":[[265,285],[325,285],[325,465],[265,465]]
+	}
+	reopened._build_ui()
+	_expect(reopened._cutout_progress() == 6 and reopened._preview_uses_rig,"all six complete photo shapes switch the preview to the animated rig")
 	workshop.source_mode = "import"
 	workshop.record.photo_path = imported_record.photo_path
 	workshop.record.photo_parts = {}
@@ -176,9 +201,9 @@ func _check() -> void:
 	var issue_explanation := ""
 	if issue_overlay != null:
 		for child in issue_overlay.get_children():
-			if child is Label and child.text.contains("bendy joints"):
+			if child is Label and child.text.contains("does not find body parts"):
 				issue_explanation = child.text
-	_expect(issue_overlay != null and issue_button != null and issue_explanation.contains("outside edge") and workshop.status == "Let's trace your doodle!","child-friendly message stays in the help card and the status line stays short")
+	_expect(issue_overlay != null and issue_button != null and issue_explanation.contains("outside edge") and issue_explanation.contains("does not find body parts") and workshop.status == "Let's finish the paper cutouts!","child-friendly message explains joint dots do not detect cutouts")
 	var game_library = root.get_node_or_null("Doodles")
 	_expect(game_library != null,"project fighter library is available to the workshop")
 	if game_library != null:

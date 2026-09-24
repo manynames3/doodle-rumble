@@ -15,7 +15,9 @@ const PART_NAMES := ["Head", "Body", "Left arm", "Right arm", "Left leg", "Right
 const JOINTS := ["head", "shoulder", "hip", "back_elbow", "back_hand", "front_elbow", "front_hand", "left_knee", "left_foot", "right_knee", "right_foot"]
 const STEPS := ["Draw / Import", "Bring to life", "Weapon", "Try it!", "Save & Fight"]
 const COLORS := ["#25364b", "#f06e55", "#f6a047", "#69aa71", "#56a5c5", "#9875c7", "#f19bb6", "#fff4cc"]
+const COLOR_NAMES := ["Navy", "Coral", "Orange", "Green", "Blue", "Purple", "Pink", "Cream"]
 const WIDTHS := [4, 9, 18]
+const MIN_CUTOUT_AREA := 64.0
 const KITS := ["pixel_pick", "bone", "bat", "ball", "rubber_chicken", "giant_crayon"]
 const KIT_NAMES := ["Pixel Pickaxe", "Dinosaur Bone", "Baseball Bat", "Soccer Ball", "Rubber Chicken", "Jumbo Crayon"]
 const KIT_SPECIALS := ["Ore Pop", "Fossil Fetch", "HOME RUN!", "Swerve Shot", "Cluckquake", "Rainbow Ruckus"]
@@ -33,7 +35,9 @@ var step := 0
 var source_mode := "draw"
 var selected_part := "head"
 var selected_joint := "head"
+# `selected_color` is the drawing pen; `fighter_color` only recolors the starter body.
 var selected_color := Color("#25364b")
+var fighter_color := Color("#f6a047")
 var pen_width := 9
 var eraser_width := 22
 var eraser_on := false
@@ -78,7 +82,13 @@ func build(owner, existing: Dictionary = {}) -> void:
 	step = 0
 	source_mode = "import" if not str(record.get("photo_path","")).is_empty() else "draw"
 	var saved_color: String = str(record.get("color", COLORS[2]))
-	selected_color = Color(saved_color if saved_color in COLORS else COLORS[2])
+	if not Color.html_is_valid(saved_color): saved_color = COLORS[2]
+	fighter_color = Color(saved_color)
+	var saved_pen: String = str(record.get("pen_color", saved_color))
+	if not Color.html_is_valid(saved_pen): saved_pen = saved_color
+	selected_color = Color(saved_pen)
+	record["color"] = fighter_color.to_html(false).insert(0,"#")
+	record["pen_color"] = selected_color.to_html(false).insert(0,"#")
 	_tag_legacy_base_strokes()
 	_draw_strokes_cache = record.get("strokes",[]).duplicate(true)
 	selected_part = "head"
@@ -89,7 +99,7 @@ func build(owner, existing: Dictionary = {}) -> void:
 	_build_ui()
 
 func _fallback_record() -> Dictionary:
-	return {"id":"custom_%d" % Time.get_ticks_usec(),"name":"My Doodle","color":"#f6ad57","kit":"pixel_pick","strokes":[],"joints":{"head":[256,105],"shoulder":[256,185],"hip":[256,300],"back_elbow":[185,235],"back_hand":[150,280],"front_elbow":[327,235],"front_hand":[362,280],"left_knee":[215,385],"left_foot":[190,460],"right_knee":[297,385],"right_foot":[322,460]},"photo_path":"","source_path":"","photo_parts":{},"photo_settings":{"rotation":0,"corners":[[32,32],[480,32],[480,480],[32,480]],"sensitivity":0.5,"paper_edge":true,"keep_strokes":[],"erase_strokes":[]}}
+	return {"id":"custom_%d" % Time.get_ticks_usec(),"name":"My Doodle","color":"#f6ad57","pen_color":"#f6ad57","kit":"pixel_pick","strokes":[],"joints":{"head":[256,105],"shoulder":[256,185],"hip":[256,300],"back_elbow":[185,235],"back_hand":[150,280],"front_elbow":[327,235],"front_hand":[362,280],"left_knee":[215,385],"left_foot":[190,460],"right_knee":[297,385],"right_foot":[322,460]},"photo_path":"","source_path":"","photo_parts":{},"photo_settings":{"rotation":0,"corners":[[32,32],[480,32],[480,480],[32,480]],"sensitivity":0.5,"paper_edge":true,"keep_strokes":[],"erase_strokes":[]}}
 
 func _load_existing_photo() -> void:
 	_source_image = null
@@ -240,6 +250,8 @@ func _go_step(next: int) -> void:
 	if next < 0 or next >= STEPS.size(): return
 	step = next
 	status = ["Choose a body part, then draw it on the page.","Move the dots to make your art bend and bounce.","Every fighter needs a favorite thing!","Watch your fighter move before saving.","Name your doodle and give it a place in the roster."][step]
+	if step == 1 and source_mode == "import":
+		status = "Trace the whole %s. Photo parts are not detected automatically." % PART_NAMES[PARTS.find(selected_part)]
 	_build_ui()
 
 func _build_draw_step() -> void:
@@ -247,18 +259,21 @@ func _build_draw_step() -> void:
 	_button("Draw",Vector2(39,215),Vector2(90,36),func(): _set_source_mode("draw"),false,source_mode == "draw")
 	_button("Import",Vector2(136,215),Vector2(90,36),func(): _set_source_mode("import"),false,source_mode == "import")
 	if source_mode == "draw":
-		_part_buttons(Vector2(41,262),35)
-		_label("Fighter color",Vector2(43,476),Vector2(170,25),17)
+		_part_buttons(Vector2(41,255),31)
+		_label("Fighter: " + _color_name(fighter_color),Vector2(43,438),Vector2(175,25),16)
 		for i in COLORS.size():
 			var idx := i
-			var b := _button("●",Vector2(42+(i%4)*46,505+(i/4)*39),Vector2(39,34),func(): _select_color(idx),false,selected_color.to_html() == Color(COLORS[i]).to_html())
-			b.add_theme_color_override("font_color",Color(COLORS[i]))
-		_label("Line",Vector2(42,586),Vector2(50,22),17)
+			_palette_chip(idx,Vector2(42+(i%4)*43,464+(i/4)*24),func(): _select_fighter_color(idx),fighter_color.to_html() == Color(COLORS[i]).to_html())
+		_label("Pen: " + _color_name(selected_color),Vector2(43,512),Vector2(175,25),16)
+		for i in COLORS.size():
+			var idx := i
+			_palette_chip(idx,Vector2(42+(i%4)*43,538+(i/4)*24),func(): _select_pen_color(idx),selected_color.to_html() == Color(COLORS[i]).to_html())
+		_label("Line",Vector2(42,589),Vector2(50,22),16)
 		for i in WIDTHS.size():
 			var value: int = WIDTHS[i]
-			_button(str(i+1),Vector2(87+i*46,580),Vector2(40,35),func(): _set_pen_width(value),false,pen_width == value)
-		_button("Guide: " + ("On" if ghost else "Off"),Vector2(42,622),Vector2(175,32),_toggle_ghost)
-		_label("See a faint helper sketch. Your own marks stay yours.",Vector2(785,177),Vector2(442,54),18,MUTED,false,true)
+			_button(str(i+1),Vector2(87+i*46,585),Vector2(40,34),func(): _set_pen_width(value),false,pen_width == value)
+		_button("Guide: " + ("On" if ghost else "Off"),Vector2(42,622),Vector2(175,34),_toggle_ghost)
+		_label("Fighter color changes the starter. Pen color changes new lines.",Vector2(785,177),Vector2(442,54),18,MUTED,false,true)
 		_button("Undo",Vector2(794,244),Vector2(100,38),_undo)
 		_button("Redo",Vector2(904,244),Vector2(100,38),_do_redo)
 		_button("Eraser",Vector2(1014,244),Vector2(108,38),_toggle_eraser,false,eraser_on)
@@ -297,7 +312,7 @@ func _build_import_controls() -> void:
 	_button("4 paper corners",Vector2(43,480),Vector2(171,36),func(): _set_photo_tool("corners"),false,_canvas_mode() == "corners")
 	_button("Keep brush",Vector2(43,521),Vector2(171,36),func(): _set_photo_tool("keep"),false,_canvas_mode() == "keep")
 	_button("Erase brush",Vector2(43,562),Vector2(171,36),func(): _set_photo_tool("erase"),false,_canvas_mode() == "erase")
-	_label("Adjust the slider to remove page white. Turn White edge off to remove the extra cutout border. Drag the four dots around the paper.",Vector2(789,177),Vector2(440,83),19,MUTED,false,true)
+	_label("Use the slider, White edge switch and four page dots to remove the paper. This does not find limbs; trace all six body parts by hand on the next page.",Vector2(789,177),Vector2(440,83),18,MUTED,false,true)
 	_button("Undo",Vector2(795,272),Vector2(104,38),_undo)
 	_button("Redo",Vector2(909,272),Vector2(104,38),_do_redo)
 	_button("Zoom +",Vector2(795,320),Vector2(104,38),func(): _change_zoom(1))
@@ -308,7 +323,7 @@ func _build_import_controls() -> void:
 func _build_life_step() -> void:
 	_label("2  BRING TO LIFE",Vector2(41,175),Vector2(190,35),19)
 	if source_mode == "import":
-		_button("Cutout shapes",Vector2(41,220),Vector2(175,38),func(): _set_life_tool("polygon"),false,_canvas_mode() == "polygon")
+		_button("Trace cutouts",Vector2(41,220),Vector2(175,38),func(): _set_life_tool("polygon"),false,_canvas_mode() == "polygon")
 		_button("Move joints",Vector2(41,263),Vector2(175,38),func(): _set_life_tool("joints"),false,_canvas_mode() == "joints")
 		if _canvas_mode() == "polygon":
 			_part_buttons(Vector2(41,310),43)
@@ -319,9 +334,17 @@ func _build_life_step() -> void:
 		_joint_buttons(224,36)
 	_button("Undo",Vector2(791,185),Vector2(103,38),_undo)
 	_button("Redo",Vector2(901,185),Vector2(103,38),_do_redo)
-	_label("Pick a joint, then drag its dot to where your arm or leg bends. Try the elbow first!",Vector2(789,233),Vector2(436,80),18,MUTED,false,true)
 	if source_mode == "import":
-		_label("For each part, tap around the colored piece in your photo. Three or more dots make a shape. Overlap is okay!",Vector2(789,320),Vector2(430,85),18,MUTED,false,true)
+		var progress := _cutout_progress()
+		var next_part: String = _next_cutout_name()
+		if _canvas_mode() == "polygon":
+			_label("Trace around the whole " + PART_NAMES[PARTS.find(selected_part)].to_lower() + " in your photo. Tap around its outside edge to add dots.",Vector2(789,233),Vector2(436,83),18,MUTED,false,true)
+			_label("Cutouts ready: %d / 6. Next: %s. Joints only mark bends; switch to Move joints after all six parts are traced." % [progress,next_part],Vector2(789,320),Vector2(430,72),17,INK,false,true)
+		else:
+			_label("Drag each dot to a bend, like an elbow or knee. The dots move the cutouts; they do not find or trace body parts for you.",Vector2(789,233),Vector2(436,83),18,MUTED,false,true)
+			_label("Cutouts ready: %d / 6. %s" % [progress, "All six are ready to preview!" if progress == 6 else "Still needed: " + _next_cutout_name()],Vector2(789,320),Vector2(430,72),17,INK,false,true)
+	else:
+		_label("Pick a joint, then drag its dot to where your arm or leg bends. Try the elbow first!",Vector2(789,233),Vector2(436,80),18,MUTED,false,true)
 	_build_preview("Watch it bend",Vector2(1009,636))
 
 func _build_weapon_step() -> void:
@@ -380,16 +403,21 @@ func _build_preview(title: String, at: Vector2) -> void:
 		_label(title,Vector2(789,407),Vector2(421,71),19 if source_mode == "import" else 24,INK,false,source_mode == "import")
 	else:
 		_label(title,Vector2(283,248),Vector2(420,37),23,INK)
-	if source_mode == "import" and record.get("photo_parts",{}).is_empty():
-		if _matte_image != null:
+	if source_mode == "import" and not _all_photo_cutouts_ready():
+		var preview_image: Image = _source_square if _source_square != null else _matte_image
+		if preview_image != null:
 			var paper_preview := TextureRect.new()
-			paper_preview.position = Vector2(930,483) if step in [0,1] else Vector2(420,315)
-			paper_preview.size = Vector2(175,165) if step in [0,1] else Vector2(220,240)
-			paper_preview.texture = ImageTexture.create_from_image(_matte_image)
+			paper_preview.position = Vector2(931,480) if step in [0,1] else Vector2(415,315)
+			paper_preview.size = Vector2(150,135) if step in [0,1] else Vector2(220,240)
+			paper_preview.texture = ImageTexture.create_from_image(preview_image)
 			paper_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			paper_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 			paper_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			add_child(paper_preview)
+			if step in [0,1]:
+				_label("Whole photo · %d / 6 cutouts ready" % _cutout_progress(),Vector2(789,619),Vector2(430,28),16,MUTED,true)
+		else:
+			_label("Choose a photo to see your whole drawing here.",Vector2(789,500),Vector2(430,42),17,MUTED,true,true)
 		return
 	var data = get_node_or_null("/root/Data")
 	_preview_uses_rig = data != null and data.has_method("custom_definition")
@@ -413,6 +441,71 @@ func _build_preview(title: String, at: Vector2) -> void:
 		_preview_art.pose(0.0,{"grounded":true,"reduced_motion":_reduced_motion()})
 	else:
 		_preview_art.pose_preview({"grounded":true,"reduced_motion":_reduced_motion()})
+
+func _photo_polygon_issue(value: Variant) -> String:
+	if not value is Array or value.size() < 3:
+		return "missing"
+	if value.size() > 128:
+		return "too_many"
+	var polygon := PackedVector2Array()
+	var min_point := Vector2(512.0,512.0)
+	var max_point := Vector2.ZERO
+	for raw_point in value:
+		if not raw_point is Array or raw_point.size() != 2:
+			return "too_small"
+		if not (raw_point[0] is int or raw_point[0] is float) or not (raw_point[1] is int or raw_point[1] is float):
+			return "too_small"
+		var point := Vector2(float(raw_point[0]),float(raw_point[1]))
+		if not is_finite(point.x) or not is_finite(point.y) or point.x < 0.0 or point.y < 0.0 or point.x > 512.0 or point.y > 512.0:
+			return "too_small"
+		polygon.append(point)
+		min_point.x = minf(min_point.x,point.x)
+		min_point.y = minf(min_point.y,point.y)
+		max_point.x = maxf(max_point.x,point.x)
+		max_point.y = maxf(max_point.y,point.y)
+	var twice_area := 0.0
+	for i in polygon.size():
+		twice_area += polygon[i].x * polygon[(i+1)%polygon.size()].y - polygon[(i+1)%polygon.size()].x * polygon[i].y
+	if absf(twice_area) * 0.5 < MIN_CUTOUT_AREA or max_point.x-min_point.x < 6.0 or max_point.y-min_point.y < 6.0:
+		return "too_small"
+	if Geometry2D.triangulate_polygon(polygon).is_empty():
+		return "too_small"
+	return ""
+
+func _cutout_progress() -> int:
+	var polygons: Dictionary = record.get("photo_parts",{}) if record.get("photo_parts",{}) is Dictionary else {}
+	var count := 0
+	for part in PARTS:
+		if _photo_polygon_issue(polygons.get(part,null)).is_empty(): count += 1
+	return count
+
+func _all_photo_cutouts_ready() -> bool:
+	return _cutout_progress() == PARTS.size()
+
+func _next_cutout_name() -> String:
+	var polygons: Dictionary = record.get("photo_parts",{}) if record.get("photo_parts",{}) is Dictionary else {}
+	for i in PARTS.size():
+		if not _photo_polygon_issue(polygons.get(PARTS[i],null)).is_empty():
+			return PART_NAMES[i]
+	return "All done!"
+
+func _cutout_missing_names() -> Array[String]:
+	var missing: Array[String] = []
+	var polygons: Dictionary = record.get("photo_parts",{}) if record.get("photo_parts",{}) is Dictionary else {}
+	for i in PARTS.size():
+		if not _photo_polygon_issue(polygons.get(PARTS[i],null)).is_empty():
+			missing.append(PART_NAMES[i])
+	return missing
+
+func _first_bad_cutout() -> String:
+	var polygons: Dictionary = record.get("photo_parts",{}) if record.get("photo_parts",{}) is Dictionary else {}
+	for part in PARTS:
+		if _photo_polygon_issue(polygons.get(part,null)) in ["too_small","too_many"]:
+			return part
+	for part in PARTS:
+		if not _photo_polygon_issue(polygons.get(part,null)).is_empty():
+			return part
+	return ""
 
 func _configure_preview() -> void:
 	if not is_instance_valid(_preview_art): return
@@ -458,28 +551,59 @@ func _joint_buttons(start_y: int, gap: int) -> void:
 
 func _select_part(value: String) -> void:
 	selected_part = value
+	if source_mode == "import" and step == 1 and _canvas_mode() == "polygon":
+		status = "Trace around the whole %s in your photo." % PART_NAMES[PARTS.find(selected_part)]
 	_build_ui()
 
 func _select_joint(value: String) -> void:
 	selected_joint = value
 	_build_ui()
 
-func _select_color(index: int) -> void:
+func _palette_chip(index: int, at: Vector2, action: Callable, selected: bool) -> void:
+	var chip := Button.new()
+	chip.position = at
+	chip.size = Vector2(37,22)
+	chip.tooltip_text = COLOR_NAMES[index]
+	chip.add_theme_stylebox_override("normal",_style(Color(COLORS[index]),Color("25364b") if selected else Color("aeb9b6"),3 if selected else 1,5))
+	chip.add_theme_stylebox_override("hover",_style(Color(COLORS[index]).lightened(0.16),Color("327e8c"),2,5))
+	chip.add_theme_stylebox_override("pressed",_style(Color(COLORS[index]).darkened(0.08),Color("25364b"),2,5))
+	chip.pressed.connect(action)
+	add_child(chip)
+
+func _color_name(color: Color) -> String:
+	var index := COLORS.find("#" + color.to_html(false))
+	return COLOR_NAMES[index] if index >= 0 else "Custom"
+
+func _select_fighter_color(index: int) -> void:
+	if index < 0 or index >= COLORS.size(): return
+	var ink: String = COLORS[index]
+	if fighter_color.to_html() == Color(ink).to_html(): return
+	_snapshot()
+	fighter_color = Color(COLORS[index])
+	record["color"] = ink
+	for stroke in record.get("strokes", []):
+		if stroke is Dictionary and bool(stroke.get("base_figure", false)):
+			stroke["color"] = ink
+	status = "Base fighter color changed. Pick Pen color separately for new marks."
+	_changed()
+	_build_ui()
+
+func _select_pen_color(index: int) -> void:
 	if index < 0 or index >= COLORS.size(): return
 	var ink: String = COLORS[index]
 	if selected_color.to_html() == Color(ink).to_html(): return
 	_snapshot()
 	selected_color = Color(COLORS[index])
-	record["color"] = ink
-	for stroke in record.get("strokes", []):
-		if stroke is Dictionary and bool(stroke.get("base_figure", false)):
-			stroke["color"] = ink
-	status = "Fighter color changed. New lines use this color too."
+	record["pen_color"] = ink
+	status = "Pen color changed. Your fighter color stays the same."
 	_changed()
 	_build_ui()
 
 func _selected_color_hex() -> String:
 	return "#" + selected_color.to_html(false)
+
+func _fighter_color_hex() -> String:
+	return "#" + fighter_color.to_html(false)
 
 func _set_pen_width(width: int) -> void:
 	pen_width = width
@@ -527,6 +651,10 @@ func _set_photo_tool(value: String) -> void:
 
 func _set_life_tool(value: String) -> void:
 	record["photo_settings"]["life_tool"] = value
+	if value == "polygon":
+		status = "Trace around the whole %s; the preview waits for all six cutouts." % PART_NAMES[PARTS.find(selected_part)]
+	else:
+		status = "Move the bend dots only after all six cutouts are traced."
 	_build_ui()
 
 func _on_paper_edge_toggled(enabled: bool) -> void:
@@ -540,6 +668,7 @@ func _on_paper_edge_toggled(enabled: bool) -> void:
 func _clear_polygon() -> void:
 	_snapshot()
 	record["photo_parts"][selected_part] = []
+	status = "Cleared the %s outline. Trace around the whole part." % PART_NAMES[PARTS.find(selected_part)]
 	_changed()
 	_build_ui()
 
@@ -574,7 +703,8 @@ func _undo() -> void:
 	if _history.is_empty(): return
 	_redo.append(record.duplicate(true))
 	record = _history.pop_back()
-	selected_color = Color(str(record.get("color", COLORS[2])))
+	fighter_color = Color(str(record.get("color", COLORS[2])))
+	selected_color = Color(str(record.get("pen_color", record.get("color", COLORS[2]))))
 	_changed(source_mode == "import")
 	_build_ui()
 
@@ -582,7 +712,8 @@ func _do_redo() -> void:
 	if _redo.is_empty(): return
 	_history.append(record.duplicate(true))
 	record = _redo.pop_back()
-	selected_color = Color(str(record.get("color", COLORS[2])))
+	fighter_color = Color(str(record.get("color", COLORS[2])))
+	selected_color = Color(str(record.get("pen_color", record.get("color", COLORS[2]))))
 	_changed(source_mode == "import")
 	_build_ui()
 
@@ -590,7 +721,7 @@ func _starter() -> void:
 	_snapshot()
 	record["strokes"] = Library.starter_strokes()
 	record["joints"] = Library.default_joints()
-	record["color"] = _selected_color_hex()
+	record["color"] = _fighter_color_hex()
 	for stroke in record["strokes"]:
 		stroke["color"] = record["color"]
 	status = "Starter restored. Undo brings back your last drawing."
@@ -611,7 +742,7 @@ func _tag_legacy_base_strokes() -> void:
 			stroke["base_figure"] = true
 			# Older drafts stored the chosen accent color but left the starter ink
 			# orange. Keep those two values in sync when opening the draft.
-			stroke["color"] = _selected_color_hex()
+			stroke["color"] = _fighter_color_hex()
 			break
 	record["strokes"] = strokes
 
@@ -706,20 +837,24 @@ func _persist() -> String:
 		_show_save_issue("Choose your drawing", "Go to Draw / Import and choose a photo before saving.")
 		return ""
 	if source_mode == "import":
-		var missing: Array[String] = []
-		var polygons: Dictionary = record.get("photo_parts",{})
-		for i in PARTS.size():
-			if not polygons.has(PARTS[i]) or not polygons[PARTS[i]] is Array or polygons[PARTS[i]].size() < 3:
-				missing.append(PART_NAMES[i])
+		var missing := _cutout_missing_names()
 		if not missing.is_empty():
-			selected_part = PARTS[PART_NAMES.find(missing[0])]
+			var first_bad := _first_bad_cutout()
+			selected_part = first_bad if not first_bad.is_empty() else PARTS[PART_NAMES.find(missing[0])]
 			step = 1
 			var photo_settings: Dictionary = record.get("photo_settings", {}) if record.get("photo_settings", {}) is Dictionary else {}
 			photo_settings["life_tool"] = "polygon"
 			record["photo_settings"] = photo_settings
 			var names: String = ", ".join(missing)
-			status = "Cutout shapes: start with %s. Still needed: %s." % [missing[0], names]
-			_show_save_issue("Let's trace your doodle!", "These dots mark bendy joints, like elbows and knees. To make your paper fighter move, trace around each body part with dots along its outside edge. We've switched to Cutout shapes and picked %s for you. Add 3 or more dots around it, then trace the other parts." % missing[0])
+			var current_parts: Dictionary = record.get("photo_parts",{}) if record.get("photo_parts",{}) is Dictionary else {}
+			var issue := _photo_polygon_issue(current_parts.get(selected_part,[]))
+			status = "Cutouts ready: %d / 6. Fix %s first. Still needed: %s." % [_cutout_progress(),PART_NAMES[PARTS.find(selected_part)],names]
+			var instructions := "The Move joints tool only moves bend dots. It does not find body parts. We've switched to Trace cutouts and picked %s. Trace the missing parts with dots along their outside edges. Still needed: %s." % [missing[0],names]
+			if issue == "too_small":
+				instructions = "The %s cutout is too tiny or too narrow to move. Clear this shape, then tap around the whole colored part in your photo. Still needed: %s." % [missing[0],names]
+			elif issue == "too_many":
+				instructions = "The %s has too many dots. Clear this shape, then trace around the whole part with a few dots along its edge. Still needed: %s." % [missing[0],names]
+			_show_save_issue("Let's finish the paper cutouts!",instructions)
 			return ""
 	var library = get_node_or_null("/root/Doodles")
 	if library == null:
