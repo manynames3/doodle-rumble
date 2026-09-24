@@ -29,7 +29,7 @@ func run():
 	game.first.reset_at(Vector2(450,599))
 	game.second.reset_at(Vector2(770,599))
 	check(game.second.definition.id == "h4ck3r","sixth journey inserts H4CK3R at stage five")
-	check(is_equal_approx(game.second.body_scale,game.first.BODY_SCALE*1.25) and is_equal_approx(absf(game.second.rig.scale.x),game.first.BODY_SCALE*1.25),"H4CK3R's body and rig render at 125 percent of standard scale")
+	check(is_equal_approx(game.second.body_scale,game.first.BODY_SCALE*1.25) and is_equal_approx(absf(game.second.rig.scale.x),game.second.body_scale*game.second.VISUAL_SCALE_MULTIPLIER),"H4CK3R keeps his 125 percent combat scale with the shared 15 percent art-size boost")
 	check(is_equal_approx(game.second.hurtbox().size.x,float(game.second.definition.get("hurtbox_width",46))*game.first.BODY_SCALE*1.25),"H4CK3R's hurtbox follows the enlarged body scale")
 	check(not root.get_node("Data").ORDER.has("h4ck3r"),"six selectable fighters remain distinct from story bosses")
 	check(root.get_node("Sound")._music_context == "glitch","H4CK3R receives the unique Glitch stage score")
@@ -182,7 +182,7 @@ func run():
 	check(dark_patterns.size() == 8,"Dark lord delivers all eight distinct attack patterns in the final-stage cycle")
 	check(dark_damage > hacker_damage,"Dark lord exerts more pressure than H4CK3R in the same 40-second passive test")
 	check(is_equal_approx(game.second.body_scale,game.first.body_scale*1.5),"Dark lord body is exactly fifty percent larger")
-	check(is_equal_approx(absf(game.second.rig.scale.x),game.second.body_scale),"Dark lord rig matches his physical scale")
+	check(is_equal_approx(absf(game.second.rig.scale.x),game.second.body_scale*game.second.VISUAL_SCALE_MULTIPLIER),"Dark lord keeps his 50 percent combat scale with the shared 15 percent art-size boost")
 	check(is_equal_approx(game.second.hurtbox().size.y,game.first.hurtbox().size.y*1.5),"Dark lord hurtbox scales with his visible body")
 	check(is_equal_approx(game.second.get_child(0).shape.height,110*game.second.body_scale),"Dark lord collision capsule scales with his body")
 	game.mode = "training"

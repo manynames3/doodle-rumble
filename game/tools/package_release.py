@@ -133,7 +133,7 @@ def sha256_file(file: Path) -> str:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--version", default="0.7.5")
+    parser.add_argument("--version", default="0.7.6")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     if not re.fullmatch(r"\d+\.\d+\.\d+", args.version):

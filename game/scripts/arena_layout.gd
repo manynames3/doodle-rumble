@@ -33,6 +33,11 @@ const DESKTOP_PAD = Rect2(588,574,104,26)
 const QUARRY_BRIDGE_INDEX = 1
 const GLITCH_PADS = [Rect2(156,568,100,32),Rect2(1024,568,100,32)]
 const GLITCH_EXITS = [Vector2(1080,599),Vector2(200,599)]
+# Story-only route cues. Jumping while standing on these marks chooses a
+# harmless movement shortcut; none of them changes attack or damage timing.
+const CANOPY_GUST_PADS = [Rect2(184,458,112,32),Rect2(856,445,112,32)]
+const ARCADE_BUMPER_PADS = [Rect2(176,568,96,32),Rect2(1008,568,96,32)]
+const NETWORK_LIFT_PADS = [Rect2(205,463,112,40),Rect2(733,457,112,40)]
 
 static func get_platforms(kind: String, boss_large: bool = false) -> Array[Rect2]:
 	var source: Array = BOSS_PLATFORMS if boss_large else QUARRY_PLATFORMS if kind == "quarry" else GLITCH_PLATFORMS if kind == "glitch" else STORY_PLATFORMS.get(kind,PLATFORMS)

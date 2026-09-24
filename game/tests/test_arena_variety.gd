@@ -159,6 +159,30 @@ func run() -> void:
 			"defeated": a.health = 0
 		await _step(c,a,b,{"jump":true})
 		check(a.position.x < 300 and c.teleport_cooldown[0] == 0,locked_state+" cannot cancel into teleport")
+	for route_kind in ["canopy","arcade","network"]:
+		await _arena(route_kind)
+		c = Interactions.new()
+		world.add_child(c)
+		c.configure(route_kind,bodies)
+		var pads: Array = c._story_route_pads()
+		check(pads.size()==2,route_kind+" has two signposted movement routes")
+		var pad: Rect2 = pads[0]
+		var surface_y: float = 599.0 if route_kind == "arcade" else Layout.get_platforms(route_kind)[0].position.y
+		var route_events: Array[String] = []
+		c.activated.connect(func(kind: String,_at: Vector2): route_events.append(kind))
+		a = _fighter("orange",pad.get_center().x,surface_y)
+		b = _fighter("blue",1080,599)
+		for i in range(4): await _step(c,a,b)
+		check(a.is_on_floor(),route_kind+" route sits on a solid ledge")
+		await _step(c,a,b,{"jump":true})
+		var expected_kind: String = "gust" if route_kind=="canopy" else "bumper" if route_kind=="arcade" else "data_lift"
+		var expected_y: float = -880.0 if route_kind=="canopy" else -1090.0 if route_kind=="arcade" else -930.0
+		check(a.velocity.y <= expected_y+20.0,route_kind+" jump gives its authored non-damaging lift")
+		check(a.velocity.x > 0,route_kind+" left-side route carries the fighter toward center")
+		check(route_events == [expected_kind],route_kind+" emits one clear activation cue")
+		for i in range(8): await _step(c,a,b,{"jump":true})
+		check(route_events.size()==1,route_kind+" held jump cannot retrigger a route in midair")
+		check(a.health==a.max_health,route_kind+" movement shortcut never deals damage")
 	await _arena("glitch",true)
 	check(bodies.size() == 3,"large boss collision matches its three drawn ledges")
 	for body in bodies:

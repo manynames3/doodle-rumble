@@ -7,6 +7,7 @@ const SPRING_SPEED = -1010.0
 const TELEPORT_COOLDOWN = 2.0
 const BRIDGE_LOAD_TIME = 0.52
 const BRIDGE_REFORM_TIME = 2.25
+const STORY_ROUTE_COOLDOWN = 2.4
 
 var arena_kind = "desktop"
 var boss_large = false
@@ -14,9 +15,13 @@ var platform_bodies: Array = []
 var jump_was_down = [false,false]
 var suppress_jump_until_release = [false,false]
 var spring_pending = [false,false]
+var route_pending = ["",""]
+var route_index = [-1,-1]
+var route_cooldown = [0.0,0.0]
 var teleport_cooldown = [0.0,0.0]
 var flash_time = 0.0
 var flash_at = Vector2.ZERO
+var flash_kind := ""
 var bridge_load = 0.0
 var bridge_gone = 0.0
 var reduced_motion = false
@@ -31,8 +36,12 @@ func reset() -> void:
 	jump_was_down = [false,false]
 	suppress_jump_until_release = [false,false]
 	spring_pending = [false,false]
+	route_pending = ["",""]
+	route_index = [-1,-1]
+	route_cooldown = [0.0,0.0]
 	teleport_cooldown = [0.0,0.0]
 	flash_time = 0.0
+	flash_kind = ""
 	bridge_load = 0.0
 	bridge_gone = 0.0
 	_set_bridge_collision(true)
@@ -52,12 +61,15 @@ func begin_tick(delta: float, fighters: Array, commands: Array) -> Array[Diction
 		var command: Dictionary = commands[i].duplicate()
 		var fighter = fighters[i]
 		teleport_cooldown[i] = maxf(0.0,float(teleport_cooldown[i])-delta)
+		route_cooldown[i] = maxf(0.0,float(route_cooldown[i])-delta)
 		var jump_down: bool = bool(command.get("jump",false))
 		var jump_pressed: bool = jump_down and not bool(jump_was_down[i])
 		jump_was_down[i] = jump_down
 		if not jump_down: suppress_jump_until_release[i] = false
 		if suppress_jump_until_release[i]: command["jump"] = false
 		spring_pending[i] = false
+		route_pending[i] = ""
+		route_index[i] = -1
 		if not boss_large and is_instance_valid(fighter) and fighter.health > 0 and fighter.hurt_time <= 0 and fighter.attack_time < 0 and fighter.dodge_time < 0 and fighter.is_on_floor() and jump_pressed:
 			if arena_kind == "desktop" and Layout.DESKTOP_PAD.has_point(fighter.position):
 				spring_pending[i] = true
@@ -74,6 +86,13 @@ func begin_tick(delta: float, fighters: Array, commands: Array) -> Array[Diction
 						suppress_jump_until_release[i] = true
 						teleport_cooldown[i] = TELEPORT_COOLDOWN
 						_flash("teleport",destination)
+			elif route_cooldown[i] <= 0.0:
+				var pads: Array = _story_route_pads()
+				var pad_index: int = _pad_index_in(pads,fighter.position)
+				if pad_index >= 0:
+					route_pending[i] = arena_kind
+					route_index[i] = pad_index
+					route_cooldown[i] = STORY_ROUTE_COOLDOWN
 		result.append(command)
 	return result
 
@@ -107,11 +126,36 @@ func end_tick(delta: float, fighters: Array) -> void:
 					_flash("crumble",bridge.get_center())
 			else:
 				bridge_load = maxf(0.0,bridge_load-delta*1.5)
+	for i in range(2):
+		if route_pending[i] != "" and fighters[i].velocity.y < 0:
+			var route: String = str(route_pending[i])
+			var index: int = int(route_index[i])
+			var pad: Rect2 = _story_route_pads()[index]
+			var strength: float = -880.0 if route == "canopy" else -1090.0 if route == "arcade" else -930.0
+			var drift: float = 145.0 if route == "canopy" else 245.0 if route == "arcade" else 185.0
+			var toward_center: float = signf(640.0-fighters[i].position.x)
+			fighters[i].velocity.y = strength
+			fighters[i].velocity.x = clampf(fighters[i].velocity.x+toward_center*drift,-520.0,520.0)
+			_flash("gust" if route == "canopy" else "bumper" if route == "arcade" else "data_lift",Vector2(fighters[i].position.x,pad.position.y))
+		route_pending[i] = ""
+		route_index[i] = -1
 	queue_redraw()
 
 func _pad_index(position: Vector2) -> int:
 	for i in range(Layout.GLITCH_PADS.size()):
 		if Layout.GLITCH_PADS[i].has_point(position): return i
+	return -1
+
+func _story_route_pads() -> Array:
+	match arena_kind:
+		"canopy": return Layout.CANOPY_GUST_PADS
+		"arcade": return Layout.ARCADE_BUMPER_PADS
+		"network": return Layout.NETWORK_LIFT_PADS
+	return []
+
+func _pad_index_in(pads: Array, position: Vector2) -> int:
+	for index in range(pads.size()):
+		if pads[index].has_point(position): return index
 	return -1
 
 func _safe_exit(from_index: int, other: Vector2) -> Vector2:
@@ -123,6 +167,7 @@ func _safe_exit(from_index: int, other: Vector2) -> Vector2:
 	return Vector2.ZERO
 
 func _flash(kind: String, at: Vector2) -> void:
+	flash_kind = kind
 	flash_at = at
 	flash_time = 0.36
 	activated.emit(kind,at)
@@ -131,6 +176,6 @@ func _flash(kind: String, at: Vector2) -> void:
 func _draw() -> void:
 	if flash_time <= 0 or reduced_motion: return
 	var progress = 1.0-flash_time/0.36
-	var color = Color("f4ca78") if arena_kind == "desktop" else Color("f2d47d") if arena_kind == "quarry" else Color("e18cff")
+	var color = Color("b9f69a") if flash_kind == "gust" else Color("ffd15e") if flash_kind == "bumper" else Color("6cedf2") if flash_kind == "data_lift" else Color("f4ca78") if arena_kind == "desktop" else Color("f2d47d") if arena_kind == "quarry" else Color("e18cff")
 	for ring in range(2):
 		draw_arc(flash_at,22+progress*42+ring*17,0,TAU,28,Color(color,(1-progress)*(0.42-ring*0.17)),2.6,true)

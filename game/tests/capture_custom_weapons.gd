@@ -331,7 +331,7 @@ func run() -> void:
 	_build_contact(drawn_id,photo_id)
 	await _save_viewport(contact,"custom_fighters_six_poses.png")
 	check(contact_rigs[0].custom_art.get_node("PaperCutout").material == null,"drawn fighter skips the paper shader")
-	check(contact_rigs[0].custom_art.get_node("PosedCutoutComposite").render_target_update_mode == SubViewport.UPDATE_ONCE,"posed cutout updates only when requested")
+	check(contact_rigs[0].custom_art.get_node("PosedCutoutComposite").render_target_update_mode == SubViewport.UPDATE_DISABLED,"drawn art skips the unused photo composite pass")
 	_photo_pixels_preserved(contact_rigs[1])
 	# Free every contact-sheet rig and its nested art viewport before the timing
 	# loop. UPDATE_DISABLED on the parent alone does not stop those children.

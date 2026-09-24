@@ -69,8 +69,30 @@ func run() -> void:
 		quit(1)
 		return
 	art.pose_preview()
+	var drawn_record: Dictionary = record_library.new_record()
+	drawn_record.name = "Cache QA"
+	var first_drawn := Art.new()
+	canvas.add_child(first_drawn)
+	first_drawn.configure(drawn_record)
+	for _frame in 32: await process_frame
+	var cache: Dictionary = root.get_meta("custom_art_texture_cache",{})
+	var cached_entry: Dictionary = cache.get(first_drawn._art_cache_key,{})
+	var baked_segments := 0
+	for key in cached_entry.keys():
+		if key != "_strokes_by_segment": baked_segments += 1
+	var all_visible := true
+	for node in first_drawn._segment_nodes.values(): all_visible = all_visible and node.visible
+	var second_drawn := Art.new()
+	canvas.add_child(second_drawn)
+	second_drawn.configure(drawn_record)
+	var reused_pages := second_drawn._static_viewports.is_empty()
+	for node in second_drawn._segment_nodes.values(): reused_pages = reused_pages and node.visible
+	if baked_segments < 6 or not all_visible or not reused_pages:
+		push_error("Custom segment cache did not finish and reuse the drawn fighter pages")
+		quit(1)
+		return
 	if DisplayServer.get_name() == "headless":
-		print("CUSTOM_ART_TEST_RESULT checks=4 failures=0 geometry=pass source_photo=pass render=requires_display")
+		print("CUSTOM_ART_TEST_RESULT checks=12 failures=0 geometry=pass source_photo=pass segment_cache=pass render=requires_display")
 		canvas.queue_free()
 		record_library.free()
 		root.get_node("Sound").shutdown()

@@ -26,6 +26,7 @@ The art has grown alongside the game. Illustrated backgrounds set the scene; ink
 | Making the finale feel final | Pac-Man's runtime poses now keep his single-eye silhouette. Dark lord has eight telegraphed attack patterns, a stronger damage tier, and three new signature hazards with much larger purple effects. |
 | Doodle Workshop | Draw or import a paper character, pose its head, body and limbs, preview movement, and choose from six weapon kits. Custom fighters can enter Story, Quick Match, 2P Battle and Practice, with six local save slots and an optional paper-white edge. |
 | Latest Workshop tune-up | The starter figure can now change color without recoloring a child's other marks. Imported-photo saves guide players to missing cutout shapes, and **Save fighter** stays in the Workshop while **Save & Fight!** continues to battle. |
+| Poster-to-gameplay pass | Fighters are more prominent in the arena, top HUD marks use rougher ink, and opening control prompts fade so the fight owns the screen. Three story worlds now include harmless, scene-themed jump routes. Custom art is cached across selection and combat instead of building both detailed fighters at once. |
 
 The best design test is still the original one: does it feel like the kids' drawing came alive, and do they want another round?
 
@@ -71,13 +72,11 @@ These are native captures from the running Godot project, after the nine new pac
 
 ## Play on a Mac
 
-The public GitHub repository includes the **v0.7.5** source and Doodle Workshop updates, including six custom weapon kits and platform-aware special attacks. Imported fighters have a working white cutout-edge switch, and custom artwork is cached as articulated pieces so detailed drawings animate smoothly in matches. Photo imports now explain unfinished cutouts; **Save fighter** saves and stays in the Workshop, while **Save & Fight!** saves and continues to battle. Generated `.app` bundles and ZIP archives stay out of Git history. The newest prebuilt GitHub download remains [v0.6.10](https://github.com/manynames3/doodle-rumble/releases/tag/v0.6.10); this repository update is source and documentation, not a new downloadable release. See [the v0.7.5 verification report](docs/TESTING_0_7_5.md) or run the project in Godot 4.7.2.
+The **v0.7.6** source and matching Mac build include the Doodle Workshop, six custom weapon kits, platform-aware specials, and the latest visual/performance pass. Custom character art is cached as articulated pieces and reused between selection and matches. The Mac download and complete Godot project are available from the [v0.7.6 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.6). See the [v0.7.6 verification report](docs/TESTING_0_7_6.md) or run the project in Godot 4.7.2.
 
-The v0.7.5 Universal Mac app is available in the developer workspace, but this GitHub update publishes source and documentation only. Mac app downloads are attached to GitHub releases.
+Download and extract `Doodle_Rumble_Mac_v0.7.6.zip`, then double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly before the title menu. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default. The separate `Doodle_Rumble_Project_v0.7.6.zip` contains the complete Godot project for editing or running from source.
 
-To run the latest published prebuilt app, open the extracted `Doodle_Rumble_Mac_v0.6.10` folder and double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly, then the title menu opens. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default.
-
-The developer-workspace v0.7.5 build is a Universal arm64/x86_64 app, locally ad-hoc signed and not Apple-notarized. macOS may require **System Settings → Privacy & Security → Open Anyway** after a transfer.
+This Universal arm64/x86_64 build is ad-hoc signed and not Apple-notarized. macOS may require **System Settings → Privacy & Security → Open Anyway** after a transfer.
 
 ## Run from source
 
@@ -136,7 +135,7 @@ Settings supports remapping, available controllers, music/effects volume, reduce
 
 Workshop verification covers library recovery, kit combat, custom-versus-custom selection, story continuation, local photo import and the animated paper perimeter. Native captures and measured rendering checks are recorded separately from headless logic tests. These source changes are pushed to GitHub; no new downloadable release is created by this update.
 
-See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_7_5.md`](docs/TESTING_0_7_5.md) for the latest test evidence. Physical controller behavior, Intel execution, transferred first launch, audio hardware and family playtesting still need verification on those devices.
+See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation list and [`docs/TESTING_0_7_6.md`](docs/TESTING_0_7_6.md) for the latest test evidence. The project owner reports that family playtesting is complete; physical controller behavior, Intel execution, transferred first launch and external audio hardware still need verification.
 
 ## Repository map
 

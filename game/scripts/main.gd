@@ -13,7 +13,6 @@ const Arena = preload("res://scripts/arena_art.gd")
 const ArenaInteractions = preload("res://scripts/arena_interactions.gd")
 const ArenaLayout = preload("res://scripts/arena_layout.gd")
 const Foreground = preload("res://scripts/foreground_props.gd")
-const Rig = preload("res://scripts/fighter_rig.gd")
 const Juice = preload("res://scripts/juice.gd")
 const Hazards = preload("res://scripts/hazards.gd")
 const InkHUD = preload("res://scripts/ink_hud.gd")
@@ -162,7 +161,8 @@ func _rebuild_platforms() -> void:
 	interactions.configure(arena_kind,platform_bodies,large_boss)
 
 func _on_arena_interaction(kind: String, at: Vector2) -> void:
-	Sound.play("jump" if kind == "spring" else "signal" if kind == "teleport" else "hammer")
+	var cue: String = "jump" if kind in ["spring","gust"] else "signal" if kind in ["teleport","data_lift"] else "hammer" if kind in ["crumble","bumper"] else "special"
+	Sound.play(cue)
 	juice.dust(at)
 
 func _notification(what: int) -> void:
@@ -253,13 +253,13 @@ func _button(parent: Node, value: String, rect: Rect2, callback: Callable, fill:
 	return button
 
 func _portrait(parent: Node, id: String, at: Vector2, size_scale: float = 1.0, facing: int = 1):
-	var rig = Rig.new()
+	# Story panels use full-size animated portraits. The tiny match HUD instead
+	# draws an ink icon so it never instantiates a second custom-art renderer.
+	var rig = load("res://scripts/fighter_rig.gd").new()
 	rig.position = at
 	rig.scale = Vector2(size_scale * facing,size_scale)
 	parent.add_child(rig)
 	rig.configure(Data.fighter(id))
-	# HUD portraits are tiny and stationary. Animating a second full rig for
-	# each combatant doubles custom-art compositing during every match.
 	rig.preview = false
 	rig.pose(0,{"grounded":true,"facing":facing,"reduced_motion":Settings.reduced_motion})
 	return rig
@@ -660,8 +660,6 @@ func build_hud() -> void:
 	for i in range(2):
 		var x = 66 if i == 0 else 824
 		var fighter = first if i == 0 else second
-		if bool(fighter.definition.get("custom",false)):
-			_portrait(ui,str(fighter.definition.id),Vector2(38 if i==0 else 1240,66),0.28,1 if i==0 else -1)
 		var identity = "  /  YOU" if i == 0 and mode != "local" else "  /  P%d" % (i+1) if mode == "local" else "  /  DUMMY" if mode == "training" else ""
 		var name_label = _text(ui,fighter.definition.name.to_upper() + identity,Rect2(x,12,390,26),19)
 		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -744,7 +742,7 @@ func _update_hud() -> void:
 		hint_label.text = "NO PRESSURE. EXPERIMENT AWAY."
 	else:
 		hint_label.text = "JUMP THE WAVE. WATCH THE FLOOR." if selected[1] == "dark_lord" else "SIDESTEP THE CURSOR. JUMP THE INK!" if selected[1] == "h4ck3r" else "WATCH THE MOUTH. HOP OVER THE CHARGE!" if selected[1] == "pac_man" else ("Hold attack to repeat. Jump + hit: air move. Dodge to counter!" if Settings.hold_to_attack else "Press attack to swing. Jump + hit: air move. Dodge to counter!")
-	var note_alpha = clampf(1.0 - (Time.get_ticks_msec() - hud_note_started_at - 4200.0) / 2200.0,0.0,1.0)
+	var note_alpha = 1.0 if mode == "training" else clampf(1.0 - (Time.get_ticks_msec() - hud_note_started_at - 4300.0) / 1500.0,0.0,1.0)
 	hint_label.modulate.a = note_alpha
 	for prompt in prompts: prompt.modulate.a = note_alpha
 	if countdown_label:

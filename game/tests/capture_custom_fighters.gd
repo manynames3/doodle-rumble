@@ -169,6 +169,22 @@ func _build_contact(drawn_id: String, photo_id: String) -> void:
 			for _step in 24: rig.pose(1.0/60.0,state)
 			contact_rigs.append(rig)
 			check(rig.custom_art != null and rig.custom_art.is_rendering(),"custom art rendered in " + POSES[column])
+	# Let the globally budgeted source-art pages finish before saving the sheet;
+	# screenshot QA should judge a complete pose rather than its loading frames.
+	var bake_waited := 0
+	for _frame in 480:
+		bake_waited = _frame + 1
+		await process_frame
+		var pending: bool = not root.get_meta("custom_art_bake_queue",[]).is_empty()
+		# SceneTree group scans omit nodes inside secondary SubViewports on some
+		# renderers. The rigs list is authoritative for this contact sheet.
+		for rig in contact_rigs:
+			var art: Node = rig.custom_art
+			if not is_instance_valid(art): continue
+			pending = pending or not art._awaiting_page_reveals.is_empty()
+			for node in art._segment_nodes.values(): pending = pending or not node.visible
+		if not pending: break
+	print("CUSTOM_BAKE_WAIT frames=",bake_waited," rigs=",contact_rigs.size()," queue=",root.get_meta("custom_art_bake_queue",[]).size())
 
 func _photo_pixels_preserved(photo_rig: Node2D) -> void:
 	var art: Node2D = photo_rig.custom_art
@@ -290,10 +306,10 @@ func run() -> void:
 		return
 	check(root.get_node("Doodles").get_record(drawn_id).strokes[-1].get("detail",false),"detail metadata survives save")
 	check(root.get_node("Doodles").get_record(photo_id).photo_parts.size() == PARTS.size(),"all six photo parts survive save")
-	_build_contact(drawn_id,photo_id)
+	await _build_contact(drawn_id,photo_id)
 	await _save_viewport(contact,"custom_fighters_six_poses.png")
 	check(contact_rigs[0].custom_art.get_node("PaperCutout").material == null,"drawn fighter skips the paper shader")
-	check(contact_rigs[0].custom_art.get_node("PosedCutoutComposite").render_target_update_mode == SubViewport.UPDATE_ONCE,"posed cutout updates only when requested")
+	check(contact_rigs[0].custom_art.get_node("PosedCutoutComposite").render_target_update_mode == SubViewport.UPDATE_DISABLED,"drawn art skips the unused photo composite pass")
 	_photo_pixels_preserved(contact_rigs[1])
 	# Free every contact-sheet rig and its nested art viewport before the timing
 	# loop. UPDATE_DISABLED on the parent alone does not stop those children.

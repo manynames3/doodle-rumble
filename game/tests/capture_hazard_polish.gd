@@ -28,7 +28,10 @@ func run() -> void:
 	game.optional_hazards = false
 	await _scene("canopy", ["orange","green"], "paper_swarm", 640, "hazard_canopy_warning_after.png")
 	await _scene("canopy", ["orange","green"], "paper_swarm", 640, "hazard_canopy_active_after.png", 1.67)
+	await _scene("canopy", ["orange","green"], "", 640, "story_route_canopy.png")
+	await _scene("arcade", ["orange","blue"], "", 640, "story_route_arcade.png")
 	await _scene("network", ["orange","purple"], "circuit_zip", 837, "hazard_network_warning_after.png")
+	await _scene("network", ["orange","purple"], "", 640, "story_route_network.png")
 	await _scene("quarry", ["blue","red"], "eraser_drop", 640, "hazard_quarry_warning_after.png")
 	game.queue_free()
 	await process_frame
@@ -43,8 +46,9 @@ func _scene(arena: String, fighters: Array, kind: String, x: float, filename: St
 	game.first.reset_at(Vector2(410,599))
 	game.second.reset_at(Vector2(862,599))
 	game.hazards.clear()
-	game.hazards.mark_target(x,0,kind)
-	game.hazards.marks[0].age = age
+	if not kind.is_empty():
+		game.hazards.mark_target(x,0,kind)
+		game.hazards.marks[0].age = age
 	game.hazards.queue_redraw()
 	game.hazards.warning_overlay.queue_redraw()
 	for frame in range(6): await process_frame

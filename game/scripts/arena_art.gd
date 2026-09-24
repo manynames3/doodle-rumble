@@ -48,7 +48,9 @@ func _draw() -> void:
 		_draw_boss_platforms()
 		return
 	match arena_kind:
-		"canopy","arcade","network": _draw_story_platforms()
+		"canopy","arcade","network":
+			_draw_story_platforms()
+			_draw_story_route_cues()
 		"quarry": _draw_quarry_platforms()
 		"glitch": _draw_glitch_platforms()
 		_: _draw_desktop_platforms()
@@ -265,3 +267,38 @@ func _draw_story_platforms() -> void:
 					var nx = rect.position.x+24+j*(rect.size.x-48)/3.0
 					draw_polyline(PackedVector2Array([Vector2(nx,rect.position.y+23),Vector2(nx+6,rect.position.y+16),Vector2(nx+16,rect.position.y+16)]),Color("80dce2",0.65),1.2,false)
 					draw_circle(Vector2(nx+17,rect.position.y+16),1.7,Color("f2bd90",0.8))
+
+func _draw_story_route_cues() -> void:
+	match arena_kind:
+		"canopy":
+			for index in range(ArenaLayout.CANOPY_GUST_PADS.size()):
+				var pad: Rect2 = ArenaLayout.CANOPY_GUST_PADS[index]
+				var center := Vector2(pad.get_center().x,pad.position.y-8.0)
+				var direction := -1.0 if index == 0 else 1.0
+				for line in range(3):
+					var from := center+Vector2(-16.0,5.0+line*4.0)
+					var to := from+Vector2(direction*(19.0+line*4.0),-5.0)
+					_rough_line(from,to,Color("c8f29b",0.78-float(line)*0.14),1.7,float(index*7+line),5)
+				draw_string(HandFont,center+Vector2(-49,-13),"JUMP: CATCH WIND",HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("e1f2b5"))
+		"arcade":
+			for index in range(ArenaLayout.ARCADE_BUMPER_PADS.size()):
+				var pad: Rect2 = ArenaLayout.ARCADE_BUMPER_PADS[index]
+				var center := Vector2(pad.get_center().x,594.0)
+				draw_arc(center,16.0,PI,TAU,18,Color("ff9cce",0.8),3.0,true)
+				draw_arc(center,10.0,PI,TAU,16,Color("ffe37d",0.9),2.0,true)
+				var direction: float = 1.0 if index == 0 else -1.0
+				var arrow := PackedVector2Array([center+Vector2(-5,9),center+Vector2(direction,-9),center+Vector2(direction*8,-1)])
+				_rough_line(arrow[0],arrow[1],Color("ffe37d"),2.0,float(index+31),4)
+				_rough_line(arrow[1],arrow[2],Color("ffe37d"),2.0,float(index+37),3)
+				draw_string(HandFont,center+Vector2(-48,-22),"JUMP: BUMPER",HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("ffe7a0"))
+		"network":
+			for index in range(ArenaLayout.NETWORK_LIFT_PADS.size()):
+				var pad: Rect2 = ArenaLayout.NETWORK_LIFT_PADS[index]
+				var center := Vector2(pad.get_center().x,pad.position.y-7.0)
+				for stripe in range(4):
+					var x := pad.position.x+11.0+stripe*20.0
+					draw_rect(Rect2(x,pad.position.y+7.0,11,3),Color("70eff3",0.42+float((stripe+index)%2)*0.22))
+				var arrow := PackedVector2Array([center+Vector2(-5,7),center+Vector2(0,-8),center+Vector2(5,7)])
+				_rough_line(arrow[0],arrow[1],Color("9affff",0.88),2.0,float(index+51),4)
+				_rough_line(arrow[1],arrow[2],Color("9affff",0.88),2.0,float(index+57),4)
+				draw_string(HandFont,center+Vector2(-42,-16),"JUMP: DATA LIFT",HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("a5f9f5"))

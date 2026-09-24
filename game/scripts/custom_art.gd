@@ -12,6 +12,8 @@ const PAPER_SHADER = preload("res://assets/shaders/custom_paper_edge.gdshader")
 const PARTS := ["left_leg", "right_leg", "left_arm", "body", "head", "right_arm"]
 const SEGMENTS := ["left_leg_proximal", "left_leg_distal", "right_leg_proximal", "right_leg_distal",
 	"left_arm_proximal", "left_arm_distal", "body", "head", "right_arm_proximal", "right_arm_distal"]
+const BAKE_ORDER := ["head", "body", "right_arm_distal", "right_arm_proximal", "left_arm_distal", "left_arm_proximal",
+	"right_leg_distal", "right_leg_proximal", "left_leg_distal", "left_leg_proximal"]
 
 class Painter extends Node2D:
 	var art: Node2D
@@ -42,20 +44,157 @@ var _strokes_by_segment: Dictionary = {}
 var _deform_transforms: Dictionary = {}
 var _static_viewports: Array[SubViewport] = []
 var _segment_nodes: Dictionary = {}
-var _bake_warmup_frames := 0
+var _awaiting_page_reveals: Array[Dictionary] = []
+var _art_cache_key := ""
 
 func _ready() -> void:
+	add_to_group("custom_art_live")
 	_ensure_nodes()
 	if not record.is_empty(): pose_preview()
-	if _bake_warmup_frames == 0: set_process(false)
+	if _segment_nodes.is_empty(): set_process(false)
 
 func _process(_delta: float) -> void:
-	# A composite can sample a freshly added SubViewport before its cached
-	# texture has rendered. Refresh only during the first three display frames.
-	if _bake_warmup_frames > 0:
-		_bake_warmup_frames -= 1
+	if not is_inside_tree():
+		set_process(false)
+		return
+	# Bake only one page across every custom fighter per rendered frame. Concurrent
+	# updates were the source of entry spikes when two detailed drawings fought.
+	var changed := false
+	for i in range(_awaiting_page_reveals.size()-1,-1,-1):
+		var reveal: Dictionary = _awaiting_page_reveals[i]
+		if Engine.get_process_frames() <= int(reveal.frame): continue
+		var segment_node = reveal.node.get_ref()
+		var page = reveal.page.get_ref()
+		if is_instance_valid(segment_node) and is_instance_valid(page):
+			segment_node.visible = true
+			_store_cached_page(str(reveal.segment),page)
+			changed = true
+		_awaiting_page_reveals.remove_at(i)
+	if changed and _photo != null:
 		_request_draw()
-	if _bake_warmup_frames == 0: set_process(false)
+	if _photo != null and _awaiting_page_reveals.is_empty() and not _has_queued_pages():
+		_sprite.visible = true
+		_request_draw()
+	_bake_next_shared_page()
+	if _awaiting_page_reveals.is_empty() and not _has_queued_pages():
+		set_process(false)
+
+func _has_queued_pages() -> bool:
+	var queue: Array = get_tree().root.get_meta("custom_art_bake_queue", [])
+	for job in queue:
+		var owner = job.owner.get_ref()
+		if is_instance_valid(owner) and not owner.is_queued_for_deletion() and owner == self: return true
+	return false
+
+func _cache_root() -> Node:
+	var tree_root := get_tree().root
+	var cache_root := tree_root.get_node_or_null("CustomArtRuntimeCache")
+	if cache_root == null:
+		cache_root = Node.new()
+		cache_root.name = "CustomArtRuntimeCache"
+		tree_root.add_child(cache_root)
+	return cache_root
+
+func _texture_cache() -> Dictionary:
+	var tree_root := get_tree().root
+	if not tree_root.has_meta("custom_art_texture_cache"):
+		tree_root.set_meta("custom_art_texture_cache",{})
+	return tree_root.get_meta("custom_art_texture_cache")
+
+func _make_art_cache_key() -> String:
+	var settings: Dictionary = record.get("photo_settings",{}) if record.get("photo_settings",{}) is Dictionary else {}
+	var photo_path := str(record.get("photo_path",""))
+	if photo_path.is_empty(): photo_path = str(settings.get("matte_path",""))
+	return "%s:%s:%s:%s:%s:%s:%s" % [str(record.get("id","")),str(hash(record.get("strokes",[]))),photo_path,str(hash(record.get("photo_parts",{}))),str(hash(record.get("joints",{}))),str(bool(settings.get("paper_edge",true))),str(canvas_padding_px)]
+
+func _cached_page(segment: String) -> SubViewport:
+	var entry: Dictionary = _texture_cache().get(_art_cache_key,{})
+	var page = entry.get(segment)
+	return page as SubViewport if is_instance_valid(page) else null
+
+func _store_cached_page(segment: String, page: SubViewport) -> void:
+	if not is_instance_valid(page): return
+	var cache := _texture_cache()
+	var entry: Dictionary = cache.get(_art_cache_key,{})
+	var existing = entry.get(segment)
+	if is_instance_valid(existing) and existing != page:
+		var image: Sprite2D = _segment_nodes[segment].get_child(0)
+		image.texture = existing.get_texture()
+		if page in _static_viewports: _static_viewports.erase(page)
+		page.queue_free()
+		page = existing
+	else:
+		page.render_target_update_mode = SubViewport.UPDATE_DISABLED
+		var painter := page.get_child(0)
+		if is_instance_valid(painter): painter.queue_free()
+		page.reparent(_cache_root())
+		page.name = "Art_%s_%s" % [str(record.get("id","fighter")).validate_filename(),str(absi(hash(segment)))]
+		if page in _static_viewports: _static_viewports.erase(page)
+	entry[segment] = page
+	cache[_art_cache_key] = entry
+	get_tree().root.set_meta("custom_art_texture_cache",cache)
+	_evict_old_cache_entries()
+
+func _evict_old_cache_entries() -> void:
+	var cache := _texture_cache()
+	if cache.size() <= 8: return
+	var active_keys: Array[String] = []
+	for art in get_tree().get_nodes_in_group("custom_art_live"):
+		if is_instance_valid(art) and not art.is_queued_for_deletion() and not str(art._art_cache_key).is_empty():
+			active_keys.append(str(art._art_cache_key))
+	for key in cache.keys():
+		if cache.size() <= 8: break
+		if key == _art_cache_key or key in active_keys: continue
+		var entry: Dictionary = cache[key]
+		for cached in entry.values():
+			if is_instance_valid(cached): cached.queue_free()
+		cache.erase(key)
+	get_tree().root.set_meta("custom_art_texture_cache",cache)
+
+func _bake_next_shared_page() -> void:
+	var tree_root := get_tree().root
+	var frame := Engine.get_process_frames()
+	if int(tree_root.get_meta("custom_art_bake_frame", -1)) == frame: return
+	var queue: Array = tree_root.get_meta("custom_art_bake_queue", [])
+	for i in range(queue.size()-1,-1,-1):
+		var stale: Dictionary = queue[i]
+		var stale_owner = stale.owner.get_ref()
+		var stale_page = stale.page.get_ref()
+		var stale_node = stale.node.get_ref()
+		if not is_instance_valid(stale_owner) or not stale_owner.is_inside_tree() or stale_owner.is_queued_for_deletion() or not is_instance_valid(stale_page) or not is_instance_valid(stale_node):
+			queue.remove_at(i)
+	tree_root.set_meta("custom_art_bake_queue",queue)
+	if queue.is_empty(): return
+	var last_owner: int = int(tree_root.get_meta("custom_art_bake_last_owner", -1))
+	var job_index := 0
+	for i in range(queue.size()):
+		var candidate_owner = queue[i].owner.get_ref()
+		if is_instance_valid(candidate_owner) and candidate_owner.get_instance_id() != last_owner:
+			job_index = i
+			break
+	var job: Dictionary = queue.pop_at(job_index)
+	tree_root.set_meta("custom_art_bake_queue", queue)
+	tree_root.set_meta("custom_art_bake_frame", frame)
+	var owner = job.owner.get_ref()
+	var page = job.page.get_ref()
+	var segment_node = job.node.get_ref()
+	if not is_instance_valid(owner) or not is_instance_valid(page) or not is_instance_valid(segment_node): return
+	var cached: SubViewport = owner._cached_page(str(job.segment))
+	if is_instance_valid(cached):
+		owner._use_cached_page(str(job.segment),cached,page)
+		tree_root.set_meta("custom_art_bake_last_owner",owner.get_instance_id())
+		return
+	page.render_target_update_mode = SubViewport.UPDATE_ONCE
+	tree_root.set_meta("custom_art_bake_last_owner", owner.get_instance_id())
+	owner._awaiting_page_reveals.append({"page":weakref(page),"node":weakref(segment_node),"segment":str(job.segment),"frame":frame})
+
+func _use_cached_page(segment: String, cached: SubViewport, duplicate_page: SubViewport) -> void:
+	if not is_instance_valid(cached) or not _segment_nodes.has(segment): return
+	var image: Sprite2D = _segment_nodes[segment].get_child(0)
+	image.texture = cached.get_texture()
+	_segment_nodes[segment].visible = true
+	if duplicate_page in _static_viewports: _static_viewports.erase(duplicate_page)
+	if is_instance_valid(duplicate_page): duplicate_page.queue_free()
 
 func _ensure_nodes() -> void:
 	if _viewport != null: return
@@ -97,8 +236,8 @@ func refresh_art() -> void:
 	_request_draw()
 
 func _request_draw() -> void:
-	if _painter == null or _viewport == null: return
-	if _photo != null: _painter.queue_redraw()
+	if _photo == null or _painter == null or _viewport == null: return
+	_painter.queue_redraw()
 	_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 
 func configure(value: Dictionary) -> void:
@@ -125,6 +264,8 @@ func configure(value: Dictionary) -> void:
 			_photo = ImageTexture.create_from_image(image)
 	var photo_settings: Dictionary = record.get("photo_settings", {}) if record.get("photo_settings", {}) is Dictionary else {}
 	margin_world_px = 2.5 if bool(photo_settings.get("paper_edge", true)) else 0.0
+	_sprite.visible = false
+	_art_cache_key = _make_art_cache_key()
 	_build_photo_geometry()
 	_prepare_render_strokes()
 	_rebuild_static_parts()
@@ -220,6 +361,11 @@ func _bone_transform(start_key: String, end_key: String) -> Transform2D:
 
 func _prepare_render_strokes() -> void:
 	_strokes_by_segment.clear()
+	var cached_entry: Dictionary = _texture_cache().get(_art_cache_key,{})
+	var cached_strokes: Variant = cached_entry.get("_strokes_by_segment",{})
+	if cached_strokes is Dictionary and not cached_strokes.is_empty():
+		_strokes_by_segment = cached_strokes
+		return
 	var strokes: Variant = record.get("strokes", [])
 	if not strokes is Array: return
 	for stroke in strokes:
@@ -254,6 +400,11 @@ func _prepare_render_strokes() -> void:
 				current_distal = next_distal
 			path.append(points[index])
 		_add_static_stroke(_segment_key(part,current_distal),path,color,width)
+	var cache := _texture_cache()
+	var entry: Dictionary = cache.get(_art_cache_key,{})
+	entry["_strokes_by_segment"] = _strokes_by_segment
+	cache[_art_cache_key] = entry
+	get_tree().root.set_meta("custom_art_texture_cache",cache)
 
 func _add_static_stroke(segment: String, path: PackedVector2Array, color: Color, width: float) -> void:
 	if path.size() < 2: return
@@ -282,25 +433,36 @@ func _rebuild_static_parts() -> void:
 	for viewport in _static_viewports:
 		if is_instance_valid(viewport): viewport.queue_free()
 	_static_viewports.clear()
+	_awaiting_page_reveals.clear()
 	if _viewport == null or record.is_empty(): return
+	_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE if _photo != null else SubViewport.UPDATE_DISABLED
 	var page_size := Vector2i(roundi((CANVAS+canvas_padding_px*2.0)*RENDER_SCALE),roundi((CANVAS+canvas_padding_px*2.0)*RENDER_SCALE))
+	var pages_by_segment: Dictionary = {}
+	var pending_segments: Dictionary = {}
 	for segment in SEGMENTS:
 		if not _strokes_by_segment.has(segment) and not _has_photo_segment(segment): continue
-		var page := SubViewport.new()
-		page.name = "Cached_" + segment
-		page.size = page_size
-		page.transparent_bg = true
-		page.disable_3d = true
-		page.render_target_update_mode = SubViewport.UPDATE_ONCE
-		add_child(page)
-		var painter := StaticPainter.new()
-		painter.art = self
-		painter.segment = segment
-		page.add_child(painter)
-		_static_viewports.append(page)
+		var page := _cached_page(segment)
+		var cached := is_instance_valid(page)
+		if not cached:
+			page = SubViewport.new()
+			page.name = "Cached_" + segment
+			page.size = page_size
+			page.transparent_bg = true
+			page.disable_3d = true
+			page.render_target_update_mode = SubViewport.UPDATE_DISABLED
+			add_child(page)
+			_static_viewports.append(page)
+			pending_segments[segment] = true
+		pages_by_segment[segment] = page
+		if not cached:
+			var painter := StaticPainter.new()
+			painter.art = self
+			painter.segment = segment
+			page.add_child(painter)
 		var bone := Node2D.new()
 		bone.name = "Posed_" + segment
-		_viewport.add_child(bone)
+		bone.visible = cached
+		(_viewport if _photo != null else self).add_child(bone)
 		var image := Sprite2D.new()
 		image.texture = page.get_texture()
 		image.centered = false
@@ -310,8 +472,18 @@ func _rebuild_static_parts() -> void:
 		bone.add_child(image)
 		_segment_nodes[segment] = bone
 	_sync_segment_transforms()
-	_bake_warmup_frames = 3
-	set_process(true)
+	var tree_root := get_tree().root
+	var queue: Array = tree_root.get_meta("custom_art_bake_queue", [])
+	queue = queue.filter(func(job): return is_instance_valid(job.owner.get_ref()) and job.owner.get_ref() != self)
+	for segment in BAKE_ORDER:
+		if not pending_segments.has(segment): continue
+		queue.append({"owner":weakref(self),"page":weakref(pages_by_segment[segment]),"node":weakref(_segment_nodes[segment]),"segment":segment})
+	tree_root.set_meta("custom_art_bake_queue",queue)
+	var has_pending := not pending_segments.is_empty()
+	if _photo != null and not has_pending:
+		_sprite.visible = true
+		_request_draw()
+	set_process(has_pending)
 
 func _has_photo_segment(segment: String) -> bool:
 	if _photo == null: return false
@@ -325,7 +497,7 @@ func _sync_segment_transforms() -> void:
 	var viewport_from_local := Transform2D(Vector2(factor,0),Vector2(0,factor),Vector2(256+canvas_padding_px,FEET_Y+canvas_padding_px)*RENDER_SCALE)
 	for segment in _segment_nodes:
 		if _deform_transforms.has(segment):
-			_segment_nodes[segment].transform = viewport_from_local * _deform_transforms[segment]
+			_segment_nodes[segment].transform = viewport_from_local * _deform_transforms[segment] if _photo != null else _deform_transforms[segment]
 
 func pose_preview(state: Dictionary = {}) -> void:
 	_state = state.duplicate()

@@ -37,6 +37,7 @@ func run() -> void:
 	game.second.reset_at(Vector2(856,599))
 	game.first.rig.pose(0.016,{"grounded":true,"facing":1,"attack_progress":0.35,"attack_windup_ratio":0.20,"attack_active_ratio":0.45,"special":true,"reduced_motion":false})
 	game.second.rig.pose(0.016,{"grounded":true,"facing":-1,"reduced_motion":false})
+	game.hud_note_started_at = Time.get_ticks_msec()-6000
 	await _save("fighter_match_spin.png")
 	game.selected = ["purple","red"]
 	game.start_match()
@@ -46,6 +47,7 @@ func run() -> void:
 	game.second.reset_at(Vector2(856,599))
 	game.first.rig.pose(0.016,{"grounded":true,"facing":1,"dodging":true,"dodge_progress":0.35,"shield_guard":true,"shield_perfect":true,"shield_progress":0.45,"reduced_motion":false})
 	game.second.rig.pose(0.016,{"grounded":true,"facing":-1,"attack_progress":0.32,"attack_windup_ratio":0.18,"attack_active_ratio":0.40,"special":false,"reduced_motion":false})
+	game.hud_note_started_at = Time.get_ticks_msec()-6000
 	await _save("fighter_match_guard.png")
 	quit()
 

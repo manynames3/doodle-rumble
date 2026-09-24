@@ -32,7 +32,13 @@ func measure(label: String, ids: Array, frames: int) -> void:
     game.selected = ids
     game.arena_kind = "desktop"
     game.optional_hazards = false
+    if "--warm-cache" in OS.get_cmdline_user_args() and ids[0] not in ["orange","blue"]:
+        game.selection_tab = "custom"
+        game.open_selection("local")
+        for frame in 150: await process_frame
+    var setup_started := Time.get_ticks_usec()
     game.start_match()
+    var setup_ms := float(Time.get_ticks_usec()-setup_started)/1000.0
     game.countdown = 0.0
     if "--freeze-hud" in OS.get_cmdline_user_args():
         for child in game.ui.get_children():
@@ -42,6 +48,7 @@ func measure(label: String, ids: Array, frames: int) -> void:
     var late: Array[float] = []
     var simulation: Array[float] = []
     var draw_calls: Array[float] = []
+    var entry_frames: Array[float] = []
     for frame in frames + 20:
         if frame % 20 == 0: print("PROFILE_PROGRESS ",label," frame=",frame)
         var begin := Time.get_ticks_usec()
@@ -49,8 +56,10 @@ func measure(label: String, ids: Array, frames: int) -> void:
         var after_sim := Time.get_ticks_usec()
         await process_frame
         # Frame draw synchronizes through the native loop.
+        var elapsed_ms := float(Time.get_ticks_usec() - begin) / 1000.0
+        if frame < 20:
+            entry_frames.append(elapsed_ms)
         if frame >= 20:
-            var elapsed_ms := float(Time.get_ticks_usec() - begin) / 1000.0
             total.append(elapsed_ms)
             if frame >= 120: late.append(elapsed_ms)
             simulation.append(float(after_sim - begin) / 1000.0)
@@ -64,6 +73,8 @@ func measure(label: String, ids: Array, frames: int) -> void:
     for sample in total: sum += sample
     print("MATCH_PROFILE %s frames=%d mean_ms=%.3f median_ms=%.3f p95_ms=%.3f max_ms=%.3f simulation_median_ms=%.3f simulation_p95_ms=%.3f draw_calls_median=%.0f" % [label,frames,sum / frames,total[frames/2],total[int(frames*0.95)],total[-1],simulation[frames/2],simulation[int(frames*0.95)],draw_calls[frames/2]])
     print("MATCH_STEADY %s frames=%d median_ms=%.3f p95_ms=%.3f max_ms=%.3f" % [label,late.size(),late[late.size()/2],late[int(late.size()*0.95)],late[-1]])
+    entry_frames.sort()
+    print("MATCH_ENTRY %s setup_ms=%.3f first_frame_p95_ms=%.3f peak_ms=%.3f" % [label,setup_ms,entry_frames[int(entry_frames.size()*0.95)],entry_frames[-1]])
 
 func run() -> void:
     if not "--isolated-qa" in OS.get_cmdline_user_args():

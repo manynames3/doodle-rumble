@@ -10,6 +10,7 @@ signal perfect_dodged(fighter)
 signal guarded(fighter, reflected)
 
 const BODY_SCALE = 1.45
+const VISUAL_SCALE_MULTIPLIER: float = 1.15
 const SPEED = 310.0
 const GRAVITY = 1550.0
 const JUMP_SPEED = -770.0
@@ -94,7 +95,9 @@ func setup(id: String, player_slot: int, use_temporary_art: bool = false) -> voi
 		rig = load("res://scripts/fighter_rig.gd").new()
 		add_child(rig)
 		rig.configure(definition)
-		rig.scale = Vector2.ONE * body_scale
+		# Make the drawing the focal point without changing the capsule, weapon
+		# reach, damage or any fixed-step combat values.
+		rig.scale = Vector2.ONE * body_scale * VISUAL_SCALE_MULTIPLIER
 
 func reset_at(spawn: Vector2) -> void:
 	position = spawn

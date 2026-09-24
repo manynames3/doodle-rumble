@@ -3,6 +3,7 @@ extends Node2D
 
 const HandFont = preload("res://assets/fonts/Kalam-Bold.ttf")
 const BLACK = Color("08090fe9")
+const INK = Color("08090f")
 const EDGE = Color("020309e8")
 const CHALK = Color("f1eee3d9")
 var host: Node
@@ -16,7 +17,7 @@ func _process(_delta: float) -> void:
 	if not is_instance_valid(host):
 		return
 	var age := float(Time.get_ticks_msec() - host.hud_note_started_at)
-	var note_alpha := 1.0 if host.state == "paused" else clampf(1.0 - (age - 4200.0) / 2200.0, 0.34, 1.0)
+	var note_alpha := 1.0 if host.state == "paused" or host.mode == "training" else clampf(1.0 - (age - 4300.0) / 1500.0, 0.0, 1.0)
 	if is_instance_valid(host.hint_label):
 		host.hint_label.modulate.a = note_alpha
 	for prompt in host.prompts:
@@ -43,6 +44,47 @@ func _rough_box(rect: Rect2, seed_value: int, color: Color = BLACK) -> void:
 	for i in range(3):
 		var y := rect.position.y + 9.0 + i * (rect.size.y - 15.0) / 3.0
 		draw_line(Vector2(rect.position.x + 12.0 + sin(float(seed_value + i)) * 7.0, y), Vector2(rect.end.x - 15.0, y + sin(float(i + seed_value)) * 1.5), Color("25263148"), 1.3, true)
+
+func _paint_swatch(rect: Rect2, seed_value: int, color: Color = Color("08090ff2")) -> void:
+	# Layer dry-brush edges so the health marks read like ink on the poster.
+	for pass_index in range(3):
+		var points := PackedVector2Array()
+		var inset_x := float(pass_index-1)*2.5
+		var inset_y := float(pass_index)*1.4
+		points.append(Vector2(rect.position.x-8.0+inset_x,rect.position.y+8.0+inset_y))
+		for i in range(13):
+			var t := float(i)/12.0
+			var rough := sin(float(i*17+seed_value+pass_index*9))*2.6+sin(float(i*5+seed_value))*1.2
+			var taper := 0.55+sin(PI*t)*0.45
+			points.append(Vector2(rect.position.x+rect.size.x*t+inset_x,rect.position.y+rough*taper+inset_y))
+		points.append(Vector2(rect.end.x+8.0+inset_x,rect.position.y+rect.size.y*0.34+sin(float(seed_value))*3.0))
+		points.append(Vector2(rect.end.x+5.0+inset_x,rect.end.y-5.0-inset_y))
+		for i in range(12,-1,-1):
+			var t := float(i)/12.0
+			var rough := sin(float(i*11+seed_value+pass_index*7))*3.1+sin(float(i*7+seed_value))*1.5
+			var taper := 0.55+sin(PI*t)*0.45
+			points.append(Vector2(rect.position.x+rect.size.x*t+inset_x,rect.end.y+rough*taper-inset_y))
+		points.append(Vector2(rect.position.x-10.0+inset_x,rect.end.y-rect.size.y*0.27+sin(float(seed_value+pass_index))*3.0))
+		var shade := Color(color.r,color.g,color.b,clampf(color.a*(0.82-float(pass_index)*0.13),0.0,1.0))
+		draw_colored_polygon(points,shade)
+	# Uneven chalk edge catches the outline of the poster swatch at a glance.
+	var edge := PackedVector2Array()
+	for i in range(13):
+		var t := float(i)/12.0
+		edge.append(Vector2(rect.position.x+rect.size.x*t,rect.position.y+sin(float(i*17+seed_value))*3.2))
+	for i in range(12,-1,-1):
+		var t := float(i)/12.0
+		edge.append(Vector2(rect.position.x+rect.size.x*t,rect.end.y+sin(float(i*11+seed_value))*3.8))
+	edge.append(edge[0])
+	draw_polyline(edge,Color("fff0d61c"),1.25,true)
+	for i in range(9):
+		var y := rect.position.y+5.0+i*(rect.size.y-10.0)/8.0
+		var offset := sin(float(seed_value+i*17))*7.0
+		var bristle := 7.0+absf(sin(float(i*13+seed_value)))*9.0
+		draw_line(Vector2(rect.position.x+18.0+offset,y),Vector2(rect.end.x-20.0,y+sin(float(i+seed_value))*2.2),Color("c9c6d124"),1.2,true)
+		if i%2==0:
+			draw_line(Vector2(rect.position.x+3.0,y),Vector2(rect.position.x-bristle,y+2.0),Color(color.r,color.g,color.b,0.8),1.5,true)
+			draw_line(Vector2(rect.end.x-3.0,y),Vector2(rect.end.x+bristle*0.65,y-2.0),Color(color.r,color.g,color.b,0.8),1.5,true)
 
 func _jagged_bar(rect: Rect2, amount: float, color: Color, right_to_left: bool, seed_value: int) -> void:
 	var track := PackedVector2Array([
@@ -92,6 +134,25 @@ func _head_icon(center: Vector2, color: Color, style: String, flip: float) -> vo
 	draw_line(center + Vector2(-8,10),center + Vector2(-12,15),CHALK,1.8,true)
 	draw_line(center + Vector2(8,10),center + Vector2(12,15),CHALK,1.8,true)
 
+func _custom_doodle_icon(center: Vector2, color: Color, flip: float) -> void:
+	var head := PackedVector2Array()
+	for i in range(17):
+		var angle := TAU*float(i)/16.0
+		head.append(center+Vector2(cos(angle)*10.0,sin(angle)*9.5)*(1.0+sin(float(i*7))*0.055))
+	draw_polyline(head,Color(INK,0.95),4.0,true)
+	draw_polyline(head,Color("fff0cb"),2.1,true)
+	draw_arc(center+Vector2(0.5,0),5.4,0.1,TAU-0.1,14,color,1.35,true)
+	draw_line(center+Vector2(0,10),center+Vector2(0,22),Color(INK,0.95),4.0,true)
+	draw_line(center+Vector2(0,10),center+Vector2(0,22),color,2.0,true)
+	for limb_value in [Vector2(-10,15),Vector2(10,15),Vector2(-7,31),Vector2(7,31)]:
+		var limb: Vector2 = limb_value
+		var joint: Vector2 = center+Vector2(limb.x*0.55,limb.y*0.62)
+		var endpoint: Vector2 = center+limb*0.92
+		draw_line(center+Vector2(0,13),joint,Color(INK,0.95),4.0,true)
+		draw_line(center+Vector2(0,13),joint,color,2.0,true)
+		draw_line(joint,endpoint,Color(INK,0.95),4.0,true)
+		draw_line(joint,endpoint,color,2.0,true)
+
 func _special_icon(at: Vector2, color: Color, ready: bool, flip: float) -> void:
 	var ink := color if ready else Color("777987")
 	var points := PackedVector2Array([
@@ -110,11 +171,11 @@ func _round_pips(slot: int, color: Color, score: int) -> void:
 		draw_line(center+Vector2(-5,5),center+Vector2(4,7),Color("020309b0"),1.0,true)
 
 func _draw() -> void:
-	_rough_box(Rect2(20,10,458,68),7)
-	_rough_box(Rect2(802,10,458,68),11)
-	_rough_box(Rect2(590,7,100,72),19,Color("08090ff2"))
 	if not is_instance_valid(host) or not is_instance_valid(host.first) or not is_instance_valid(host.second):
 		return
+	_paint_swatch(Rect2(20,10,458,68),7)
+	_paint_swatch(Rect2(802,10,458,68),11)
+	_paint_swatch(Rect2(590,7,100,72),19,Color("08090ff2"))
 	var fighters := [host.first,host.second]
 	for i in range(2):
 		var fighter = fighters[i]
@@ -122,9 +183,15 @@ func _draw() -> void:
 		var health_rect := Rect2(66 if i == 0 else 824,39,390,18)
 		_jagged_bar(health_rect,float(fighter.health)/float(fighter.max_health),tint,i == 1,17+i*8)
 		var cooldown_ready: float = clampf((6.0-float(fighter.cooldown))/6.0,0.0,1.0)
-		var cooldown_rect := Rect2(67 if i == 0 else 1137,68,76,5)
-		_jagged_bar(cooldown_rect,cooldown_ready,tint,i == 1,41+i*6)
-		if not bool(fighter.definition.get("custom",false)):
+		var pip_start_x: float = 392.0 if i == 0 else 1188.0
+		for pip in range(4):
+			var filled: bool = cooldown_ready >= float(pip+1)/4.0
+			var point := Vector2(pip_start_x+(pip*9.0 if i == 0 else -pip*9.0),69.0)
+			draw_circle(point,3.2,Color(tint if filled else Color("777987"),0.98 if filled else 0.72))
+			draw_arc(point,4.1,0,TAU,10,Color(INK,0.94),1.1,true)
+		if bool(fighter.definition.get("custom",false)):
+			_custom_doodle_icon(Vector2(42 if i == 0 else 1238,31),tint,1.0 if i == 0 else -1.0)
+		else:
 			_head_icon(Vector2(42 if i == 0 else 1238,33),tint,str(fighter.definition.head),1.0 if i == 0 else -1.0)
 		_special_icon(Vector2(45 if i == 0 else 1235,67),tint,fighter.cooldown <= 0,1.0 if i == 0 else -1.0)
 		_round_pips(i,tint,int(host.rules.scores[i]))
@@ -136,6 +203,6 @@ func _draw() -> void:
 			if fighter.counter_time>0:
 				draw_string(HandFont,Vector2(364 if i==0 else 834,29),"COUNTER!",HORIZONTAL_ALIGNMENT_LEFT,-1,11,Color("fff0ab"))
 	var age := float(Time.get_ticks_msec() - host.hud_note_started_at)
-	var note_alpha := 1.0 if host.state == "paused" else clampf(1.0 - (age - 4200.0) / 2200.0,0.34,1.0)
+	var note_alpha := 1.0 if host.state == "paused" or host.mode == "training" else clampf(1.0 - (age - 4300.0) / 1500.0,0.0,1.0)
 	_rough_box(Rect2(18,683,594,27),31,Color(0.03,0.035,0.06,0.66*note_alpha))
 	_rough_box(Rect2(648,683,605,27),37,Color(0.03,0.035,0.06,0.66*note_alpha))
