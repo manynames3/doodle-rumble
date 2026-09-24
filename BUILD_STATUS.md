@@ -1,15 +1,16 @@
-# Build status — Doodle Rumble v0.7.7 local / v0.7.6 public
+# Build status — Doodle Rumble v0.7.7
 
-Updated 2026-09-24. Godot 4.7.2 / GDScript. The current local export is prepared on an Apple M1 Mac. The latest public GitHub release remains v0.7.6.
+Updated 2026-09-24. Godot 4.7.2 / GDScript. The Universal Mac build was prepared on an Apple M1 Mac.
 
-## Current local follow-up — v0.7.7 (not yet published)
+## v0.7.7 Workshop and photo cleanup
 
 - Photo import now explains that it removes page white but does not auto-detect limbs. The complete original photo stays in the preview until all six body-part cutouts are valid, rather than showing a misleading fragment after the first partial outline.
 - Cutout validation rejects very small, narrow, malformed or untriangulatable outlines. Save redirects the player to the first bad outline and explains how to trace that whole part. The footer and instructions now match whether **Trace cutouts** or **Move joints** is selected.
 - Draw mode has separate **Fighter** and **Pen** color palettes. Changing the fighter color only recolors starter-body marks; the pen independently colors new strokes. Both colors survive saves and undo/redo, and older creations without a saved pen color keep their previous palette behavior.
-- Complete source regression: **30 suites / 2,787 checks / zero failures**, including the targeted Workshop suite (**53 checks**). Export verification and remaining device checks are recorded in [TESTING_0_7_7.md](docs/TESTING_0_7_7.md). Native screenshots were captured and inspected.
-- Exported local Universal Mac app: `builds/mac-v0.7.7/Doodle Rumble.app`, build 25. The bundle is ad-hoc signed; strict signature verification and an isolated 120-frame launch smoke test passed. It is not notarized and has not been published as a GitHub release.
-- The public/downloadable Mac app and archives remain v0.7.6; they do not include this follow-up.
+- Photo cleanup now handles warm-gray paper such as the supplied test image at its default strength, while preserving the yellow marker. The slider updates a visible cutout preview and stays independent from the **White edge** sticker-border setting. Keep/Erase corrections now apply in brush order.
+- Complete source regression: **30 suites / 2,794 checks / zero failures**, including the targeted Workshop suite (**60 checks**). Export verification and remaining device checks are recorded in [TESTING_0_7_7.md](docs/TESTING_0_7_7.md). Native screenshots were captured and inspected.
+- Published Universal Mac app: `builds/mac-v0.7.7/Doodle Rumble.app`, build 25. The bundle is ad-hoc signed; strict signature verification and an isolated 120-frame launch smoke test passed. It is not notarized.
+- The app remains ad-hoc signed and not notarized.
 
 ## Published v0.7.6 feature set
 
@@ -31,14 +32,14 @@ Updated 2026-09-24. Godot 4.7.2 / GDScript. The current local export is prepared
 
 ## Mac build and launch
 
-- Current local app: **v0.7.7 / build 25**, Universal arm64/x86_64, Godot 4.7.2 Compatibility renderer at `builds/mac-v0.7.7/Doodle Rumble.app`. The executable contains both architecture slices; strict local signature verification passed. Its embedded game pack boots headlessly for 120 frames and exits without errors.
-- Latest public archives: `Doodle_Rumble_Mac_v0.7.6.zip` and `Doodle_Rumble_Project_v0.7.6.zip`, available from the [v0.7.6 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.6). No v0.7.7 public release has been created.
+- Current app: **v0.7.7 / build 25**, Universal arm64/x86_64, Godot 4.7.2 Compatibility renderer at `builds/mac-v0.7.7/Doodle Rumble.app`. The executable contains both architecture slices; strict local signature verification passed. Its embedded game pack boots headlessly for 120 frames and exits without errors.
+- Public archives: `Doodle_Rumble_Mac_v0.7.7.zip` and `Doodle_Rumble_Project_v0.7.7.zip`, available from the [v0.7.7 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.7). The [v0.7.6 release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.6) remains available as an earlier version.
 - Launch the local build by double-clicking **Doodle Rumble.app** in the v0.7.7 folder. From source, open `game/project.godot` in Godot 4.7.2 and press F5.
 
 ## Known limits
 
 - Photo cutouts remain a manual assisted workflow. Page-white cleanup does not find or separate the character automatically; children trace the six body parts. Overlapping or faint photos may still need adult help.
 
-- This Mac has no Developer ID certificate. The local app is ad-hoc signed and not notarized, so Gatekeeper may require **System Settings → Privacy & Security → Open Anyway** after transfer. This is not a notarized public storefront release.
+- This Mac has no Developer ID certificate. The app is ad-hoc signed and not notarized, so Gatekeeper may require **System Settings → Privacy & Security → Open Anyway** after transfer. This is not a notarized public storefront release.
 - Intel execution, transfer to another Mac, physical controller assignment/disconnect, keyboard rollover, sleep/wake, and external speaker/headphone behavior were not verified here.
 - The native performance check shows a single entry-frame spike even after selection warm-up. Steady frames in the measured custom-fighter match were below 10 ms at p95 on this M1; unusually detailed artwork and other Mac hardware still need measurement.

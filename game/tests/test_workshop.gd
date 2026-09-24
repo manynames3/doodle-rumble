@@ -86,6 +86,34 @@ func _check() -> void:
 	var settings := {"corners":[[0,0],[511,0],[511,511],[0,511]],"sensitivity":0.5,"keep_strokes":[],"erase_strokes":[]}
 	var matte: Image = Photo.make_matte(paper,settings)
 	_expect(matte.get_pixel(10,10).a < 0.1 and matte.get_pixel(250,250).a > 0.9,"paper removal keeps blue drawing")
+	var shaded_page := Image.create_empty(512,512,false,Image.FORMAT_RGBA8)
+	shaded_page.fill(Color("#bdb5a8"))
+	for y in range(100,400):
+		for x in range(180,330): shaded_page.set_pixel(x,y,Color("#d4c600"))
+	var shaded_settings := {"corners":[[0,0],[511,0],[511,511],[0,511]],"sensitivity":0.5,"keep_strokes":[],"erase_strokes":[]}
+	var shaded_matte: Image = Photo.make_matte(shaded_page,shaded_settings)
+	_expect(shaded_matte.get_pixel(10,10).a < 0.05 and shaded_matte.get_pixel(250,250).a > 0.95,"default cleanup removes warm-gray paper while preserving saturated yellow marker")
+	shaded_settings.sensitivity = 0.0
+	var gentle_matte: Image = Photo.make_matte(shaded_page,shaded_settings)
+	_expect(gentle_matte.get_pixel(10,10).a > 0.95,"lower cleanup strength retains the shaded paper")
+	var brush_order_settings := {"corners":[[0,0],[511,0],[511,511],[0,511]],"sensitivity":0.5,"correction_strokes":[{"mode":"erase","width":9,"points":[[40,40]]},{"mode":"keep","width":9,"points":[[40,40]]}]}
+	var restored_paper: Image = Photo.make_matte(shaded_page,brush_order_settings)
+	_expect(restored_paper.get_pixel(40,40).a > 0.95,"Keep restores a pale pixel after a later correction")
+	brush_order_settings.correction_strokes.reverse()
+	var erased_again: Image = Photo.make_matte(shaded_page,brush_order_settings)
+	_expect(erased_again.get_pixel(40,40).a < 0.05,"Erase removes a pixel when it is the latest correction")
+	var cleanup_workshop := Workshop.new()
+	root.add_child(cleanup_workshop)
+	cleanup_workshop.build(null)
+	cleanup_workshop.source_mode = "import"
+	cleanup_workshop._source_square = shaded_page
+	cleanup_workshop.record.photo_settings.sensitivity = 0.0
+	cleanup_workshop._build_ui()
+	cleanup_workshop._on_sensitivity(0.5)
+	_expect(cleanup_workshop._matte_image != null and cleanup_workshop._matte_image.get_pixel(10,10).a < 0.05 and cleanup_workshop._matte_image.get_pixel(250,250).a > 0.95,"cleanup slider reprocesses the page and retains marker color")
+	_expect(cleanup_workshop._matte_preview != null and cleanup_workshop._matte_preview.texture != null and cleanup_workshop._matte_preview.texture.get_image().get_pixel(10,10).a < 0.05 and cleanup_workshop._matte_preview.texture.get_image().get_pixel(250,250).a > 0.95,"visible cleanup preview refreshes to the transparent page and preserved marker")
+	_expect(cleanup_workshop._sensitivity_label != null and cleanup_workshop._sensitivity_label.text == "Page cleanup: 50%","page cleanup slider reports its current strength")
+	cleanup_workshop.free()
 	settings.keep_strokes = [{"width":7,"points":[[10,10]]}]
 	settings.erase_strokes = [{"width":7,"points":[[250,250]]}]
 	var touched: Image = Photo.make_matte(paper,settings)

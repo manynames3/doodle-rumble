@@ -65,6 +65,8 @@ var _dialog: FileDialog
 var _name_edit: LineEdit
 var _exit_dialog: ConfirmationDialog
 var _sensitivity: HSlider
+var _sensitivity_label: Label
+var _matte_preview: TextureRect
 var _paper_edge_check: CheckButton
 var _zoom := 1.0
 
@@ -99,7 +101,7 @@ func build(owner, existing: Dictionary = {}) -> void:
 	_build_ui()
 
 func _fallback_record() -> Dictionary:
-	return {"id":"custom_%d" % Time.get_ticks_usec(),"name":"My Doodle","color":"#f6ad57","pen_color":"#f6ad57","kit":"pixel_pick","strokes":[],"joints":{"head":[256,105],"shoulder":[256,185],"hip":[256,300],"back_elbow":[185,235],"back_hand":[150,280],"front_elbow":[327,235],"front_hand":[362,280],"left_knee":[215,385],"left_foot":[190,460],"right_knee":[297,385],"right_foot":[322,460]},"photo_path":"","source_path":"","photo_parts":{},"photo_settings":{"rotation":0,"corners":[[32,32],[480,32],[480,480],[32,480]],"sensitivity":0.5,"paper_edge":true,"keep_strokes":[],"erase_strokes":[]}}
+	return {"id":"custom_%d" % Time.get_ticks_usec(),"name":"My Doodle","color":"#f6ad57","pen_color":"#f6ad57","kit":"pixel_pick","strokes":[],"joints":{"head":[256,105],"shoulder":[256,185],"hip":[256,300],"back_elbow":[185,235],"back_hand":[150,280],"front_elbow":[327,235],"front_hand":[362,280],"left_knee":[215,385],"left_foot":[190,460],"right_knee":[297,385],"right_foot":[322,460]},"photo_path":"","source_path":"","photo_parts":{},"photo_settings":{"rotation":0,"corners":[[32,32],[480,32],[480,480],[32,480]],"sensitivity":0.5,"paper_edge":true,"keep_strokes":[],"erase_strokes":[],"correction_strokes":[]}}
 
 func _load_existing_photo() -> void:
 	_source_image = null
@@ -181,6 +183,8 @@ func _clear_ui() -> void:
 	_name_edit = null
 	_exit_dialog = null
 	_sensitivity = null
+	_sensitivity_label = null
+	_matte_preview = null
 	_paper_edge_check = null
 
 func _build_ui() -> void:
@@ -289,7 +293,7 @@ func _build_import_controls() -> void:
 	_button("Choose photo",Vector2(43,267),Vector2(170,46),_choose_photo,true)
 	_label("JPEG · PNG · HEIC",Vector2(43,315),Vector2(180,25),16,MUTED)
 	_button("Turn ↻",Vector2(43,345),Vector2(170,38),_rotate_photo)
-	_label("Remove page white",Vector2(43,388),Vector2(170,25),17)
+	_sensitivity_label = _label(_cleanup_strength_text(float(record.get("photo_settings",{}).get("sensitivity",0.5))),Vector2(43,388),Vector2(190,25),16)
 	_sensitivity = HSlider.new()
 	_sensitivity.position = Vector2(44,411)
 	_sensitivity.size = Vector2(169,27)
@@ -312,7 +316,7 @@ func _build_import_controls() -> void:
 	_button("4 paper corners",Vector2(43,480),Vector2(171,36),func(): _set_photo_tool("corners"),false,_canvas_mode() == "corners")
 	_button("Keep brush",Vector2(43,521),Vector2(171,36),func(): _set_photo_tool("keep"),false,_canvas_mode() == "keep")
 	_button("Erase brush",Vector2(43,562),Vector2(171,36),func(): _set_photo_tool("erase"),false,_canvas_mode() == "erase")
-	_label("Use the slider, White edge switch and four page dots to remove the paper. This does not find limbs; trace all six body parts by hand on the next page.",Vector2(789,177),Vector2(440,83),18,MUTED,false,true)
+	_label("Set cleanup strength and frame the page with four dots. It removes light, low-color paper. White edge adds the sticker border separately; Keep restores pale marks.",Vector2(789,177),Vector2(440,83),16,MUTED,false,true)
 	_button("Undo",Vector2(795,272),Vector2(104,38),_undo)
 	_button("Redo",Vector2(909,272),Vector2(104,38),_do_redo)
 	_button("Zoom +",Vector2(795,320),Vector2(104,38),func(): _change_zoom(1))
@@ -404,18 +408,20 @@ func _build_preview(title: String, at: Vector2) -> void:
 	else:
 		_label(title,Vector2(283,248),Vector2(420,37),23,INK)
 	if source_mode == "import" and not _all_photo_cutouts_ready():
-		var preview_image: Image = _source_square if _source_square != null else _matte_image
+		# Keep the full source on the central canvas for page-corner placement,
+		# while this companion preview shows the processed transparency result.
+		var preview_image: Image = _matte_image if _matte_image != null else _source_square
 		if preview_image != null:
-			var paper_preview := TextureRect.new()
-			paper_preview.position = Vector2(931,480) if step in [0,1] else Vector2(415,315)
-			paper_preview.size = Vector2(150,135) if step in [0,1] else Vector2(220,240)
-			paper_preview.texture = ImageTexture.create_from_image(preview_image)
-			paper_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			paper_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			paper_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			add_child(paper_preview)
+			_matte_preview = TextureRect.new()
+			_matte_preview.position = Vector2(931,480) if step in [0,1] else Vector2(415,315)
+			_matte_preview.size = Vector2(150,135) if step in [0,1] else Vector2(220,240)
+			_matte_preview.texture = ImageTexture.create_from_image(preview_image)
+			_matte_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			_matte_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			_matte_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			add_child(_matte_preview)
 			if step in [0,1]:
-				_label("Whole photo · %d / 6 cutouts ready" % _cutout_progress(),Vector2(789,619),Vector2(430,28),16,MUTED,true)
+				_label("Cleanup preview · %d / 6 cutouts" % _cutout_progress(),Vector2(789,619),Vector2(430,28),16,MUTED,true)
 		else:
 			_label("Choose a photo to see your whole drawing here.",Vector2(789,500),Vector2(430,42),17,MUTED,true,true)
 		return
@@ -674,7 +680,12 @@ func _clear_polygon() -> void:
 
 func _on_sensitivity(value: float) -> void:
 	record["photo_settings"]["sensitivity"] = value
+	if is_instance_valid(_sensitivity_label):
+		_sensitivity_label.text = _cleanup_strength_text(value)
 	_changed(true)
+
+func _cleanup_strength_text(value: float) -> String:
+	return "Page cleanup: %d%%" % int(round(clampf(value,0.0,1.0)*100.0))
 
 func _select_kit(index: int) -> void:
 	_snapshot()
@@ -766,6 +777,8 @@ func _changed(reprocess_photo: bool = false) -> void:
 			_photo_path_cache = path
 			_matte_image = Image.new()
 			_matte_image.load(path)
+			if is_instance_valid(_matte_preview):
+				_matte_preview.texture = ImageTexture.create_from_image(_matte_image)
 	if is_instance_valid(_canvas):
 		_canvas.texture = _canvas_texture()
 		_canvas.queue_redraw()
@@ -803,7 +816,7 @@ func _photo_selected(path: String) -> void:
 	record["photo_parts"] = {}
 	var previous_settings: Dictionary = record.get("photo_settings",{}) if record.get("photo_settings",{}) is Dictionary else {}
 	var paper_edge: bool = bool(previous_settings.get("paper_edge",true))
-	record["photo_settings"] = {"rotation":0,"corners":[[32,32],[480,32],[480,480],[32,480]],"sensitivity":0.50,"paper_edge":paper_edge,"keep_strokes":[],"erase_strokes":[],"tool":"corners","life_tool":"polygon"}
+	record["photo_settings"] = {"rotation":0,"corners":[[32,32],[480,32],[480,480],[32,480]],"sensitivity":0.50,"paper_edge":paper_edge,"keep_strokes":[],"erase_strokes":[],"correction_strokes":[],"tool":"corners","life_tool":"polygon"}
 	_changed(true)
 	status = "Photo loaded. Drag the four corner dots to frame the paper."
 	_build_ui()

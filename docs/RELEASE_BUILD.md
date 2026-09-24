@@ -1,6 +1,6 @@
 # Build and distribute Doodle Rumble
 
-The current local source export is v0.7.7. The latest published GitHub download remains v0.7.6 until a release is made. `MAC_SETUP.md` is the archived starter plan.
+The current release is v0.7.7. `MAC_SETUP.md` is the archived starter plan.
 
 ## Run from source
 
@@ -29,4 +29,4 @@ This Mac has no Apple Developer ID signing identity. The local app is **ad-hoc s
 
 ## Current local build
 
-The v0.7.7 app is exported with the matching Godot 4.7.2 macOS template. It includes the Workshop's separate Fighter/Pen palettes and clearer manual photo-cutout flow, in addition to the poster-focused combat HUD, custom-art cache/performance pass, and story-arena movement routes. It is Universal arm64/x86_64, bundle build 25. Earlier versioned bundles are preserved. The app remains ad-hoc signed and unnotarized; see the current verification report before distributing it. The v0.7.7 build is available locally; the public GitHub release page still links v0.7.6.
+The v0.7.7 app is exported with the matching Godot 4.7.2 macOS template. It includes the Workshop's independent Fighter/Pen palettes, shaded-paper cleanup and clearer manual photo-cutout flow, in addition to the poster-focused combat HUD, custom-art cache/performance pass, and story-arena movement routes. It is Universal arm64/x86_64, bundle build 25. Earlier versioned bundles are preserved. The app remains ad-hoc signed and unnotarized; see the current verification report before distributing it. The public GitHub release includes both the Mac app and complete project archives.

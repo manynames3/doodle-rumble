@@ -111,7 +111,11 @@ static func make_matte(source_square: Image, settings: Dictionary) -> Image:
 	var p2 := Vector2(float(corners[2][0]), float(corners[2][1]))
 	var p3 := Vector2(float(corners[3][0]), float(corners[3][1]))
 	var sensitivity: float = clampf(float(settings.get("sensitivity", 0.50)), 0.0, 1.0)
-	var threshold: float = lerpf(0.995, 0.70, sensitivity)
+	# Most phone photos of "white paper" are warm gray after shadows and JPEG
+	# compression. The old 0.70 floor could not clear backgrounds below that
+	# brightness. Ease the control so its middle value handles ordinary shaded
+	# paper, while keeping saturated marker colors out of the removal mask.
+	var threshold: float = lerpf(0.995, 0.50, pow(sensitivity, 0.30))
 	var image := Image.create_empty(SIDE, SIDE, false, Image.FORMAT_RGBA8)
 	var base := Image.create_empty(SIDE, SIDE, false, Image.FORMAT_RGBA8)
 	for y in SIDE:
@@ -122,13 +126,23 @@ static func make_matte(source_square: Image, settings: Dictionary) -> Image:
 			var color: Color = source_square.get_pixel(clampi(int(round(source_point.x)),0,SIDE-1), clampi(int(round(source_point.y)),0,SIDE-1))
 			base.set_pixel(x,y,color)
 			var light: float = minf(color.r, minf(color.g, color.b))
-			var alpha: float = 1.0 - smoothstep(threshold - 0.13, threshold + 0.035, light)
-			color.a *= clampf(alpha,0.0,1.0)
+			var chroma: float = maxf(color.r,maxf(color.g,color.b)) - light
+			var paper_coverage: float = smoothstep(threshold - 0.13, threshold + 0.035, light)
+			var neutral_paper: float = 1.0 - smoothstep(0.10,0.30,chroma)
+			color.a *= 1.0 - clampf(paper_coverage * neutral_paper,0.0,1.0)
 			image.set_pixel(x,y,color)
-	for stroke in settings.get("keep_strokes", []):
-		_paint_alpha(image,base,stroke,1.0)
-	for stroke in settings.get("erase_strokes", []):
-		_paint_alpha(image,base,stroke,0.0)
+	if settings.has("correction_strokes"):
+		for stroke in settings.get("correction_strokes", []):
+			var mode: String = str(stroke.get("mode", ""))
+			if mode in ["keep", "erase"]:
+				_paint_alpha(image,base,stroke,1.0 if mode == "keep" else 0.0)
+	else:
+		# Older doodles stored Keep and Erase separately; preserve their original
+		# ordering until the first new correction migrates them to one ordered list.
+		for stroke in settings.get("keep_strokes", []):
+			_paint_alpha(image,base,stroke,1.0)
+		for stroke in settings.get("erase_strokes", []):
+			_paint_alpha(image,base,stroke,0.0)
 	return image
 
 static func _paint_alpha(image: Image, base: Image, stroke: Dictionary, alpha: float) -> void:

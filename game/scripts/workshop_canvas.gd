@@ -179,12 +179,22 @@ func _start_at(pos: Vector2) -> void:
 	elif mode in ["keep","erase"]:
 		editor._snapshot()
 		var settings: Dictionary = rec.get("photo_settings",{})
-		var field := "keep_strokes" if mode == "keep" else "erase_strokes"
-		var brush: Array = settings.get(field,[])
-		brush.append({"width":editor.brush_width,"points":[[roundi(pos.x),roundi(pos.y)]]})
-		settings[field] = brush
+		var corrections: Array = settings.get("correction_strokes",[])
+		if not settings.has("correction_strokes"):
+			# Migrate older saved corrections in their existing Keep-then-Erase
+			# priority before appending this new action.
+			for old_stroke in settings.get("keep_strokes",[]):
+				var keep_stroke: Dictionary = old_stroke.duplicate(true)
+				keep_stroke["mode"] = "keep"
+				corrections.append(keep_stroke)
+			for old_stroke in settings.get("erase_strokes",[]):
+				var erase_stroke: Dictionary = old_stroke.duplicate(true)
+				erase_stroke["mode"] = "erase"
+				corrections.append(erase_stroke)
+		corrections.append({"mode":mode,"width":editor.brush_width,"points":[[roundi(pos.x),roundi(pos.y)]]})
+		settings["correction_strokes"] = corrections
 		rec["photo_settings"] = settings
-		stroke_index = brush.size()-1
+		stroke_index = corrections.size()-1
 		active = true
 		queue_redraw()
 
@@ -204,8 +214,7 @@ func _move_to(pos: Vector2) -> void:
 	elif mode == "erase_stroke":
 		_erase_at(pos)
 	elif mode in ["keep","erase"] and stroke_index >= 0:
-		var field := "keep_strokes" if mode == "keep" else "erase_strokes"
-		var pts: Array = rec["photo_settings"][field][stroke_index]["points"]
+		var pts: Array = rec["photo_settings"]["correction_strokes"][stroke_index]["points"]
 		if _array_point(pts[-1]).distance_to(pos) > 3.5: pts.append(point)
 	queue_redraw()
 
