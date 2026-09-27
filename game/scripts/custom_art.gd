@@ -14,6 +14,17 @@ const SEGMENTS := ["left_leg_proximal", "left_leg_distal", "right_leg_proximal",
 	"left_arm_proximal", "left_arm_distal", "body", "head", "right_arm_proximal", "right_arm_distal"]
 const BAKE_ORDER := ["head", "body", "right_arm_distal", "right_arm_proximal", "left_arm_distal", "left_arm_proximal",
 	"right_leg_distal", "right_leg_proximal", "left_leg_distal", "left_leg_proximal"]
+const JOINT_BRIDGES := [
+	["head","shoulder","head",Vector2(255,155),23.0],
+	["shoulder","back_elbow","left_arm",Vector2(215,215),18.0],
+	["back_elbow","back_hand","left_arm",Vector2(168,257),18.0],
+	["shoulder","front_elbow","right_arm",Vector2(300,215),18.0],
+	["front_elbow","front_hand","right_arm",Vector2(342,257),18.0],
+	["hip","left_knee","left_leg",Vector2(229,344),20.0],
+	["left_knee","left_foot","left_leg",Vector2(201,423),20.0],
+	["hip","right_knee","right_leg",Vector2(283,344),20.0],
+	["right_knee","right_foot","right_leg",Vector2(311,423),20.0]
+]
 
 class Painter extends Node2D:
 	var art: Node2D
@@ -40,6 +51,7 @@ var _posed: Dictionary = {}
 var _bind: Dictionary = {}
 var _state: Dictionary = {}
 var _photo_geometry: Dictionary = {}
+var _bridge_colors: Dictionary = {}
 var _strokes_by_segment: Dictionary = {}
 var _deform_transforms: Dictionary = {}
 var _static_viewports: Array[SubViewport] = []
@@ -267,6 +279,7 @@ func configure(value: Dictionary) -> void:
 	_sprite.visible = false
 	_art_cache_key = _make_art_cache_key()
 	_build_photo_geometry()
+	_prepare_bridge_colors()
 	_prepare_render_strokes()
 	_rebuild_static_parts()
 	_set_margin()
@@ -568,28 +581,50 @@ func _draw_static_segment(canvas: Node2D, segment: String) -> void:
 
 func _draw_joint_bridges(canvas: Node2D, parts: Dictionary) -> void:
 	if _photo_image == null: return
-	# The game's rig can stretch farther than the 512 binding pose. Underpaint
-	# joins using colors from the original image before any textured cutouts.
-	# The final shader then sees one silhouette, not white rings on each piece.
-	var bridges := [
-		["head","shoulder","head",Vector2(255,155),23.0],
-		["shoulder","back_elbow","left_arm",Vector2(215,215),18.0],
-		["back_elbow","back_hand","left_arm",Vector2(168,257),18.0],
-		["shoulder","front_elbow","right_arm",Vector2(300,215),18.0],
-		["front_elbow","front_hand","right_arm",Vector2(342,257),18.0],
-		["hip","left_knee","left_leg",Vector2(229,344),20.0],
-		["left_knee","left_foot","left_leg",Vector2(201,423),20.0],
-		["hip","right_knee","right_leg",Vector2(283,344),20.0],
-		["right_knee","right_foot","right_leg",Vector2(311,423),20.0]
-	]
-	for bridge in bridges:
+	# Only draw a connector when its source color came from clear foreground ink
+	# inside that traced part. Fixed sample points can land on leftover gray paper
+	# and stretch it into an unwanted strip behind the face or neck.
+	for bridge in JOINT_BRIDGES:
 		if not parts.has(bridge[2]): continue
-		var sample: Vector2 = bridge[3]
-		var color: Color = _photo_image.get_pixelv(Vector2i(sample))
-		if color.a < 0.2: continue
+		var key := "%s:%s" % [str(bridge[2]),str(bridge[3])]
+		if not _bridge_colors.has(key): continue
+		var color: Color = _bridge_colors[key]
 		var start: Vector2 = _posed[bridge[0]]
 		var finish: Vector2 = _posed[bridge[1]]
 		canvas.draw_line(_viewport_point(start),_viewport_point(finish),color,float(bridge[4])*RENDER_SCALE,true)
+
+func _prepare_bridge_colors() -> void:
+	_bridge_colors.clear()
+	if _photo_image == null: return
+	var parts: Variant = record.get("photo_parts",{})
+	if not parts is Dictionary: return
+	for bridge in JOINT_BRIDGES:
+		var part := str(bridge[2])
+		var raw_polygon: Variant = parts.get(part,null)
+		if not raw_polygon is Array or raw_polygon.size() < 3: continue
+		var polygon := PackedVector2Array()
+		for point in raw_polygon: polygon.append(_vec(point))
+		var seed: Vector2 = bridge[3]
+		var best_color := Color(0,0,0,0)
+		var best_score := -INF
+		# Prefer nearby opaque drawing pixels over pale paper residue. This is
+		# computed once at import/configure time, not during the animation loop.
+		for y in range(maxi(0,floori(seed.y)-12),mini(_photo_image.get_height(),ceili(seed.y)+13),2):
+			for x in range(maxi(0,floori(seed.x)-12),mini(_photo_image.get_width(),ceili(seed.x)+13),2):
+				var point := Vector2(x,y)
+				if not Geometry2D.is_point_in_polygon(point,polygon): continue
+				var sample := _photo_image.get_pixelv(Vector2i(x,y))
+				if sample.a < 0.82: continue
+				var luminance := sample.r*0.2126 + sample.g*0.7152 + sample.b*0.0722
+				# Light gray paper is not a useful connector color. Saturated marker
+				# ink and dark pencil/pen marks remain eligible.
+				if sample.s < 0.16 and luminance > 0.34: continue
+				var score := sample.s*1.2 + (1.0-luminance)*0.4 - point.distance_to(seed)*0.002
+				if score > best_score:
+					best_score = score
+					best_color = sample
+		if best_score >= 0.20:
+			_bridge_colors["%s:%s" % [part,str(bridge[3])]] = best_color
 
 func _deform(part: String, point: Vector2, distal: bool = false) -> Vector2:
 	var key := part

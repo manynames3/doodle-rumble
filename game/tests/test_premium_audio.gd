@@ -69,7 +69,7 @@ func run() -> void:
 		sound._process(0.75)
 		check(sound.get("_music").stream == streams["climax"] and sound.get("_music_other").stream == null, "%s completes climax fade" % context)
 
-	for weapon in ["pitchfork", "hammer", "sword", "pickaxe", "bow", "staff", "chomp", "dark_blade", "cursor_wand"]:
+	for weapon in ["pitchfork", "hammer", "sword", "pickaxe", "bow", "staff", "chomp", "dark_blade", "cursor_wand", "custom_pick", "custom_bone", "custom_bat", "custom_ball", "custom_chicken", "custom_crayon"]:
 		var light: AudioStreamWAV = sound._impact_stream(weapon, false, "paper")
 		var heavy: AudioStreamWAV = sound._impact_stream(weapon, true, "paper")
 		var paper_stats := signal_stats(light)
@@ -80,6 +80,27 @@ func run() -> void:
 	var hammer_metal: AudioStreamWAV = sound._impact_stream("hammer", true, "metal")
 	var hammer_magic: AudioStreamWAV = sound._impact_stream("hammer", true, "magic")
 	check(hammer_paper.data != hammer_metal.data and hammer_paper.data != hammer_magic.data and hammer_metal.data != hammer_magic.data, "paper, metal, and magic accents differ")
+	var signature_styles := ["spin", "quake", "dash", "blocks", "signal", "swarm", "chomp", "glitch", "void"]
+	var signature_fingerprints: Dictionary = {}
+	for style in signature_styles:
+		var fighter_signature: AudioStreamWAV = sound.get("_sounds")["signature_" + style]
+		var fighter_stats := signal_stats(fighter_signature)
+		check(fighter_signature != null and fighter_stats.x < 0.8 and fighter_stats.y > 0.008, "%s fighter special cue is bounded and audible" % style)
+		var fingerprint := hash(fighter_signature.data)
+		check(not signature_fingerprints.has(fingerprint), "%s fighter special has its own musical identity" % style)
+		signature_fingerprints[fingerprint] = style
+	for style in ["ore", "fossil", "home_run", "swerve", "cluck", "rainbow"]:
+		var kit_signature: AudioStreamWAV = sound.get("_sounds")["signature_" + style]
+		check(kit_signature != null and kit_signature.get_length() >= 0.45 and signal_stats(kit_signature).y > 0.006, "%s custom kit has a dedicated special cue" % style)
+	for style in ["pellet", "cursor_stamp", "ink_geyser", "eraser", "firewall", "dark_slash", "dark_rift", "eclipse", "dark_quake", "camera_flash", "packet_blast"]:
+		check(sound.get("_sounds").has("signature_" + style), "%s boss pattern has its own release cue" % style)
+	var boss_styles: Dictionary = sound.get_script().get_script_constant_map()["BOSS_PATTERN_STYLE"]
+	check(boss_styles["h4ck3r"]["packet_blast"] == "packet_blast", "H4CK3R packet blast uses its digital burst cue")
+	check(boss_styles["dark_lord"]["quake"] == "dark_quake", "Dark lord quake has its own heavier impact cue")
+	check(boss_styles["dark_lord"]["camera"] == "camera_flash", "Dark lord camera attack has its own snapshot-glitch cue")
+	for cue in ["pac_bite", "cursor_tap", "dark_blade_swing"]:
+		var attack: AudioStreamWAV = sound.get("_sounds")[cue]
+		check(attack != null and attack.get_length() < 0.35 and signal_stats(attack).y > 0.006, "%s makes repeated boss basics recognizable" % cue)
 	for cue in ["guard_shield", "guard_parry", "guard_reflect", "warning_hazard", "warning_boss", "warning_projectile", "menu_move", "menu_select", "menu_back", "round_start", "round_end", "match_win"]:
 		var stream: AudioStreamWAV = sound.get("_sounds")[cue]
 		var stats := signal_stats(stream)

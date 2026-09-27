@@ -9,6 +9,21 @@ func _initialize() -> void:
 func run() -> void:
 	await process_frame
 	root.size = Vector2i(640, 540)
+	var bridge_probe := Art.new()
+	bridge_probe.record = {"photo_parts":{"head":[[230,130],[280,130],[280,180],[230,180]]}}
+	bridge_probe._photo_image = Image.create_empty(512,512,false,Image.FORMAT_RGBA8)
+	bridge_probe._photo_image.fill(Color("999999"))
+	bridge_probe._prepare_bridge_colors()
+	var pale_paper_skipped: bool = bridge_probe._bridge_colors.is_empty()
+	for y in range(152,159):
+		for x in range(252,259): bridge_probe._photo_image.set_pixel(x,y,Color("d4c600"))
+	bridge_probe._prepare_bridge_colors()
+	var marker_color_kept: bool = bridge_probe._bridge_colors.size() == 1 and bridge_probe._bridge_colors.values()[0].s > 0.5
+	bridge_probe.free()
+	if not pale_paper_skipped or not marker_color_kept:
+		push_error("Joint connectors sampled pale paper instead of foreground ink")
+		quit(1)
+		return
 	var image := Image.create_empty(512, 512, false, Image.FORMAT_RGBA8)
 	image.fill(Color.TRANSPARENT)
 	image.fill_rect(Rect2i(145, 175, 119, 115), Color("27a45a"))
@@ -92,7 +107,7 @@ func run() -> void:
 		quit(1)
 		return
 	if DisplayServer.get_name() == "headless":
-		print("CUSTOM_ART_TEST_RESULT checks=12 failures=0 geometry=pass source_photo=pass segment_cache=pass render=requires_display")
+		print("CUSTOM_ART_TEST_RESULT checks=14 failures=0 geometry=pass source_photo=pass bridge_color=pass segment_cache=pass render=requires_display")
 		canvas.queue_free()
 		record_library.free()
 		root.get_node("Sound").shutdown()
@@ -130,7 +145,7 @@ func run() -> void:
 	art.configure(plain_record)
 	var no_edge: bool = is_zero_approx(float(art.get_node("PaperCutout").material.get_shader_parameter("edge_opacity")))
 	ok = ok and no_edge
-	print("CUSTOM_ART_TEST_RESULT checks=9 failures=%d size=%s head_alpha=%.2f body_alpha=%.2f paper=%s edge_off=%s" % [0 if ok else 1, str(composed.get_size()), composed.get_pixelv(Vector2i(head_sample)).a, composed.get_pixelv(Vector2i(body_sample)).a, str(paper_found), str(no_edge)])
+	print("CUSTOM_ART_TEST_RESULT checks=11 failures=%d size=%s head_alpha=%.2f body_alpha=%.2f paper=%s edge_off=%s bridge_color=pass" % [0 if ok else 1, str(composed.get_size()), composed.get_pixelv(Vector2i(head_sample)).a, composed.get_pixelv(Vector2i(body_sample)).a, str(paper_found), str(no_edge)])
 	canvas.queue_free()
 	record_library.free()
 	root.get_node("Sound").shutdown()

@@ -9,6 +9,8 @@ const Photo = preload("res://scripts/workshop_photo.gd")
 const Rig = preload("res://scripts/fighter_rig.gd")
 const Library = preload("res://scripts/custom_library.gd")
 const KitPreview = preload("res://scripts/custom_kit_preview.gd")
+const WeaponArt = preload("res://scripts/weapon_art.gd")
+const CustomKits = preload("res://scripts/custom_kits.gd")
 const FONT = preload("res://assets/fonts/Kalam-Bold.ttf")
 const PARTS := ["head", "body", "left_arm", "right_arm", "left_leg", "right_leg"]
 const PART_NAMES := ["Head", "Body", "Left arm", "Right arm", "Left leg", "Right leg"]
@@ -53,6 +55,8 @@ var _canvas
 var _canvas_frame: Control
 var _preview_art: Node2D
 var _preview_fx: Node2D
+var _weapon_preview: Node2D
+var _standalone_weapon_preview := false
 var _preview_uses_rig := false
 var _preview_clock := 0.0
 var _source_image: Image
@@ -178,6 +182,8 @@ func _clear_ui() -> void:
 	_canvas_frame = null
 	_preview_art = null
 	_preview_fx = null
+	_weapon_preview = null
+	_standalone_weapon_preview = false
 	_preview_uses_rig = false
 	_dialog = null
 	_name_edit = null
@@ -413,8 +419,8 @@ func _build_preview(title: String, at: Vector2) -> void:
 		var preview_image: Image = _matte_image if _matte_image != null else _source_square
 		if preview_image != null:
 			_matte_preview = TextureRect.new()
-			_matte_preview.position = Vector2(931,480) if step in [0,1] else Vector2(415,315)
-			_matte_preview.size = Vector2(150,135) if step in [0,1] else Vector2(220,240)
+			_matte_preview.position = Vector2(931,480) if step in [0,1] else Vector2(315,315)
+			_matte_preview.size = Vector2(150,135) if step in [0,1] else Vector2(210,240)
 			_matte_preview.texture = ImageTexture.create_from_image(preview_image)
 			_matte_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			_matte_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
@@ -424,6 +430,29 @@ func _build_preview(title: String, at: Vector2) -> void:
 				_label("Cleanup preview · %d / 6 cutouts" % _cutout_progress(),Vector2(789,619),Vector2(430,28),16,MUTED,true)
 		else:
 			_label("Choose a photo to see your whole drawing here.",Vector2(789,500),Vector2(430,42),17,MUTED,true,true)
+		if step in [0,1]: return
+		_label("Your paper fighter",Vector2(322,558),Vector2(195,28),16,MUTED,true)
+		_panel(Vector2(535,327),Vector2(207,231),Color("f5f5e8"))
+		_label("WEAPON PICK",Vector2(546,337),Vector2(185,30),17,MUTED,true)
+		var kit_id := str(record.get("kit","pixel_pick"))
+		var kit_info: Dictionary = CustomKits.info(kit_id)
+		var accent := Color(str(record.get("color","#f6a047")))
+		_weapon_preview = WeaponArt.new()
+		_weapon_preview.position = Vector2(625,439)
+		_weapon_preview.scale = Vector2.ONE * 1.08
+		_weapon_preview.z_index = 2
+		_weapon_preview.configure(str(kit_info.get("weapon","custom_pick")),accent)
+		add_child(_weapon_preview)
+		_label(str(kit_info.get("name","Pixel Pick")),Vector2(545,496),Vector2(187,43),18,INK,true,true)
+		_label("Finish all 6 cutouts to see your photo fighter move.",Vector2(315,592),Vector2(426,39),16,MUTED,true,true)
+		_standalone_weapon_preview = true
+		if step == 3:
+			_preview_fx = KitPreview.new()
+			_preview_fx.position = Vector2(541,433)
+			_preview_fx.scale = Vector2.ONE * 0.72
+			_preview_fx.z_index = 3
+			add_child(_preview_fx)
+			_preview_clock = 0.0
 		return
 	var data = get_node_or_null("/root/Data")
 	_preview_uses_rig = data != null and data.has_method("custom_definition")
@@ -523,7 +552,7 @@ func _reduced_motion() -> bool:
 	return bool(settings.reduced_motion) if settings != null else false
 
 func _process(delta: float) -> void:
-	if not is_instance_valid(_preview_art): return
+	if not is_instance_valid(_preview_art) and not is_instance_valid(_preview_fx): return
 	_preview_clock += delta
 	var state := {"grounded":true,"reduced_motion":_reduced_motion(),"facing":1}
 	match pose_name:
@@ -539,10 +568,11 @@ func _process(delta: float) -> void:
 				state["weapon_hidden"] = true
 		"Victory": state["victory"] = true
 		"Defeat": state["defeated"] = true
-	if _preview_uses_rig: _preview_art.pose(delta,state)
-	else: _preview_art.pose_preview(state)
+	if is_instance_valid(_preview_art):
+		if _preview_uses_rig: _preview_art.pose(delta,state)
+		else: _preview_art.pose_preview(state)
 	if is_instance_valid(_preview_fx):
-		var hand: Vector2 = _preview_art.front_hand if _preview_uses_rig else Vector2(27,-65)
+		var hand: Vector2 = Vector2.ZERO if _standalone_weapon_preview else _preview_art.front_hand if _preview_uses_rig else Vector2(27,-65)
 		_preview_fx.present(str(record.get("kit","pixel_pick")),float(state.get("attack_progress",-1.0)) if pose_name == "Special" else -1.0,hand,_reduced_motion())
 
 func _part_buttons(start: Vector2, gap: int) -> void:

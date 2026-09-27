@@ -306,6 +306,7 @@ func show_title() -> void:
 func _boss_pattern(kind: String) -> void:
 	if state != "playing" or not is_instance_valid(second): return
 	if kind in ["void_orb","pellet_fan","eclipse_volley"]:
+		Sound.play_boss_pattern(str(second.definition.id),kind)
 		var angles = [-0.24,0.0,0.24] if kind == "void_orb" else [-0.40,0.0,0.40] if kind == "pellet_fan" else [-0.44,-0.22,0.0,0.22,0.44]
 		for angle in angles:
 			var projectile = BossProjectile.new()
@@ -313,7 +314,6 @@ func _boss_pattern(kind: String) -> void:
 			projectile.configure(second,kind,second.facing,angle)
 			projectile.z_index = 6
 			projectiles.append(projectile)
-		Sound.play("boss" if kind in ["void_orb","eclipse_volley"] else "pickaxe")
 	elif kind == "rift":
 		_boss_hazard("dark_lord","dark_rift")
 	elif kind == "eclipse_wave":
@@ -326,13 +326,13 @@ func _boss_pattern(kind: String) -> void:
 func _hacker_pattern(kind: String) -> void:
 	if state != "playing" or not is_instance_valid(second): return
 	if kind == "checksum_volley":
+		Sound.play_boss_pattern("h4ck3r",kind)
 		for angle in [-0.22,0.0,0.22]:
 			var projectile = BossProjectile.new()
 			world.add_child(projectile)
 			projectile.configure(second,kind,second.facing,angle)
 			projectile.z_index = 6
 			projectiles.append(projectile)
-		Sound.play("signal")
 	else:
 		_boss_hazard("h4ck3r",kind)
 
@@ -340,9 +340,10 @@ func _boss_hazard(owner_id: String, kind: String = "") -> void:
 	if state != "playing" or not is_instance_valid(first): return
 	var cycle = ["camera","eraser_drop","ink_geyser","cursor_stamp"]
 	if kind.is_empty(): kind = cycle[hazard_sequence%cycle.size()]
+	Sound.play_boss_pattern(owner_id,kind)
 	hazards.mark_target(first.position.x,hazard_sequence%2,kind,owner_id)
 	hazard_sequence += 1
-	Sound.play("warning")
+	Sound.play_warning("boss")
 
 func start_racing() -> void:
 	Sound.set_music_context("racing")
@@ -512,7 +513,7 @@ func _show_story_scene(after: bool, finished: Callable, index: int = -1) -> void
 	state = "story"
 	_hide_fighters()
 	_clear_ui()
-	Sound.set_music_context("story")
+	Sound.set_story_stage(arcade_stage if index < 0 else index)
 	story_scene = load("res://scripts/story_scene.gd").new()
 	ui.add_child(story_scene)
 	story_scene.build(self,arcade_stage if index < 0 else index,after,func():
@@ -845,10 +846,11 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 func _on_attack(fighter, special: bool) -> void:
-	var cue: String = str(fighter.definition.special) if special and fighter.definition.special in ["signal","swarm"] else "special" if special else "boss" if fighter.definition.id == "dark_lord" else "swing" if fighter.definition.id == "pac_man" else "signal" if fighter.definition.id == "h4ck3r" else str(fighter.definition.weapon)
-	if bool(fighter.definition.get("custom",false)):
-		cue = str(fighter.definition.special if special else fighter.definition.weapon)
-	Sound.play(cue)
+	if special:
+		Sound.play_fighter_special(str(fighter.definition.id),str(fighter.definition.special))
+	else:
+		var cue: String = "dark_blade_swing" if fighter.definition.id == "dark_lord" else "pac_bite" if fighter.definition.id == "pac_man" else "cursor_tap" if fighter.definition.id == "h4ck3r" else str(fighter.definition.weapon)
+		Sound.play(cue)
 	if fighter == first and special: practice_special = true
 
 func _projectile_platforms() -> Array:

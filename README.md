@@ -74,6 +74,8 @@ These are native captures from the running Godot project, after the nine new pac
 
 The latest public downloadable Mac build is **v0.7.7**. It includes independent Fighter/Pen colors, a more effective warm-gray paper cleanup, and clearer manual photo-cutout guidance, alongside the Doodle Workshop, six custom weapon kits and the latest visual/performance pass. Download the Mac app or Godot project from the [v0.7.7 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.7). See the [v0.7.7 verification report](docs/TESTING_0_7_7.md) or run the project in Godot 4.7.2.
 
+The current `main` source also includes the later Workshop preview fixes and expanded stage music/audio cues, with full verification recorded in [`BUILD_STATUS.md`](BUILD_STATUS.md) and [`TESTING_0_7_8.md`](docs/TESTING_0_7_8.md). These source updates are ahead of the latest downloadable release; no v0.7.8 GitHub release has been published yet.
+
 Download and extract `Doodle_Rumble_Mac_v0.7.7.zip`, then double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly before the title menu. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default. The separate `Doodle_Rumble_Project_v0.7.7.zip` contains the complete Godot project for editing or running from source.
 
 This Universal arm64/x86_64 build is ad-hoc signed and not Apple-notarized. macOS may require **System Settings → Privacy & Security → Open Anyway** after a transfer.

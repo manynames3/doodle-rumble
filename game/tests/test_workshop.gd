@@ -201,6 +201,14 @@ func _check() -> void:
 	reopened._go_step(1)
 	_expect(reopened.status.contains("Trace the whole Head") and not reopened.status.contains("Move the dots"),"photo import footer explains tracing instead of repeating the joint instruction")
 	_expect(reopened._cutout_progress() == 1 and not reopened._preview_uses_rig,"a partial photo cutout keeps the whole photo preview instead of showing a misleading sliver")
+	reopened.record.kit = "bone"
+	reopened._go_step(2)
+	_expect(reopened._weapon_preview != null and reopened._weapon_preview.visible and reopened._weapon_preview.kind == "custom_bone" and reopened._matte_preview != null,"selected weapon stays visible on the Weapon step while photo cutouts are unfinished")
+	reopened._go_step(3)
+	reopened._select_pose("Special")
+	reopened._preview_clock = 0.65
+	reopened._process(0.0)
+	_expect(reopened._weapon_preview != null and reopened._weapon_preview.visible and reopened._preview_fx != null and reopened._preview_fx.active and reopened._preview_fx.kit == "bone","Try It shows the selected weapon and its special even before photo rigging is complete")
 	reopened.record.photo_parts = {"body":[[230,110],[235,110],[235,300],[230,300]]}
 	_expect(reopened._cutout_progress() == 0 and reopened._first_bad_cutout() == "body","a narrow outline is rejected and selected for repair before unrelated missing parts")
 	reopened.record.photo_parts = {
@@ -213,6 +221,7 @@ func _check() -> void:
 	}
 	reopened._build_ui()
 	_expect(reopened._cutout_progress() == 6 and reopened._preview_uses_rig,"all six complete photo shapes switch the preview to the animated rig")
+	_expect(reopened._preview_art.weapon.kind == "custom_bone" and reopened._preview_art.weapon.visible,"a fully rigged imported fighter keeps its selected weapon equipped in the preview")
 	workshop.source_mode = "import"
 	workshop.record.photo_path = imported_record.photo_path
 	workshop.record.photo_parts = {}

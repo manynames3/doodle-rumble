@@ -1,6 +1,20 @@
-# Build status — Doodle Rumble v0.7.7
+# Build status — Doodle Rumble
 
 Updated 2026-09-24. Godot 4.7.2 / GDScript. The Universal Mac build was prepared on an Apple M1 Mac.
+
+## Local project follow-up (not yet released)
+
+- Imported fighters now show the selected weapon on both **Weapon** and **Try it!** while body cutouts are still being finished. The Try It page can preview the selected special; a clear note explains that all six cutouts are needed for the paper fighter to animate.
+- Cutout connectors now take their tint from nearby opaque ink inside the traced part and skip pale gray paper. This avoids stretching a sampled paper color into a gray strip behind the face or neck.
+- Focused checks cover incomplete and complete photo rigs, the selected weapon, its special preview, and paper-colored connector rejection. The latest full source regression for this local tree passes: **30 suites / 2,867 checks / zero failures**, including Workshop, music, and premium-audio coverage. Native Workshop screenshots using the supplied yellow doodle were captured and inspected.
+- These fixes are in the local Godot project. They are not included in the published v0.7.7 app or archives.
+
+## Local audio polish (not yet released)
+
+- Reworked all six stage scores into distinct, developed 61–73 second arrangements so a 60-second round ends before a full loop repeats. Each keeps tempo-aligned intro, battle and climax versions; generated climax mixes now have a consistently stronger measured level while retaining waveform headroom.
+- Story chapters now play the corresponding arena's lighter music arrangement. The story journal keeps its quieter paper-desk theme. Pac-Man, H4CK3R and Dark lord have distinct basic attack sounds; fighter specials, custom weapon kits and boss patterns receive their own short signature cues. Heavy combat cues gently lower the score for a moment and release it smoothly.
+- Music assets were regenerated with the deterministic local composer. All 18 WAVs passed repeated byte-for-byte regeneration, mono/16-bit/22.05 kHz format checks, 61–73 second duration checks, peak levels below 0.75, and intro < battle < climax RMS checks for every stage. Godot 4.7.2 source regression passed **30 suites / 2,867 checks / zero failures**, including the focused music (114 checks) and premium audio (188 checks) suites. Automated checks do not audition the mix; speakers/headphones, external audio hardware and family listening feedback remain unverified.
+- A local Universal Mac app was exported as **v0.7.8 / build 26** to `builds/mac-v0.7.8/Doodle Rumble.app`; an app-only ZIP was created in the workspace outputs folder, outside this repository. The exported pack passed the focused music (114 checks) and premium-audio (188 checks) suites, and the app completed a 120-frame headless startup smoke test. It is ad-hoc signed and not notarized. No project archive or GitHub release was created.
 
 ## v0.7.7 Workshop and photo cleanup
 

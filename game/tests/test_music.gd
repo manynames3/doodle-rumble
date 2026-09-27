@@ -41,7 +41,7 @@ func run() -> void:
 		if stream != null:
 			check(stream.mix_rate == 22050 and stream.format == AudioStreamWAV.FORMAT_16_BITS and not stream.stereo, "%s is 16-bit mono at expected rate" % key)
 			check(stream.loop_mode == AudioStreamWAV.LOOP_FORWARD and stream.loop_begin == 0 and stream.loop_end == stream.data.size() / 2, "%s covers a complete PCM loop" % key)
-			check(stream.get_length() > 10.0 and stream.get_length() < 20.0, "%s has a complete arrangement" % key)
+			check(stream.get_length() > 59.0 and stream.get_length() < 74.0, "%s has a full-match arrangement before it repeats" % key)
 			var signature := hash(stream.data)
 			check(not fingerprints.has(signature), "%s has a distinct arrangement" % key)
 			fingerprints[signature] = key
@@ -71,6 +71,16 @@ func run() -> void:
 	check(story_stream != null and story_stream.loop_mode == AudioStreamWAV.LOOP_FORWARD and story_stream.get_length() > 10.0, "story bed is a long loop")
 	sound._process(FADE)
 	check(sound.get("_music").stream == story_stream, "story bed crossfade completes")
+	var story_contexts := ["desktop", "quarry", "journey_green", "pac_man", "glitch", "dark_lord"]
+	for stage_index in range(story_contexts.size()):
+		sound.set_story_stage(stage_index)
+		var expected: AudioStreamWAV = sound._get_music_stream(story_contexts[stage_index], "intro")
+		check(sound.get("_music_phase") == "intro" and sound.get("_music_other").stream == expected, "chapter %d uses its arena's intro arrangement" % (stage_index + 1))
+		sound._process(FADE)
+		check(sound.get("_music").stream == expected, "chapter %d intro arrangement crossfades cleanly" % (stage_index + 1))
+	sound.set_music_context("story")
+	sound._process(FADE)
+	check(sound.get("_music_context") == "story" and sound.get("_music").stream == story_stream, "story journal returns to its quiet paper bed")
 	sound.set_music_context("racing")
 	check(sound.get("_music_context") == "racing" and sound.get("_music_fading"), "story-to-racing starts a clean return")
 	sound._process(FADE)
@@ -86,6 +96,13 @@ func run() -> void:
 	sound.apply_settings()
 	check(sound.get("_music").volume_db <= -79.0, "zero music volume mutes stream")
 	settings.music_volume = 1.0
+	sound.apply_settings()
+	var music_level_before_duck: float = sound.get("_music").volume_db
+	sound._duck_music(0.80, 0.01)
+	check(absf(sound.get("_music").volume_db - (music_level_before_duck + linear_to_db(0.80))) < 0.02, "impact duck leaves readable score beneath a big sound cue")
+	sound._process(0.01)
+	sound._process(0.60)
+	check(sound.get("_music_duck") >= 0.99, "music duck releases quickly after combat cue")
 	for cue in ["story_open", "story_page", "story_pencil", "story_bonk", "story_magic", "story_glitch", "story_chomp", "story_swish", "story_spark", "story_next", "story_skip", "story_hover", "story_close"]:
 		var story_cue: AudioStreamWAV = sound.get("_sounds")[cue]
 		check(story_cue != null and story_cue.get_length() > 0.04 and story_cue.get_length() < 0.7, "%s is a short story Foley cue" % cue)
