@@ -101,7 +101,7 @@ func run() -> void:
 	for button in menu.buttons: positions.append(button.position)
 	var stable_positions := true
 	# Actual 60-Hz menu frames. Captures sample every four frames (15 fps).
-	for frame in range(1620):
+	for frame in range(3030):
 		await process_frame
 		if frame % 4 == 0: await capture("frames/%04d.png" % (frame/4))
 		if frame in [40,400,650]: await capture("key_%04d.png" % frame)

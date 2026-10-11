@@ -2,7 +2,8 @@ extends Control
 ## Title footer comedy: Blue and Yellow fight over the star that lives in the golden selection underline.
 ## Every pose is a pure function of cosmetic time, so there are no tweens, timers or extra nodes to clean up.
 ## The gag is staged in the label gaps beside the selected underline: Blue sneaks in at the underline's end, skates
-## to the second gap beyond it, and Yellow catches the star there.
+## to the second gap beyond it, and Yellow catches the star there. Four shorter gags follow it in rotation.
+## Props (pencil, moustaches, snot bubble) and handwritten sound effects are cleared and rebuilt from time every frame.
 const INK := Color("070810")
 const GOLD := Color("ffb539")
 const GOLD_HI := Color("ffe2a0")
@@ -12,11 +13,13 @@ const PENCIL := Color("dcd2bc")
 const SWEAT := Color("8fd0ff")
 const BLUE := Color("4f9dff")
 const YELLOW := Color("ffd52e")
+const FONT = preload("res://assets/fonts/Kalam-Bold.ttf")
+const PINK := Color("ff8fa3")
 const MODE_INTRO := 0
 const MODE_LOOP := 1
-const ACT_LEN: float = 11.9
-const ACT_COUNT: int = 3
-const LOOP_LEN: float = ACT_LEN * float(ACT_COUNT)
+# Five vignettes of deliberately different lengths (see _act_len): the long heist, then four quick gags.
+const ACT_COUNT: int = 5
+const LOOP_LEN: float = 47.9
 const INTRO_LEN: float = 2.6
 const LOOP_REST: float = 0.55
 const T_ON: float = 0.8
@@ -34,6 +37,20 @@ const GAP_HALF: float = 9.0
 const RING_SLOTS: int = 3
 const RING_LIFE: float = 1.2
 const MAX_SPARKS: int = 28
+# Per-vignette timing, in seconds from the start of that vignette. Each one ends 0.3 s before its _act_len.
+const PLUCK_AT: Array = [1.5,1.95,2.4,2.8,3.15,3.5,3.85,4.2,4.55,4.9,5.25]
+const PLUCK_BIG: float = 5.95
+const PLUCK_LAND: float = 6.55
+const PLUCK_TOSS: float = 7.15
+const PLUCK_HOME: float = 7.6
+const PLUCK_END: float = 8.1
+const SNOOZE_END: float = 10.3
+const WHACK_POPS: Array = [0.8,2.05,3.3,4.4,5.6,5.7]
+const WHACK_END: float = 7.5
+const HIC_Y: Array = [4.1,4.65,5.55,7.0,7.45,7.95]
+const HIC_B: Array = [5.2,6.0,7.0,7.45,7.95]
+const HIC_S: Array = [6.45,7.0,7.45,7.95]
+const HICCUP_END: float = 8.9
 
 class Doodle extends RefCounted:
 	var tint: Color = Color.WHITE
@@ -70,6 +87,8 @@ class Doodle extends RefCounted:
 	var mark_kind: int = 0
 	var mark: float = 0.0
 	var speed: float = 0.0
+	var bubble: float = 0.0
+	var stache: float = 0.0
 
 	func setup(color: Color, seed_value: float) -> void:
 		tint = color
@@ -118,6 +137,8 @@ class Doodle extends RefCounted:
 		mark_kind = 0
 		mark = 0.0
 		speed = 0.0
+		bubble = 0.0
+		stache = 0.0
 
 var focus_btn: Button = null
 var ul_a: Vector2 = Vector2(103.0,704.0)
@@ -176,6 +197,15 @@ var cur_ghost: float = 0.0
 var cur_board: Vector4 = Vector4.ZERO
 var cur_pebble: float = 0.0
 var cur_trail: bool = false
+# Extras used by the newer vignettes: the star's gaze, a pencil prop and one handwritten sound effect.
+var cur_look: Vector2 = Vector2.ZERO
+var cur_stache: bool = false
+var cur_pencil: Vector4 = Vector4.ZERO
+var cur_word: String = ""
+var cur_word_at: Vector2 = Vector2.ZERO
+var cur_word_f: float = 0.0
+var cur_word_size: int = 22
+var cur_word_tilt: float = 0.0
 # Stage geometry, refreshed from the (smoothed) anchor each frame and frozen while the doodles drop away.
 var gm_d: float = 1.0
 var gm_ax: float = 239.0
@@ -313,9 +343,32 @@ func _set_reduced(value: bool) -> void:
 
 # ---------------------------------------------------------------- clock
 
+func _act_len(act: int) -> float:
+	match act:
+		0: return 11.9
+		1: return 8.4
+		2: return 10.6
+		3: return 7.8
+	return 9.2
+
+func _act_start(act: int) -> float:
+	var total: float = 0.0
+	for i in range(act): total += _act_len(i)
+	return total
+
+func _act_at(x: float) -> int:
+	var total: float = 0.0
+	for i in range(ACT_COUNT):
+		total += _act_len(i)
+		if x < total: return i
+	return ACT_COUNT - 1
+
+## Each act is empty underline for its first T_ON seconds and its last 0.3 s, so the stage breathes between gags.
 func _stage_active() -> bool:
 	if mode == MODE_INTRO: return iu >= 0.25
-	return u >= T_ON and u < T_OFF
+	var act: int = _act_at(u)
+	var beat: float = u - _act_start(act)
+	return beat >= T_ON and beat < _act_len(act) - 0.3
 
 func _stage_time() -> float:
 	return iu if mode == MODE_INTRO else u
@@ -349,19 +402,21 @@ func _process(delta: float) -> void:
 		var previous: float = u
 		u += dt
 		_loop_events(previous,u)
-		if u >= LOOP_LEN:
-			u -= LOOP_LEN
-			dirn = target_dir
+		if u >= LOOP_LEN: u -= LOOP_LEN
+		# The stage is empty at every act boundary, so that is when a mirrored layout may swap sides.
+		if _act_at(previous) != _act_at(u): dirn = target_dir
 	_update_sparks(dt)
 	var active: bool = _stage_active() or leaving or react_age < REACT_LEN or _sparks_alive > 0 or _ring_live() or _wash > 0.01
 	if active or _drawn_active: queue_redraw()
 	_drawn_active = active
 
+## After a focus change the next vignette in the rotation plays, so quick browsing never repeats the same opener.
 func _finish_leave() -> void:
 	leaving = false
 	leave_age = 0.0
+	if mode == MODE_LOOP: u = _act_start((_act_at(u) + 1) % ACT_COUNT)
+	else: u = 0.0
 	mode = MODE_LOOP
-	u = 0.0
 	dirn = target_dir
 
 func _ring_live() -> bool:
@@ -441,6 +496,87 @@ func _star_hug(d: Doodle) -> Vector2:
 func _star_behind(d: Doodle) -> Vector2:
 	return _world(d,Vector2(-_ef(d) * 12.5,-14.0))
 
+## Where the star sits when perched on a doodle's head.
+func _star_crown(d: Doodle) -> Vector2:
+	return _world(d,Vector2(0.0,-44.0))
+
+func _hand_front(d: Doodle) -> Vector2:
+	return _world(d,_arm(d,1)[2])
+
+func _head_top(d: Doodle) -> Vector2:
+	return _world(d,Vector2(0.0,-28.0)) + Vector2(0.0,-HR * CS - 8.0)
+
+## Pop-in out of the floor after t_in and drop-away before t_out, added on top of whatever lift the pose set.
+## Pass a negative t_in for doodles that already rise by themselves (see _hole).
+func _bookend(d: Doodle, t: float, t_in: float, t_out: float) -> void:
+	if t < t_in + 0.4:
+		var f: float = _seg(t,t_in,t_in + 0.4)
+		d.lift -= 84.0 * (1.0 - _pop(f))
+		d.squash *= 1.0 - 0.12 * sin(PI * _seg(f,0.65,1.0))
+	elif t > t_out - 0.35:
+		var g: float = _seg(t,t_out - 0.35,t_out)
+		d.lift -= 90.0 * _ease_in(g)
+		d.squash *= 1.0 - 0.1 * sin(PI * minf(g * 2.0,1.0))
+
+## Whack-a-mole lift: under the floor, springs up at t_up, ducks back down from t_down.
+func _hole(t: float, t_up: float, t_down: float) -> float:
+	if t < t_up: return -90.0
+	if t < t_up + 0.28: return -84.0 * (1.0 - _pop(_seg(t,t_up,t_up + 0.28)))
+	if t < t_down: return 0.0
+	return -90.0 * _ease_in(_seg(t,t_down,t_down + 0.2))
+
+## Half-sine pulse of the most recent event in times (seconds), lasting dur; 0 when none is running.
+func _pulse(t: float, times: Array, dur: float) -> float:
+	for s in times:
+		var age: float = t - float(s)
+		if age >= 0.0 and age < dur: return sin(PI * age / dur)
+	return 0.0
+
+func _strum_index(t: float) -> int:
+	var idx: int = -1
+	for i in range(PLUCK_AT.size()):
+		if t >= float(PLUCK_AT[i]): idx = i
+	return idx
+
+## One handwritten sound effect at a time; the last call that is still running in a frame wins.
+func _say(words: String, at: Vector2, t: float, t0: float, life: float, font_px: int, tilt: float, rise: float) -> void:
+	var age: float = t - t0
+	if age < 0.0 or age >= life: return
+	cur_word = words
+	cur_word_at = Vector2(at.x,minf(at.y,636.0) - rise * age / life)
+	cur_word_f = _pop(minf(age / 0.12,1.0)) * (1.0 - smoothstep(life - 0.25,life,age))
+	cur_word_size = font_px
+	cur_word_tilt = tilt
+
+## The star resting in (and riding) the underline: pops in at t_in, sinks back at t_out, hop lifts it off the string.
+func _star_rest(t: float, t_in: float, t_out: float, hop: float) -> Vector4:
+	if t < t_in or t >= t_out: return Vector4.ZERO
+	var z: float = SR * _pop(_seg(t,t_in,t_in + 0.3)) * (1.0 - _ease_io(_seg(t,t_out - 0.3,t_out)))
+	var ride: float = _deform(gm_ax,cur_pull)
+	cur_star_sq = clampf(ride * 0.03,-0.08,0.3)
+	return Vector4(gm_home.x,gm_home.y + ride - hop,z,0.06 * sin(t * 3.0))
+
+## Every per-frame prop and text effect starts cleared, so nothing leaks from one vignette (or the static pose) into the next.
+func _clear_props() -> void:
+	cur_gap = 0.0
+	cur_pull = 0.0
+	cur_star = Vector4.ZERO
+	cur_star_sq = 0.0
+	cur_star_mood = 0
+	cur_star_back = false
+	cur_ghost = 0.0
+	cur_board = Vector4.ZERO
+	cur_pebble = 0.0
+	cur_trail = false
+	cur_look = Vector2.ZERO
+	cur_stache = false
+	cur_pencil = Vector4.ZERO
+	cur_word = ""
+	cur_word_at = Vector2.ZERO
+	cur_word_f = 0.0
+	cur_word_size = 22
+	cur_word_tilt = 0.0
+
 func _geom() -> void:
 	if leaving: return
 	gm_d = dirn
@@ -466,19 +602,26 @@ func _probe_yellow(t: float) -> Doodle:
 	_yellow_loop(_py,t)
 	return _py
 
-# ---------------------------------------------------------------- loop choreography (three 11.9s vignettes before the cycle repeats)
-# 0.8 Blue peeks, 1.3 tiptoes in, 2.0 winds up, 2.4 pulls the star out of the line, 3.15 smirks, 3.75 hops on a board
-# and skates off, 5.05 hits a pebble, 5.4 faceplants while Yellow hurdles him and catches the star, 6.0 Yellow
-# celebrates far too early, 7.3 Yellow tosses the star up and Blue snatches it, 8.05 Blue whistles innocently,
+# ---------------------------------------------------------------- loop choreography (five vignettes, 47.9 s per cycle)
+# 0 The Underline Heist (11.9 s): the original star-stealing story.
+# 1 Boing (8.4 s): the underline is a guitar string; Blue's jam session ends with the star landing on Yellow's head.
+# 2 Snooze (10.6 s): Blue nods off with a snot bubble, Yellow draws a pencil moustache, and the star gets one too.
+# 3 Whack-a-Doodle (7.8 s): a game of peekaboo from the floor in which nobody ever looks the right way.
+# 4 Hiccups (9.2 s): a "BOO!" ambush that backfires, then the hiccups are contagious, star included.
+# Heist beats: 0.8 Blue peeks, 1.3 tiptoes in, 2.0 winds up, 2.4 pulls the star out of the line, 3.15 smirks, 3.75 hops
+# on a board and skates off, 5.05 hits a pebble, 5.4 faceplants while Yellow hurdles him and catches the star, 6.0
+# Yellow celebrates far too early, 7.3 Yellow tosses the star up and Blue snatches it, 8.05 Blue whistles innocently,
 # 8.45 Yellow's double-take, 8.8 mock offence, 9.35 Blue's sheepish grin, 10.4 Blue punts the star home.
 
 func _loop_pose(t: float) -> void:
-	var act: int = clampi(int(floor(t / ACT_LEN)),0,ACT_COUNT - 1)
-	var beat: float = t - float(act) * ACT_LEN
+	var act: int = _act_at(t)
+	var beat: float = t - _act_start(act)
 	match act:
 		0: _heist_pose(beat)
-		1: _zoomies_pose(beat)
-		_: _dance_pose(beat)
+		1: _pluck_pose(beat)
+		2: _snooze_pose(beat)
+		3: _whack_pose(beat)
+		_: _hiccup_pose(beat)
 
 func _heist_pose(t: float) -> void:
 	_geom()
@@ -491,356 +634,6 @@ func _heist_pose(t: float) -> void:
 	cur_board = _board_loop(t)
 	cur_pebble = smoothstep(3.7,3.95,t) * (1.0 - smoothstep(6.1,6.5,t))
 	cur_trail = _ball(t).z > 0.5
-
-func _zoomies_star(t: float) -> Vector4:
-	var home: Vector2 = gm_home
-	var head: Vector2 = _world(blue,Vector2(0.0,-42.0))
-	var spin: float = 0.0
-	var p: Vector2 = home
-	cur_star_mood = 0
-	if t < 0.65:
-		return Vector4.ZERO
-	if t < 1.1:
-		p = home + Vector2(0.0,-31.0 * _ease_out(_seg(t,0.65,1.1)))
-		spin = -0.18 * _seg(t,0.65,1.1)
-	elif t < 1.7:
-		p = home.lerp(Vector2(gm_xb,FLOOR_Y - 53.0),_ease_io(_seg(t,1.1,1.7)))
-		spin = -0.18 + TAU * _seg(t,1.1,1.7)
-	elif t < 5.9:
-		var f: float = _seg(t,1.7,5.9)
-		var angle: float = TAU * 1.15 * f
-		var center_x: float = (gm_xb + gm_yc) * 0.5
-		var radius_x: float = (gm_yc - gm_xb) * 0.46
-		p = Vector2(center_x + cos(angle) * radius_x,FLOOR_Y - 37.0 + sin(angle * 2.0) * 11.0)
-		spin = angle * 1.8
-		cur_star_mood = 2
-	elif t < 6.35:
-		var f: float = _seg(t,5.9,6.35)
-		var angle: float = TAU * 1.15
-		var center_x: float = (gm_xb + gm_yc) * 0.5
-		var radius_x: float = (gm_yc - gm_xb) * 0.46
-		var orbit_end: Vector2 = Vector2(center_x + cos(angle) * radius_x,FLOOR_Y - 37.0 + sin(angle * 2.0) * 11.0)
-		p = orbit_end.lerp(head + Vector2(0.0,-3.0),_ease_out(f))
-		spin = TAU * 2.3 * (1.0 - f)
-		cur_star_mood = 1
-	elif t < 9.8:
-		var wobble: float = sin((t - 6.35) * 8.0)
-		p = head + Vector2(wobble * 2.5,-3.0 + absf(wobble) * 2.0)
-		spin = wobble * 0.08
-		cur_star_mood = 2
-	else:
-		var f: float = _seg(t,9.8,10.65)
-		p = head.lerp(home,_ease_out(f))
-		if t > 10.65: p = home
-		spin = TAU * 1.4 * (1.0 - f)
-		cur_star_mood = 2
-	return Vector4(p.x,p.y,SR,spin)
-
-func _zoomies_pose(t: float) -> void:
-	_geom()
-	cur_gap = 0.0
-	cur_pull = 0.0
-	cur_ghost = 0.0
-	cur_board = Vector4.ZERO
-	cur_pebble = 0.0
-	cur_trail = false
-	_blue_zoomies(blue,t)
-	_yellow_zoomies(yellow,t)
-	cur_star = _zoomies_star(t)
-
-func _blue_zoomies(d: Doodle, t: float) -> void:
-	var fd: float = gm_d
-	d.face = -fd
-	if t < 0.55 or t >= 11.6: return
-	d.shown = 1.0
-	d.look = Vector2(-fd,-0.7)
-	if t < 1.5:
-		var f: float = _seg(t,0.55,1.5)
-		_stand(d,gm_xb,-54.0 * (1.0 - _pop(f)))
-		d.arm_f = 1.9
-		d.arm_b = -1.4
-		d.eye_open = 1.15
-		d.mouth = 1
-		d.brow = 0.6
-	elif t < 5.9:
-		var f: float = _seg(t,1.5,5.9)
-		var angle: float = TAU * 1.15 * f
-		var target_x: float = gm_xb + fd * 7.0 * sin(angle + 0.75)
-		d.walk = angle * 2.1
-		d.stride = 1.1
-		_stand(d,target_x,3.0 + 2.5 * absf(sin(d.walk)))
-		d.lean = fd * 0.23 * sin(angle)
-		d.arm_f = 1.3 + 0.6 * sin(d.walk)
-		d.arm_b = -0.5 + 0.6 * sin(d.walk + PI)
-		d.speed = 0.7
-		d.mouth = 2
-		d.brow = 0.7
-		d.look = Vector2(-fd * cos(angle),-0.8)
-	elif t < 6.35:
-		var f: float = _seg(t,5.9,6.35)
-		_stand(d,gm_xb + fd * 5.0 * _ease_out(f),15.0 * sin(PI * f))
-		d.squash = 1.0 + 0.12 * sin(PI * f)
-		d.arm_f = 2.7
-		d.arm_b = 2.4
-		d.eye_open = 1.3
-		d.mouth = 9
-		d.mark_kind = 3
-		d.mark = 1.0 - smoothstep(0.75,1.0,f)
-		d.look = Vector2(-fd,-1.0)
-	elif t < 7.75:
-		var f: float = _seg(t,6.35,7.75)
-		_stand(d,gm_xb + fd * 5.0,0.0)
-		d.lean = 0.045 * sin(t * 22.0)
-		d.arm_f = 1.4
-		d.arm_b = 0.9
-		d.eye_open = 1.25
-		d.brow = -0.9
-		d.mouth = 9
-		d.mark_kind = 1
-		d.mark = 1.0 - smoothstep(7.3,7.75,t)
-		d.look = Vector2(0.0,-1.0)
-	elif t < 9.8:
-		var f: float = _seg(t,7.75,9.8)
-		_stand(d,gm_xb + fd * 5.0,2.0 * absf(sin(t * 5.0)))
-		d.arm_f = 2.4 + 0.35 * sin(t * 7.0)
-		d.arm_b = -0.5
-		d.eye_open = 0.8
-		d.brow = 0.25
-		d.mouth = 4
-		d.blush = smoothstep(7.9,8.2,t)
-		d.look = Vector2(0.0,-0.8)
-	else:
-		var f: float = _seg(t,9.8,11.6)
-		var home_x: float = gm_xb
-		_stand(d,lerpf(gm_xb + fd * 5.0,home_x,_ease_io(f)),2.0 * sin(PI * f))
-		d.arm_f = 2.0 + 0.35 * sin(t * 11.0)
-		d.mouth = 2
-		d.brow = 0.2
-		d.look = Vector2(-fd,-0.25)
-
-func _yellow_zoomies(d: Doodle, t: float) -> void:
-	var fd: float = gm_d
-	d.face = fd
-	if t < 0.7 or t >= 11.6: return
-	d.shown = 1.0
-	d.look = Vector2(-fd,-0.7)
-	if t < 1.5:
-		var f: float = _seg(t,0.7,1.5)
-		_stand(d,gm_yc,-60.0 * (1.0 - _pop(f)))
-		d.arm_f = 1.6
-		d.arm_b = -1.8
-		d.eye_open = 1.1
-		d.mouth = 1
-		d.brow = 0.4
-	elif t < 5.9:
-		var f: float = _seg(t,1.5,5.9)
-		var angle: float = TAU * 1.15 * f
-		var target_x: float = gm_yc - fd * 7.0 * sin(angle - 0.75)
-		d.walk = angle * 2.1 + PI
-		d.stride = 1.0
-		_stand(d,target_x,3.0 + 2.5 * absf(sin(d.walk)))
-		d.lean = -fd * 0.2 * sin(angle)
-		d.arm_f = 1.1 + 0.6 * sin(d.walk)
-		d.arm_b = -0.7 + 0.6 * sin(d.walk + PI)
-		d.speed = 0.65
-		d.mouth = 2
-		d.brow = 0.6
-		d.look = Vector2(fd * cos(angle),-0.8)
-	elif t < 6.35:
-		var f: float = _seg(t,5.9,6.35)
-		_stand(d,gm_yc - fd * 5.0,13.0 * sin(PI * f))
-		d.squash = 1.0 + 0.1 * sin(PI * f)
-		d.arm_f = 2.8
-		d.arm_b = 2.5
-		d.eye_open = 1.3
-		d.mouth = 9
-		d.mark_kind = 2
-		d.mark = 1.0 - smoothstep(0.75,1.0,f)
-		d.look = Vector2(-fd,-1.0)
-	elif t < 7.75:
-		var f: float = _seg(t,6.35,7.75)
-		_stand(d,gm_yc - fd * 5.0,0.0)
-		d.arm_mode = 5
-		d.eye_open = 1.1
-		d.brow = 0.8
-		d.mouth = 4
-		d.look = Vector2(-fd,-0.8)
-		d.mark_kind = 2
-		d.mark = smoothstep(6.45,6.6,t) * (1.0 - smoothstep(7.4,7.75,t))
-	elif t < 9.8:
-		var f: float = _seg(t,7.75,9.8)
-		_stand(d,gm_yc - fd * 5.0,1.5 * absf(sin(t * 5.0)))
-		d.arm_f = 2.7
-		d.arm_b = -2.7
-		d.eye_open = -1.0
-		d.brow = -0.3
-		d.mouth = 2
-		d.mark_kind = 7
-		d.mark = 1.0 - smoothstep(9.4,9.8,t)
-	else:
-		var f: float = _seg(t,9.8,11.6)
-		_stand(d,lerpf(gm_yc - fd * 5.0,gm_yc,_ease_io(f)),1.5 * sin(PI * f))
-		d.arm_f = 2.3 + 0.35 * sin(t * 10.0)
-		d.mouth = 2
-		d.brow = -0.2
-		d.look = Vector2(-fd,-0.2)
-
-func _dance_star(t: float) -> Vector4:
-	var home: Vector2 = gm_home
-	var center: Vector2 = Vector2(gm_ax,FLOOR_Y - 32.0)
-	var p: Vector2 = home
-	var spin: float = 0.0
-	cur_star_mood = 0
-	if t < 0.75: return Vector4.ZERO
-	if t < 1.4:
-		p = home + Vector2(0.0,-24.0 * _ease_out(_seg(t,0.75,1.4)))
-	elif t < 5.0:
-		var f: float = _seg(t,1.4,5.0)
-		var angle: float = TAU * 1.3 * f
-		p = Vector2(center.x + cos(angle) * 24.0,center.y + sin(angle * 1.5) * 9.0)
-		spin = angle * 1.5
-		cur_star_mood = 2
-	elif t < 7.15:
-		var f: float = _seg(t,5.0,7.15)
-		var high: Vector2 = center + Vector2(0.0,-22.0)
-		p = high.lerp(home,_ease_in(f))
-		spin = TAU * 2.0 * f
-		cur_star_mood = 1
-	else:
-		p = home + Vector2(0.0,-4.0 * absf(sin((t - 7.15) * 7.0)))
-		cur_star_mood = 2 if t < 10.2 else 0
-	return Vector4(p.x,p.y,SR,spin)
-
-func _dance_pose(t: float) -> void:
-	_geom()
-	cur_gap = 0.0
-	cur_pull = 0.0
-	cur_ghost = 0.0
-	cur_board = Vector4.ZERO
-	cur_pebble = 0.0
-	cur_trail = false
-	_dance_blue(blue,t)
-	_dance_yellow(yellow,t)
-	cur_star = _dance_star(t)
-
-func _dance_blue(d: Doodle, t: float) -> void:
-	var fd: float = gm_d
-	d.face = -fd
-	if t < 0.45 or t >= 11.6: return
-	d.shown = 1.0
-	if t < 1.4:
-		var f: float = _seg(t,0.45,1.4)
-		_stand(d,gm_xb,-48.0 * (1.0 - _pop(f)))
-		d.arm_f = 1.6
-		d.mouth = 4
-		d.look = Vector2(-fd,-0.8)
-	elif t < 5.0:
-		var f: float = _seg(t,1.4,5.0)
-		d.walk = f * PI * 8.0
-		d.stride = 0.65
-		_stand(d,gm_xb + fd * 13.0 * sin(d.walk),4.0 * absf(sin(d.walk)))
-		d.tilt = fd * 0.08 * sin(d.walk)
-		d.arm_mode = 8 if int(f * 4.0) % 2 == 0 else 5
-		d.arm_f = 2.8
-		d.mouth = 2
-		d.brow = 0.4
-		d.look = Vector2(-fd,0.0)
-		if f > 0.72:
-			d.arm_f = 0.8
-			d.eye_open = 0.8
-	elif t < 6.55:
-		var f: float = _seg(t,5.0,6.55)
-		_stand(d,gm_xb + fd * 8.0 * sin(f * TAU),12.0 * absf(sin(f * PI * 2.0)))
-		d.squash = 1.0 + 0.12 * sin(PI * f)
-		d.arm_f = 2.6
-		d.arm_b = 2.3
-		d.mouth = 9
-		d.eye_open = 1.3
-		d.look = Vector2(-fd,-0.5)
-	elif t < 7.2:
-		var f: float = _seg(t,6.55,7.2)
-		_stand(d,gm_xb + fd * 9.0,0.0)
-		d.lean = fd * (0.72 + 0.04 * sin(t * 26.0))
-		d.mark_kind = 5
-		d.mark = 1.0 - smoothstep(6.9,7.2,t)
-		d.eye_open = 0.5
-		d.look = Vector2(0.0,0.0)
-		d.mouth = 7
-	elif t < 9.6:
-		var f: float = _seg(t,7.2,9.6)
-		_stand(d,gm_xb + fd * 9.0,0.0)
-		d.lean = fd * 0.2 * (1.0 - f)
-		d.arm_mode = 7
-		d.eye_open = 0.8
-		d.mouth = 6
-		d.blush = 0.45 * (1.0 - f)
-		d.look = Vector2(-fd,-0.5)
-	else:
-		var f: float = _seg(t,9.6,11.6)
-		_stand(d,lerpf(gm_xb + fd * 9.0,gm_xb,_ease_io(f)),2.0 * sin(PI * f))
-		d.arm_f = 2.4 + 0.35 * sin(t * 12.0)
-		d.mouth = 2
-		d.brow = 0.1
-		d.look = Vector2(-fd,0.0)
-
-func _dance_yellow(d: Doodle, t: float) -> void:
-	var fd: float = gm_d
-	d.face = fd
-	if t < 0.65 or t >= 11.6: return
-	d.shown = 1.0
-	if t < 1.4:
-		var f: float = _seg(t,0.65,1.4)
-		_stand(d,gm_yc,-52.0 * (1.0 - _pop(f)))
-		d.arm_f = 1.8
-		d.mouth = 4
-		d.look = Vector2(fd,-0.8)
-	elif t < 5.0:
-		var f: float = _seg(t,1.4,5.0)
-		d.walk = f * PI * 8.0 - PI * 0.5
-		d.stride = 0.65
-		_stand(d,gm_yc - fd * 13.0 * sin(d.walk),4.0 * absf(sin(d.walk)))
-		d.tilt = -fd * 0.08 * sin(d.walk)
-		d.arm_mode = 8 if int((f + 0.2) * 4.0) % 2 == 0 else 5
-		d.arm_b = 2.8
-		d.mouth = 2
-		d.brow = -0.2
-		d.look = Vector2(fd,0.0)
-		if f < 0.25:
-			d.arm_b = 0.5
-			d.eye_open = 1.1
-	elif t < 6.55:
-		var f: float = _seg(t,5.0,6.55)
-		_stand(d,gm_yc - fd * 8.0 * sin(f * TAU + 0.4),10.0 * absf(sin(f * PI * 2.0 + 0.4)))
-		d.squash = 1.0 + 0.1 * sin(PI * f)
-		d.arm_f = 2.5
-		d.arm_b = 2.2
-		d.mouth = 9
-		d.eye_open = 1.3
-		d.look = Vector2(fd,-0.5)
-	elif t < 7.2:
-		var f: float = _seg(t,6.55,7.2)
-		_stand(d,gm_yc - fd * 9.0,0.0)
-		d.lean = -fd * (0.72 + 0.04 * sin(t * 27.0))
-		d.mark_kind = 2
-		d.mark = 1.0 - smoothstep(6.9,7.2,t)
-		d.eye_open = 0.5
-		d.look = Vector2(0.0,0.0)
-		d.mouth = 7
-	elif t < 9.6:
-		var f: float = _seg(t,7.2,9.6)
-		_stand(d,gm_yc - fd * 9.0,0.0)
-		d.lean = -fd * 0.2 * (1.0 - f)
-		d.arm_mode = 7
-		d.eye_open = 0.9
-		d.mouth = 4
-		d.look = Vector2(-fd,0.0)
-	else:
-		var f: float = _seg(t,9.6,11.6)
-		_stand(d,lerpf(gm_yc - fd * 9.0,gm_yc,_ease_io(f)),2.0 * sin(PI * f))
-		d.arm_f = 2.4 + 0.35 * sin(t * 12.0 + 0.7)
-		d.mouth = 2
-		d.brow = -0.2
-		d.look = Vector2(fd,0.0)
 
 func _gap_loop(t: float) -> float:
 	if t < 2.7 or t >= 11.2: return 0.0
@@ -1432,67 +1225,1008 @@ func _board_loop(t: float) -> Vector4:
 	var alpha: float = 1.0 - smoothstep(6.1,6.5,t)
 	return Vector4(x,y,-fd * PI * _ease_out(f),alpha)
 
+## Events are keyed to each vignette's own clock, so every act's cues are written in the same local seconds as its pose.
+## Sparks emitted above the underline row are always loose; non-loose ones are culled while above y = 703.
 func _loop_events(prev: float, cur: float) -> void:
 	for act in range(ACT_COUNT):
-		var start: float = float(act) * ACT_LEN
-		var finish: float = start + ACT_LEN
+		var start: float = _act_start(act)
+		var finish: float = start + _act_len(act)
 		if cur <= start or prev >= finish: continue
 		var local_prev: float = maxf(prev,start) - start
 		var local_cur: float = minf(cur,finish) - start
 		match act:
 			0: _heist_events(local_prev,local_cur)
-			1: _zoomies_events(local_prev,local_cur)
-			_: _dance_events(local_prev,local_cur)
+			1: _pluck_events(local_prev,local_cur)
+			2: _snooze_events(local_prev,local_cur)
+			3: _whack_events(local_prev,local_cur)
+			_: _hiccup_events(local_prev,local_cur)
 
-func _zoomies_events(prev: float, cur: float) -> void:
+# ---------------------------------------------------------------- vignette 1: Boing (8.4 s)
+
+func _pluck_pose(t: float) -> void:
 	_geom()
-	if _crossed(prev,cur,0.65):
+	_blue_pluck(blue,t)
+	_yellow_pluck(yellow,t)
+	if blue.shown > 0.5: _bookend(blue,t,0.8,PLUCK_END)
+	if yellow.shown > 0.5: _bookend(yellow,t,3.3,PLUCK_END)
+	cur_pull = _pluck_pull(t)
+	cur_gap = GAP_HALF * smoothstep(PLUCK_BIG + 0.02,PLUCK_BIG + 0.12,t) * (1.0 - smoothstep(PLUCK_HOME - 0.1,PLUCK_HOME + 0.02,t))
+	cur_ghost = smoothstep(PLUCK_BIG + 0.05,PLUCK_BIG + 0.25,t) * (1.0 - smoothstep(PLUCK_HOME - 0.1,PLUCK_HOME + 0.05,t))
+	cur_star = _star_pluck(t)
+	var fd: float = gm_d
+	var above: Vector2 = Vector2(gm_ax,FLOOR_Y - 92.0)
+	_say("plink",above,t,1.5,0.7,22,-0.1,8.0)
+	_say("plonk",above,t,2.4,0.7,24,0.08,8.0)
+	_say("BOING!",above,t,3.5,0.9,30,-0.06,10.0)
+	_say("TWANG!",above + Vector2(fd * 20.0,-6.0),t,PLUCK_BIG,0.95,34,fd * 0.1,10.0)
+
+## The underline is stretched down like a bowstring just before the big strum lets go.
+func _pluck_pull(t: float) -> float:
+	if t < 5.5 or t >= PLUCK_BIG: return 0.0
+	var f: float = _seg(t,5.5,PLUCK_BIG)
+	return 8.0 * _ease_io(f) + 0.6 * f * sin(t * 70.0)
+
+## 1 when a strum has just landed, fading to 0 over a quarter second.
+func _strum_kick(t: float) -> float:
+	var idx: int = _strum_index(t)
+	if idx < 0 or t >= 5.5: return 0.0
+	return maxf(0.0,1.0 - (t - float(PLUCK_AT[idx])) / 0.26)
+
+func _blue_pluck(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = -fd
+	if t < 0.8 or t >= PLUCK_END: return
+	d.shown = 1.0
+	_stand(d,gm_xb,0.0)
+	d.look = Vector2(-fd,0.0)
+	var kick: float = _strum_kick(t)
+	if t < 1.5:
+		# Tuning up: head cocked toward the string, one finger flicking at it.
+		d.tilt = -fd * 0.12
+		d.lean = -fd * 0.08
+		d.arm_f = 0.9 + 0.12 * sin(t * 24.0)
+		d.arm_b = 1.35
+		d.brow = 0.4
+		d.mouth = 4
+		d.eye_open = 0.8
+		d.look = Vector2(-fd,0.2)
+	elif t < 5.5:
+		# Jam session: every strum kicks him back a little; eyes squeezed shut in bliss once he gets going.
+		d.lean = -fd * (0.1 + 0.2 * kick)
+		d.lift = 2.0 * kick
+		d.squash = 1.0 - 0.06 * kick
+		d.tilt = fd * 0.1 * sin(t * 9.0)
+		d.arm_f = 0.6 + 1.2 * kick
+		d.arm_b = 1.35
+		d.eye_open = -1.0 if t > 2.4 else 0.7
+		d.mouth = 2 if t > 2.4 else 4
+		d.brow = -0.2
+	elif t < PLUCK_BIG:
+		# Big wind-up: arm overhead, back arched, the whole string stretching with him.
+		var f: float = _seg(t,5.5,PLUCK_BIG)
+		var e: float = _ease_io(f)
+		d.lean = fd * 0.35 * e + sin(t * 60.0) * 0.015 * f
+		d.squash = 1.0 - 0.12 * e
+		d.arm_f = lerpf(1.0,2.9,e)
+		d.arm_b = 1.5
+		d.tilt = fd * 0.1 * e
+		d.eye_open = 1.1
+		d.brow = 1.0
+		d.mouth = 2
+	elif t < 6.4:
+		# TWANG: the strum swings through and he is thrown the other way.
+		var g: float = _seg(t,PLUCK_BIG,6.4)
+		var q: float = _ease_out(minf(g * 2.5,1.0))
+		d.lean = lerpf(fd * 0.35,-fd * 0.4,q) * (1.0 - 0.5 * g)
+		d.lift = 6.0 * sin(PI * minf(g * 2.0,1.0))
+		d.squash = 1.0 + 0.1 * sin(PI * minf(g * 2.5,1.0))
+		d.arm_f = lerpf(2.9,0.4,q)
+		d.arm_b = 1.5
+		d.eye_open = -1.0
+		d.mouth = 2
+		d.brow = -0.2
+	elif t < 6.7:
+		# Turns to see where the star went.
+		var f: float = _seg(t,6.4,6.7)
+		_flip(d,-fd,f)
+		d.arm_f = lerpf(0.4,1.0,f)
+		d.eye_open = 1.2
+		d.brow = 0.3
+		d.mouth = 1
+		d.look = Vector2(fd,-0.3)
+	elif t < 7.25:
+		# Sheepish: it landed on Yellow's head.
+		d.face = fd
+		d.arm_mode = 3
+		d.arm_b = -0.6
+		d.fidget = sin(t * 20.0)
+		d.blush = smoothstep(6.7,6.9,t)
+		d.mouth = 7
+		d.brow = -0.9
+		d.tilt = fd * 0.14
+		d.look = Vector2(fd * 0.3,0.8)
+		d.mark_kind = 4
+		d.mark = smoothstep(6.8,6.95,t) * (1.0 - smoothstep(7.05,7.25,t))
+	elif t < PLUCK_HOME - 0.05:
+		# Turns back just in time to watch the star get headbutted home.
+		var f: float = _seg(t,7.25,7.55)
+		_flip(d,fd,f)
+		d.arm_f = lerpf(0.5,2.6,f)
+		d.mouth = 2
+		d.brow = -0.2
+		d.blush = 1.0 - f
+		d.look = Vector2(-fd,-0.5)
+	else:
+		d.face = -fd
+		d.lift = 5.0 * sin(PI * _seg(t,PLUCK_HOME,PLUCK_HOME + 0.25))
+		d.arm_f = 2.6 + sin(t * 14.0) * 0.45
+		d.mouth = 2
+		d.brow = -0.2
+		d.look = Vector2(-fd,-0.2)
+
+func _yellow_pluck(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = -fd
+	if t < 3.3 or t >= PLUCK_END: return
+	d.shown = 1.0
+	_stand(d,gm_yc,0.0)
+	d.look = Vector2(-fd,0.0)
+	var kick: float = _strum_kick(t)
+	if t < 3.7:
+		d.eye_open = 1.2
+		d.mouth = 1
+		d.arm_f = 0.6
+		d.arm_b = 0.2
+		d.brow = 0.2
+	elif t < 4.6:
+		# Annoyed: fists on hips, scowl, foot tapping, flinching at every plonk.
+		d.arm_mode = 1
+		d.eye_open = 0.6
+		d.brow = 1.0
+		d.mouth = 6
+		d.tap = absf(sin(t * 10.0))
+		d.lean = -fd * 0.06
+		d.squash = 1.0 - 0.04 * kick
+	elif t < 5.5:
+		# Resistance crumbles: nodding along to the beat, a smirk creeping in.
+		d.arm_mode = 1
+		d.eye_open = 0.8
+		d.brow = 0.5
+		d.mouth = 5 if t < 5.0 else 4
+		d.tilt = fd * 0.1 * sin(t * TAU / 0.35)
+		d.lift = 1.5 * kick
+		d.tap = absf(sin(t * 10.0))
+	elif t < PLUCK_BIG:
+		d.eye_open = 1.2
+		d.arm_f = 0.8
+		d.brow = -0.4
+		d.mouth = 1
+		d.lean = fd * 0.06 * _seg(t,5.5,PLUCK_BIG)
+		d.look = Vector2(-fd,-0.2)
+	elif t < PLUCK_LAND:
+		# Something is coming straight for her head.
+		var g: float = _seg(t,PLUCK_BIG,PLUCK_LAND)
+		d.look = Vector2(-fd * (1.0 - g),-g)
+		d.eye_open = 1.4
+		d.mouth = 9
+		d.brow = -0.8
+		d.lean = fd * 0.18 * g
+		d.arm_f = 1.3
+		d.arm_b = -1.3
+		d.mark_kind = 1
+		d.mark = smoothstep(0.0,0.2,g) * (1.0 - smoothstep(0.8,1.0,g))
+	elif t < PLUCK_TOSS:
+		# Bonk. The star squashes her, then she balances it like a tightrope walker and her scowl returns.
+		var age: float = t - PLUCK_LAND
+		d.squash = 1.0 - 0.22 * exp(-age * 9.0) * cos(age * 26.0)
+		d.tilt = fd * 0.12 * exp(-age * 2.5) * sin(age * 9.0)
+		d.arm_f = 1.3
+		d.arm_b = -1.3
+		d.eye_open = 1.1
+		d.look = Vector2(0.0,-1.0)
+		d.brow = lerpf(0.2,1.0,_seg(t,6.8,7.1))
+		d.mouth = 1 if t < 6.9 else 6
+	elif t < PLUCK_HOME:
+		# Headbutt: the star is flicked back to the string.
+		var f: float = _seg(t,PLUCK_TOSS,PLUCK_HOME)
+		d.lift = 8.0 * sin(PI * minf(f * 1.25,1.0))
+		d.tilt = -fd * 0.35 * sin(PI * minf(f * 2.0,1.0))
+		d.squash = 1.0 - 0.18 * sin(PI * minf(f * 3.0,1.0))
+		d.eye_open = -1.0
+		d.mouth = 2
+		d.arm_f = 0.5
+		d.arm_b = -0.5
+	else:
+		d.arm_mode = 2
+		d.eye_open = 0.7
+		d.brow = 0.5
+		d.mouth = 4
+		d.tilt = -fd * 0.1
+		d.look = Vector2(-fd,-0.2)
+
+func _crown_of_yellow(t: float) -> Vector2:
+	_py.reset()
+	_yellow_pluck(_py,t)
+	return _star_crown(_py)
+
+func _star_pluck(t: float) -> Vector4:
+	var fd: float = gm_d
+	cur_star_mood = 2 if t < 3.5 else 1
+	cur_look = Vector2(fd,0.2)
+	if t < 1.0 or t >= PLUCK_END: return Vector4.ZERO
+	if t >= PLUCK_BIG and t < PLUCK_LAND:
+		cur_look = Vector2(fd,-0.5)
+		return _arc(gm_home,_crown_of_yellow(PLUCK_LAND),_seg(t,PLUCK_BIG,PLUCK_LAND),70.0,TAU * 2.0 * fd)
+	if t >= PLUCK_LAND and t < PLUCK_TOSS:
+		var age: float = t - PLUCK_LAND
+		var c: Vector2 = _star_crown(yellow)
+		cur_star_mood = 2
+		cur_look = Vector2(0.0,1.0)
+		cur_star_sq = 0.3 * exp(-9.0 * age) * sin(age * 40.0)
+		return Vector4(c.x,c.y,SR,0.1 * sin(t * 5.0))
+	if t >= PLUCK_TOSS and t < PLUCK_HOME:
+		cur_star_mood = 1
+		return _arc(_crown_of_yellow(PLUCK_TOSS),gm_home,_seg(t,PLUCK_TOSS,PLUCK_HOME),56.0,TAU * 1.5 * -fd)
+	var hop: float = 0.0
+	var idx: int = _strum_index(t)
+	if idx >= 0 and t < 5.5:
+		var a: float = t - float(PLUCK_AT[idx])
+		if a < 0.3: hop = (3.5 + 1.5 * float(idx)) * sin(PI * a / 0.3)
+	var s: Vector4 = _star_rest(t,1.0,PLUCK_END,hop)
+	if t >= PLUCK_HOME:
+		var age: float = t - PLUCK_HOME
+		cur_star_mood = 0
+		cur_star_sq = 0.3 * exp(-9.0 * age) * sin(age * 40.0)
+	return s
+
+func _pluck_events(prev: float, cur: float) -> void:
+	_geom()
+	if _crossed(prev,cur,1.0):
 		_add_ring(gm_ax,3.0)
-		_burst(gm_home,5,GOLD_HI,56.0,false)
-	if _crossed(prev,cur,1.7):
-		_burst(Vector2(gm_xb,FLOOR_Y - 54.0),3,GOLD,54.0,false,2)
-	if _crossed(prev,cur,3.8):
-		var center: Vector2 = Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 55.0)
-		_burst(center,3,GOLD_HI,45.0,false,2)
-	if _crossed(prev,cur,5.9):
-		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 2.0),4,DUST,62.0,true)
-	if _crossed(prev,cur,6.35):
-		_add_ring(gm_ax,5.0)
-		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 48.0),5,GOLD_HI,74.0,true,2)
-	if _crossed(prev,cur,7.75):
-		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 50.0),3,CREAM,44.0,false,1)
-	if _crossed(prev,cur,9.8):
-		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 50.0),4,GOLD,54.0,false,2)
-	if _crossed(prev,cur,10.65):
-		_add_ring(gm_ax,3.0)
-		_burst(gm_home,5,GOLD_HI,52.0,false)
-	if _crossed(prev,cur,T_OFF):
+		_burst(gm_home,5,GOLD_HI,56.0,true)
+	for i in range(PLUCK_AT.size()):
+		if _crossed(prev,cur,float(PLUCK_AT[i])):
+			_add_ring(gm_ax,2.5 + 0.35 * float(i))
+			_burst(gm_home,2,GOLD_HI,38.0 + 3.0 * float(i),true,2)
+	if _crossed(prev,cur,3.3):
+		_burst(Vector2(gm_yc,FLOOR_Y - 2.0),3,DUST,48.0,true)
+	if _crossed(prev,cur,PLUCK_BIG):
+		_add_ring(gm_ax,9.0)
+		_burst(gm_home,10,GOLD,100.0,true)
+	if _crossed(prev,cur,PLUCK_LAND):
+		_burst(_crown_of_yellow(PLUCK_LAND),6,GOLD_HI,70.0,true)
+		_burst(Vector2(gm_yc,FLOOR_Y - 2.0),3,DUST,50.0,true)
+	if _crossed(prev,cur,PLUCK_TOSS):
+		_burst(_crown_of_yellow(PLUCK_TOSS),4,CREAM,50.0,true,1)
+	if _crossed(prev,cur,PLUCK_HOME):
+		_add_ring(gm_ax,6.0)
+		_burst(gm_home,9,GOLD,90.0,true)
+	if _crossed(prev,cur,PLUCK_END):
 		_burst(Vector2(gm_xb,FLOOR_Y - 2.0),3,DUST,48.0,true)
 		_burst(Vector2(gm_yc,FLOOR_Y - 2.0),3,DUST,48.0,true)
 
-func _dance_events(prev: float, cur: float) -> void:
+# ---------------------------------------------------------------- vignette 2: Snooze (10.6 s)
+
+func _snooze_spot() -> float:
+	return gm_xb + gm_d * 27.0
+
+func _snooze_pose(t: float) -> void:
 	_geom()
-	if _crossed(prev,cur,0.75):
+	_blue_snooze(blue,t)
+	_yellow_snooze(yellow,t)
+	if blue.shown > 0.5: _bookend(blue,t,0.8,SNOOZE_END)
+	if yellow.shown > 0.5: _bookend(yellow,t,3.9,SNOOZE_END)
+	cur_star = _star_snooze(t)
+	cur_stache = t >= 7.3
+	cur_pencil = _pencil_snooze(t)
+	var fd: float = gm_d
+	var head: Vector2 = _head_top(blue)
+	var starts: Array = [3.5,5.2,6.9]
+	var lives: Array = [1.5,1.5,0.95]
+	for k in range(3):
+		_say("z z Z",head + Vector2(fd * 14.0,0.0),t,float(starts[k]),float(lives[k]),22,-0.12 * fd,18.0)
+	_say("scritch scritch",_head_top(yellow) + Vector2(fd * 24.0,-8.0),t,5.55,0.9,18,-0.05 * fd,6.0)
+	_say("hee hee",_head_top(yellow),t,7.35,0.75,22,0.08,6.0)
+	_say("POP!",head + Vector2(-fd * 20.0,-6.0),t,7.85,0.7,30,fd * 0.1,8.0)
+	_say("ha ha!",head,t,9.5,0.7,24,-0.06 * fd,8.0)
+
+## The snot bubble breathes with the snores, then swells beyond reason shortly before it bursts.
+func _snooze_bubble(t: float) -> float:
+	if t < 3.4 or t >= 7.85: return 0.0
+	var b: float = (0.55 + 0.45 * sin(t * 3.9 - 1.2)) * smoothstep(3.4,3.9,t)
+	return b + 0.45 * smoothstep(7.0,7.8,t)
+
+func _blue_snooze(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = -fd
+	if t < 0.8 or t >= SNOOZE_END: return
+	d.shown = 1.0
+	_stand(d,gm_xb,0.0)
+	d.look = Vector2(-fd,0.0)
+	d.stache = _seg(t,5.45,6.65)
+	d.bubble = _snooze_bubble(t)
+	if t < 1.3:
+		d.arm_f = 0.3
+	elif t < 2.2:
+		# A huge yawn that stretches the whole body.
+		var s: float = sin(PI * _seg(t,1.3,2.2))
+		d.arm_f = lerpf(0.3,2.9,s)
+		d.arm_b = lerpf(-0.3,-2.9,s)
+		d.lean = fd * 0.15 * s
+		d.squash = 1.0 + 0.08 * s
+		d.mouth = 9
+		d.eye_open = lerpf(1.0,0.3,s)
+		d.brow = -0.4
+	elif t < 3.3:
+		# Drowsy: lids sag, head bobs, one startled snort on the way down.
+		var f: float = _seg(t,2.2,3.3)
+		var snort: bool = t > 2.95 and t < 3.1
+		d.eye_open = 1.3 if snort else lerpf(0.8,0.35,f)
+		d.tilt = -fd * 0.22 * f * absf(sin(t * 3.0))
+		d.lean = -fd * 0.1 * f
+		d.lift = 2.5 * sin(PI * _seg(t,2.95,3.1))
+		d.mouth = 9 if snort else 5
+	elif t < 7.85:
+		# Fast asleep: slow breathing, head hanging, a twitch when the pencil gets close.
+		d.eye_open = 0.0
+		d.mouth = 8
+		d.tilt = -fd * 0.18
+		d.lean = -fd * (0.06 + 0.03 * sin(t * 1.7))
+		d.squash = 1.0 + 0.025 * sin(t * 3.4)
+		d.arm_f = 0.2
+		d.arm_b = -0.2
+		if t > 6.1 and t < 6.4:
+			var tw: float = sin(PI * _seg(t,6.1,6.4))
+			d.lean += -fd * 0.08 * tw
+			d.lift = 1.5 * tw
+	elif t < 8.2:
+		# The bubble bursts and he jolts awake.
+		var f: float = _seg(t,7.85,8.2)
+		d.lift = 8.0 * sin(PI * minf(f * 1.6,1.0))
+		d.squash = 1.0 + 0.1 * sin(PI * minf(f * 2.0,1.0))
+		d.arm_f = lerpf(2.2,0.6,f)
+		d.arm_b = -1.4
+		d.eye_open = 1.4
+		d.mouth = 9
+		d.brow = -1.0
+		d.mark_kind = 1
+		d.mark = 1.0 - smoothstep(0.6,1.0,f)
+	elif t < 8.7:
+		# Feels his upper lip, eyes crossing down to look at it.
+		d.arm_mode = 5
+		d.eye_open = 1.1
+		d.pupil = 0.8
+		d.mouth = 1
+		d.brow = 0.8
+		d.look = Vector2(0.0,1.0)
+	elif t < 9.15:
+		# Spots the star's moustache too.
+		d.arm_mode = 5
+		d.eye_open = 1.35
+		d.pupil = 0.6
+		d.brow = -0.7
+		d.mouth = 7
+		d.look = Vector2(-fd,0.1)
+		d.lean = sin(t * 50.0) * 0.012
+	elif t < 9.45:
+		# Whips round on Yellow: "!?".
+		var f: float = _seg(t,9.15,9.45)
+		_flip(d,-fd,f)
+		d.arm_f = lerpf(0.5,1.9,f)
+		d.arm_b = lerpf(-0.3,1.4,f)
+		d.eye_open = 1.4
+		d.mouth = 9
+		d.brow = -1.0
+		d.look = Vector2(fd,0.0)
+		d.mark_kind = 3
+		d.mark = smoothstep(0.0,0.2,f) * (1.0 - smoothstep(0.8,1.0,f))
+	else:
+		# Gives in and laughs, moustache and all.
+		d.face = fd
+		var hop: float = absf(sin((t - 9.45) * PI / 0.3))
+		d.lift = 5.0 * hop
+		d.squash = 1.0 - 0.08 * pow(1.0 - hop,4.0)
+		d.arm_f = 2.2
+		d.arm_b = -2.2
+		d.eye_open = -1.0
+		d.mouth = 2
+		d.brow = -0.3
+		d.tilt = fd * 0.1 * sin(t * 18.0)
+		d.look = Vector2(fd,0.0)
+
+func _yellow_snooze(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = -fd
+	if t < 3.9 or t >= SNOOZE_END: return
+	d.shown = 1.0
+	var x: float = gm_yc
+	if t >= 4.3: x = lerpf(gm_yc,_snooze_spot(),_ease_io(_seg(t,4.3,5.15)))
+	_stand(d,x,0.0)
+	d.look = Vector2(-fd,0.0)
+	if t < 4.3:
+		d.eye_open = 1.2
+		d.brow = 0.7
+		d.mouth = 4
+		d.arm_f = 0.6
+		d.arm_b = 0.2
+	elif t < 5.15:
+		# Tiptoe with a finger over the lips, one conspicuous glance at the viewer.
+		d.walk = (t - 4.3) * 7.0
+		d.lift = 1.8 + 1.4 * absf(sin(d.walk))
+		d.stride = 0.5
+		d.lean = -fd * 0.2
+		d.arm_mode = 5
+		d.arm_b = -0.9 + sin(d.walk) * 0.35
+		d.brow = 0.8
+		d.mouth = 4
+		d.eye_open = 0.85
+		d.look = Vector2.ZERO if (t > 4.55 and t < 4.9) else Vector2(-fd,0.2)
+	elif t < 5.4:
+		# Produces a pencil from nowhere.
+		var f: float = _seg(t,5.15,5.4)
+		d.arm_f = lerpf(0.6,2.2,_ease_out(f))
+		d.arm_b = -0.4
+		d.squash = 1.0 - 0.08 * sin(PI * f)
+		d.lean = -fd * 0.1
+		d.mouth = 2
+		d.brow = 1.0
+		d.eye_open = 0.7
+		d.look = Vector2(-fd,-0.2)
+	elif t < 6.7:
+		# Scribbling a moustache; a huge snore freezes her mid-stroke.
+		d.arm_f = 2.2 + 0.18 * sin(t * 38.0)
+		d.arm_b = -0.4
+		d.lean = -fd * 0.12
+		d.tilt = -fd * 0.06
+		d.mouth = 4
+		d.brow = 1.0
+		d.eye_open = 0.7
+		d.look = Vector2(-fd,-0.2)
+		if t > 6.1 and t < 6.45:
+			d.arm_f = 2.2
+			d.look = Vector2.ZERO
+			d.eye_open = 1.2
+			d.pupil = 0.8
+			d.mouth = 7
+			d.brow = -0.6
+			d.mark_kind = 4
+			d.mark = smoothstep(6.1,6.2,t) * (1.0 - smoothstep(6.35,6.45,t))
+	elif t < 6.95:
+		# Winds up to throw the pencil at the star.
+		var f: float = _seg(t,6.7,6.95)
+		d.arm_f = lerpf(2.2,2.9,_ease_io(f))
+		d.arm_b = -0.4
+		d.squash = lerpf(1.0,0.84,_ease_io(f))
+		d.lean = fd * 0.12 * f
+		d.mouth = 2
+		d.brow = 1.0
+		d.look = Vector2(-fd,-0.2)
+	elif t < 7.3:
+		var f: float = _seg(t,6.95,7.3)
+		d.arm_f = lerpf(2.9,1.1,_ease_out(minf(f * 2.0,1.0)))
+		d.arm_b = -0.4
+		d.lift = 3.0 * sin(PI * f)
+		d.lean = lerpf(fd * 0.12,-fd * 0.3,_ease_out(minf(f * 3.0,1.0)))
+		d.mouth = 2
+		d.brow = 0.6
+		d.look = Vector2(-fd,-0.3)
+	elif t < 7.85:
+		# Silent snickering.
+		d.eye_open = -1.0
+		d.mouth = 2
+		d.arm_mode = 4
+		d.squash = 1.0 - 0.07 * absf(sin(t * 24.0))
+		d.lift = 1.4 * absf(sin(t * 12.0))
+		d.tilt = -fd * 0.08 * sin(t * 18.0)
+	elif t < 8.15:
+		var f: float = _seg(t,7.85,8.15)
+		d.lift = 7.0 * sin(PI * f)
+		d.arm_f = 1.9
+		d.arm_b = 1.4
+		d.eye_open = 1.4
+		d.mouth = 9
+		d.brow = -0.8
+	elif t < 9.1:
+		# Conspicuously innocent: whistling at the ceiling.
+		d.lift = 0.8 * absf(sin(t * 7.0))
+		d.arm_mode = 6
+		d.eye_open = 0.8
+		d.brow = -0.3
+		d.mouth = 8
+		d.look = Vector2(0.0,-1.0)
+		d.mark_kind = 6
+		d.mark = 1.0
+	elif t < 9.45:
+		# Caught: a sweat drop forms.
+		d.arm_mode = 6
+		d.eye_open = 1.15
+		d.pupil = 0.75
+		d.brow = -0.9
+		d.mouth = 7
+		d.look = Vector2(-fd,0.1)
+		d.mark_kind = 4
+		d.mark = smoothstep(9.1,9.25,t)
+	else:
+		# Cracks up first.
+		var hop: float = absf(sin((t - 9.45) * PI / 0.3))
+		d.lift = 5.0 * hop
+		d.squash = 1.0 - 0.1 * pow(1.0 - hop,4.0)
+		d.arm_mode = 4
+		d.eye_open = -1.0
+		d.mouth = 2
+		d.lean = -fd * 0.08
+		d.tilt = -fd * 0.1 * sin(t * 18.0)
+
+func _probe_yellow_snooze(t: float) -> Doodle:
+	_py.reset()
+	_yellow_snooze(_py,t)
+	return _py
+
+func _probe_blue_snooze(t: float) -> Doodle:
+	_pb.reset()
+	_blue_snooze(_pb,t)
+	return _pb
+
+## The pencil's grip point as Yellow throws it.
+func _pencil_grip(t: float) -> Vector2:
+	return _hand_front(_probe_yellow_snooze(t))
+
+## x, y = grip point, z = direction the tip points (radians), w = opacity.
+func _pencil_snooze(t: float) -> Vector4:
+	var fd: float = gm_d
+	if t < 5.15 or t >= 7.55: return Vector4.ZERO
+	var aim: float = Vector2(-fd,-0.35).angle()
+	if t < 6.95:
+		var h: Vector2 = _hand_front(yellow)
+		return Vector4(h.x,h.y,aim,smoothstep(5.15,5.3,t))
+	if t < 7.3:
+		var a: Vector4 = _arc(_pencil_grip(6.95),gm_home,_seg(t,6.95,7.3),44.0,TAU * 3.0 * -fd)
+		return Vector4(a.x,a.y,aim + a.w,1.0)
+	# Bounces off the star and tumbles away.
+	var age: float = t - 7.3
+	var p: Vector2 = gm_home + Vector2(fd * 30.0 * age,-28.0 * age + 220.0 * age * age)
+	return Vector4(p.x,p.y,aim + TAU * 3.0 * -fd + age * 14.0,1.0 - smoothstep(0.1,0.25,age))
+
+func _star_snooze(t: float) -> Vector4:
+	var fd: float = gm_d
+	cur_look = Vector2(fd,0.1)
+	cur_star_mood = 2 if (t < 7.3 or t >= 9.45) else 1
+	var hop: float = 0.0
+	if t >= 7.3 and t < 7.75: hop = 12.0 * sin(PI * _seg(t,7.3,7.75))
+	elif t >= 9.45: hop = 5.0 * absf(sin((t - 9.45) * PI / 0.3))
+	var s: Vector4 = _star_rest(t,1.0,SNOOZE_END,hop)
+	if t >= 7.3 and t < 8.0:
+		var age: float = t - 7.3
+		cur_star_sq = 0.35 * exp(-9.0 * age) * sin(age * 38.0)
+	return s
+
+func _snooze_events(prev: float, cur: float) -> void:
+	_geom()
+	if _crossed(prev,cur,1.0):
 		_add_ring(gm_ax,3.0)
-		_burst(gm_home,4,GOLD_HI,52.0,false)
-	if _crossed(prev,cur,1.4):
-		_burst(Vector2(gm_ax,FLOOR_Y - 2.0),3,DUST,42.0,true)
-	if _crossed(prev,cur,5.0):
-		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 54.0),4,GOLD_HI,56.0,false,2)
-	if _crossed(prev,cur,6.55):
-		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 2.0),6,DUST,76.0,true)
-		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 41.0),3,CREAM,54.0,true,1)
-	if _crossed(prev,cur,7.15):
+		_burst(gm_home,5,GOLD_HI,56.0,true)
+	if _crossed(prev,cur,3.9):
+		_burst(Vector2(gm_yc,FLOOR_Y - 2.0),3,DUST,48.0,true)
+	if _crossed(prev,cur,5.15):
+		_burst(_pencil_grip(5.4),3,GOLD_HI,30.0,true,2)
+	if _crossed(prev,cur,6.95):
+		_burst(_pencil_grip(6.95),3,CREAM,50.0,true,1)
+	if _crossed(prev,cur,7.3):
+		_add_ring(gm_ax,5.0)
+		_burst(gm_home,8,GOLD_HI,80.0,true,2)
+	if _crossed(prev,cur,7.85):
+		var b: Doodle = _probe_blue_snooze(7.84)
+		_burst(_world(b,Vector2(_ef(b) * (3.0 + 0.9 * (1.0 + 5.2 * b.bubble)),-23.6)),6,SWEAT,70.0,true,0)
+	if _crossed(prev,cur,9.45):
+		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 52.0),4,GOLD,50.0,true,2)
+	if _crossed(prev,cur,SNOOZE_END):
+		_burst(Vector2(gm_xb,FLOOR_Y - 2.0),3,DUST,48.0,true)
+		_burst(Vector2(_snooze_spot(),FLOOR_Y - 2.0),3,DUST,48.0,true)
+
+# ---------------------------------------------------------------- vignette 3: Whack-a-Doodle (7.8 s)
+# Pops: Blue 0.8 (home perch), Yellow 2.05 (far gap), Blue 3.3 (midway), Yellow 4.4 (Blue's perch), then both at 5.6 / 5.7.
+
+func _whack_pose(t: float) -> void:
+	_geom()
+	_blue_whack(blue,t)
+	_yellow_whack(yellow,t)
+	if blue.shown > 0.5: _bookend(blue,t,-9.0,WHACK_END)
+	if yellow.shown > 0.5: _bookend(yellow,t,-9.0,WHACK_END)
+	cur_star = _star_whack(t)
+	var xm: float = (gm_xb + gm_yc) * 0.5
+	_say("peek!",Vector2(gm_xb,640.0),t,1.15,0.7,22,-0.1,6.0)
+	_say("boo?",Vector2(gm_yc,640.0),t,2.4,0.65,22,0.1,6.0)
+	_say("hello?",Vector2(xm,640.0),t,3.55,0.7,22,-0.08,6.0)
+	_say("psst!",Vector2(gm_xb,640.0),t,4.65,0.6,22,0.08,6.0)
+	_say("BOO!",Vector2(gm_xb,640.0),t,6.05,0.8,34,-0.06,8.0)
+	_say("ahem.",Vector2(gm_ax,630.0),t,6.65,0.75,22,0.05,6.0)
+
+func _blue_whack(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = fd
+	if t < 0.8 or t >= WHACK_END: return
+	var x: float = gm_xb
+	var up: float = 0.8
+	var down: float = 1.85
+	if t < 2.05:
+		pass
+	elif t < 3.3:
+		return
+	elif t < 4.45:
+		x = (gm_xb + gm_yc) * 0.5
+		up = 3.3
+		down = 4.25
+	elif t < 5.6:
+		return
+	else:
+		up = 5.6
+		down = 99.0
+	d.shown = 1.0
+	_stand(d,x,0.0)
+	d.lift = _hole(t,up,down)
+	d.eye_open = 1.2
+	d.mouth = 1
+	d.brow = 0.2
+	d.look = Vector2(fd * clampf(0.7 + 0.4 * sin((t - up) * 6.0),0.0,1.0),0.1)
+	if t < 2.05:
+		# Pops up looking the wrong way, finds nobody, shrugs.
+		if t > 1.4:
+			d.arm_mode = 7
+			d.mouth = 7
+			d.brow = -0.6
+			d.mark_kind = 2
+			d.mark = smoothstep(1.4,1.55,t) * (1.0 - smoothstep(1.7,1.85,t))
+	elif t < 4.45:
+		if t > 3.85:
+			d.arm_mode = 3
+			d.arm_b = -0.6
+			d.fidget = sin(t * 20.0)
+			d.mouth = 7
+			d.mark_kind = 2
+			d.mark = smoothstep(3.85,4.0,t) * (1.0 - smoothstep(4.05,4.25,t))
+	else:
+		# The final pop: Blue spots Yellow's back and works himself up to a scare.
+		d.look = Vector2(fd,0.0)
+		if t < 6.05:
+			var f: float = _seg(t,5.85,6.05)
+			d.mouth = 4
+			d.brow = 0.8
+			d.lean = fd * 0.2 * f
+			d.squash = 1.0 - 0.14 * f
+		elif t < 6.55:
+			var f: float = _seg(t,6.05,6.35)
+			d.lift += 14.0 * sin(PI * f)
+			d.arm_f = 2.9
+			d.arm_b = -2.9
+			d.mouth = 9
+			d.brow = 1.0
+			d.eye_open = 1.4
+			d.squash = 1.0 + 0.12 * sin(PI * minf(f * 1.5,1.0))
+			# Having scared her, he turns his own back on her.
+			_flip(d,fd,_seg(t,6.25,6.55))
+		else:
+			d.face = -fd
+			d.arm_f = 2.6 + sin(t * 14.0) * 0.45
+			d.mouth = 2
+			d.brow = -0.2
+			d.eye_open = 1.0
+			d.look = Vector2(-fd,0.0)
+
+func _yellow_whack(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = -fd
+	if t < 2.05 or t >= WHACK_END: return
+	var x: float = gm_yc
+	var up: float = 2.05
+	var down: float = 3.1
+	if t < 3.3:
+		pass
+	elif t < 4.4:
+		return
+	elif t < 5.55:
+		x = gm_xb
+		up = 4.4
+		down = 5.35
+	elif t < 5.7:
+		return
+	else:
+		up = 5.7
+		down = 99.0
+	d.shown = 1.0
+	_stand(d,x,0.0)
+	d.lift = _hole(t,up,down)
+	d.eye_open = 1.2
+	d.mouth = 1
+	d.look = Vector2(-fd,0.1)
+	if t < 3.3:
+		# Looks at the hole Blue just left.
+		if t > 2.55:
+			d.brow = 0.6
+			d.mouth = 5
+			d.mark_kind = 2
+			d.mark = smoothstep(2.55,2.7,t) * (1.0 - smoothstep(2.95,3.1,t))
+	elif t < 5.55:
+		# Looks at the hole Blue is not in either.
+		d.face = fd
+		d.look = Vector2(fd,0.1)
+		if t > 4.85:
+			d.arm_mode = 7
+			d.mouth = 7
+			d.mark_kind = 2
+			d.mark = smoothstep(4.85,5.0,t) * (1.0 - smoothstep(5.1,5.3,t))
+	else:
+		# Final pop with her back to Blue; his "BOO!" lands a beat late.
+		d.face = fd
+		d.look = Vector2(fd,0.0)
+		if t < 6.15:
+			d.arm_mode = 2
+			d.eye_open = 0.8
+			d.mouth = 5
+			d.brow = 0.3
+		elif t < 6.7:
+			var f: float = _seg(t,6.15,6.7)
+			d.lift += 9.0 * sin(PI * minf(f * 2.5,1.0))
+			d.arm_f = 1.9
+			d.arm_b = 1.4
+			d.eye_open = 1.4
+			d.mouth = 9
+			d.brow = -1.0
+			d.mark_kind = 1
+			d.mark = smoothstep(0.0,0.15,f) * (1.0 - smoothstep(0.7,1.0,f))
+			_flip(d,fd,_seg(t,6.3,6.6))
+		else:
+			# She turns round just as he turns away. Nobody ever looks the right way.
+			d.face = -fd
+			d.arm_mode = 1
+			d.eye_open = 0.6
+			d.mouth = 6
+			d.brow = 1.0
+			d.look = Vector2(-fd,0.0)
+			d.lean = -fd * 0.1
+			d.tap = absf(sin(t * 10.0))
+
+func _star_whack(t: float) -> Vector4:
+	var fd: float = gm_d
+	cur_look = Vector2(fd * (0.5 + 0.5 * sin(t * 2.3)),0.1)
+	cur_star_mood = 0
+	var hop: float = 5.0 * _pulse(t,WHACK_POPS,0.3)
+	if t >= 6.05 and t < 6.45:
+		hop += 12.0 * sin(PI * _seg(t,6.05,6.45))
+		cur_star_mood = 1
+	elif t >= 6.6 and t < 7.1:
+		hop += 10.0 * absf(sin((t - 6.6) * PI / 0.25))
+		cur_star_mood = 2
+		cur_look = Vector2(0.0,0.2)
+	return _star_rest(t,1.0,WHACK_END,hop)
+
+func _whack_events(prev: float, cur: float) -> void:
+	_geom()
+	var xm: float = (gm_xb + gm_yc) * 0.5
+	if _crossed(prev,cur,1.0):
+		_add_ring(gm_ax,3.0)
+		_burst(gm_home,5,GOLD_HI,56.0,true)
+	var spots: Array = [gm_xb,gm_yc,xm,gm_xb,gm_xb,gm_yc]
+	for i in range(WHACK_POPS.size()):
+		if _crossed(prev,cur,float(WHACK_POPS[i])):
+			_burst(Vector2(float(spots[i]),FLOOR_Y - 2.0),4,DUST,60.0,true)
+	for pair in [[1.85,gm_xb],[3.1,gm_yc],[4.25,xm],[5.35,gm_xb]]:
+		if _crossed(prev,cur,float(pair[0])):
+			_burst(Vector2(float(pair[1]),FLOOR_Y - 2.0),2,DUST,40.0,true)
+	if _crossed(prev,cur,6.05):
+		_burst(Vector2(gm_xb,FLOOR_Y - 50.0),5,CREAM,70.0,true,1)
+	if _crossed(prev,cur,6.2):
+		_burst(Vector2(gm_yc,FLOOR_Y - 50.0),4,GOLD_HI,60.0,true,2)
+	if _crossed(prev,cur,6.6):
 		_add_ring(gm_ax,4.0)
-		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 54.0),5,GOLD,62.0,false,2)
-	if _crossed(prev,cur,9.6):
-		_burst(gm_home,4,GOLD_HI,48.0,false)
-	if _crossed(prev,cur,11.15):
+		_burst(gm_home,4,GOLD_HI,50.0,true,2)
+	if _crossed(prev,cur,WHACK_END):
+		_burst(Vector2(gm_xb,FLOOR_Y - 2.0),3,DUST,48.0,true)
+		_burst(Vector2(gm_yc,FLOOR_Y - 2.0),3,DUST,48.0,true)
+
+# ---------------------------------------------------------------- vignette 4: Hiccups (9.2 s)
+
+## Yellow stops just behind Blue, who faces the star.
+func _hiccup_spot() -> float:
+	return gm_xb + gm_d * 46.0
+
+func _hiccup_pose(t: float) -> void:
+	_geom()
+	_blue_hiccup(blue,t)
+	_yellow_hiccup(yellow,t)
+	if blue.shown > 0.5: _bookend(blue,t,0.8,HICCUP_END)
+	if yellow.shown > 0.5: _bookend(yellow,t,1.0,HICCUP_END)
+	cur_star = _star_hiccup(t)
+	_say("BOO!",_head_top(yellow),t,2.55,0.85,34,-0.05,6.0)
+	for s in HIC_Y:
+		_say("hic!",_head_top(yellow),t,float(s),0.55,22 if float(s) < 6.9 else 28,sin(float(s) * 5.0) * 0.15,8.0)
+	for s in HIC_B:
+		_say("hic!",_head_top(blue),t,float(s),0.55,22 if float(s) < 6.9 else 28,sin(float(s) * 5.0) * 0.15,8.0)
+	for s in HIC_S:
+		_say("hic!",Vector2(gm_ax,gm_home.y - 30.0),t,float(s),0.55,22 if float(s) < 6.9 else 28,sin(float(s) * 5.0) * 0.15,8.0)
+
+func _blue_hiccup(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = -fd
+	if t < 0.8 or t >= HICCUP_END: return
+	d.shown = 1.0
+	_stand(d,gm_xb,0.0)
+	d.look = Vector2(-fd,0.0)
+	var hic: float = _pulse(t,HIC_B,0.24)
+	var cue: float = _pulse(t,HIC_Y,0.24)
+	if t < 2.9:
+		# Admiring the star, humming, hands behind his back, blissfully unaware of the tiptoeing behind him.
+		d.arm_mode = 6
+		d.mouth = 8 if fmod(t * 3.0,1.0) > 0.5 else 4
+		d.lean = sin(t * 3.0) * 0.04
+		d.eye_open = 0.85
+	elif t < 3.6:
+		# Zero reaction to the BOO. A slow, deadpan turn.
+		_flip(d,-fd,_seg(t,2.9,3.5))
+		d.arm_mode = 6
+		d.eye_open = 0.5
+		d.brow = 0.6
+		d.mouth = 5
+		d.look = Vector2(fd,0.0)
+	elif t < 4.1:
+		d.face = fd
+		d.arm_mode = 7 if t > 3.7 else 0
+		d.eye_open = 0.55
+		d.brow = 0.5
+		d.mouth = 5
+		d.look = Vector2(fd,0.0)
+	elif t < 5.2:
+		# Watches Yellow hiccup, delighted.
+		d.face = fd
+		d.arm_mode = 2
+		d.eye_open = 0.85
+		d.brow = 0.4
+		d.mouth = 4
+		d.squash = 1.0 - 0.04 * cue
+		d.lean = sin(t * 14.0) * 0.02
+		d.look = Vector2(fd,0.0)
+	elif t < 6.5:
+		# Contagious: his own hiccups, embarrassed, hand over mouth.
+		d.face = fd
+		d.arm_mode = 5
+		d.eye_open = 1.4 if hic > 0.05 else 1.0
+		d.mouth = 9 if hic > 0.05 else 1
+		d.lift = 7.0 * hic
+		d.squash = 1.0 - 0.1 * hic
+		d.blush = smoothstep(5.2,5.5,t) * 0.8
+		d.brow = -0.8
+		d.look = Vector2(fd * 0.4,0.5)
+	elif t < 6.85:
+		# Both turn toward the star at the same time.
+		_flip(d,fd,_seg(t,6.5,6.8))
+		d.arm_mode = 5
+		d.blush = 0.8
+		d.eye_open = 1.1
+		d.mouth = 1
+		d.brow = -0.6
+		d.look = Vector2(-fd,0.0)
+	else:
+		# Hiccuping in unison with Yellow and the star, the last one a real launch.
+		d.face = -fd
+		d.arm_mode = 5
+		d.lift = (14.0 if t >= 7.9 else 7.0) * hic
+		d.squash = 1.0 - 0.12 * hic
+		d.blush = 0.8
+		d.eye_open = 1.4 if hic > 0.05 else 1.1
+		d.mouth = 9 if hic > 0.05 else 1
+		d.brow = -0.6
+		d.look = Vector2(-fd,0.0)
+
+func _yellow_hiccup(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = -fd
+	if t < 1.0 or t >= HICCUP_END: return
+	d.shown = 1.0
+	var x: float = gm_yc
+	if t >= 1.4: x = lerpf(gm_yc,_hiccup_spot(),_ease_io(_seg(t,1.4,2.3)))
+	_stand(d,x,0.0)
+	d.look = Vector2(-fd,0.0)
+	var hic: float = _pulse(t,HIC_Y,0.24)
+	var cue: float = _pulse(t,HIC_B,0.24)
+	if t < 1.4:
+		d.eye_open = 1.1
+		d.brow = 0.8
+		d.mouth = 4
+		d.arm_f = 0.6
+	elif t < 2.3:
+		# Tiptoe up behind Blue with a finger over the lips, one conspicuous glance at the viewer.
+		d.walk = (t - 1.4) * 7.0
+		d.lift = 1.8 + 1.4 * absf(sin(d.walk))
+		d.stride = 0.5
+		d.lean = -fd * 0.2
+		d.arm_mode = 5
+		d.arm_b = -0.9 + sin(d.walk) * 0.35
+		d.brow = 0.8
+		d.mouth = 4
+		d.eye_open = 0.85
+		d.look = Vector2.ZERO if (t > 1.75 and t < 2.05) else Vector2(-fd,0.3)
+	elif t < 2.55:
+		var f: float = _seg(t,2.3,2.55)
+		d.squash = lerpf(1.0,0.78,_ease_io(f))
+		d.lean = -fd * 0.25 * f
+		d.arm_f = lerpf(0.8,1.5,f)
+		d.arm_b = -0.9 - 0.4 * f
+		d.brow = 1.0
+		d.mouth = 2
+	elif t < 2.95:
+		# BOO!
+		var f: float = _seg(t,2.55,2.95)
+		d.lift = 22.0 * sin(PI * f)
+		d.squash = 1.0 + 0.14 * sin(PI * f)
+		d.arm_f = 2.9
+		d.arm_b = -2.9
+		d.mouth = 9
+		d.eye_open = 1.4
+		d.brow = 1.0
+	elif t < 3.6:
+		# Holds the pose waiting for a scream; the scream does not come.
+		var f: float = _seg(t,3.2,3.6)
+		d.arm_f = lerpf(2.9,1.0,f)
+		d.arm_b = lerpf(-2.9,-0.4,f)
+		d.mouth = 2 if t < 3.3 else 1
+		d.eye_open = 1.2
+		d.mark_kind = 4
+		d.mark = smoothstep(3.3,3.5,t)
+	elif t < 4.1:
+		d.lean = fd * 0.05
+		d.mouth = 1
+		d.eye_open = 1.0
+		d.brow = -0.3
+		d.arm_f = 0.5
+		d.mark_kind = 4
+		d.mark = 1.0 - smoothstep(3.6,3.9,t)
+	else:
+		# The backfire: the held breath turns into hiccups, and they only get worse.
+		d.arm_mode = 5 if t > 4.7 else 0
+		d.arm_f = 0.6
+		d.lift = (10.0 if t >= 7.9 else 7.0) * hic
+		d.squash = 1.0 - 0.12 * hic - 0.04 * cue
+		d.lean = -fd * 0.05 * hic
+		d.blush = smoothstep(4.2,4.8,t) * 0.8
+		d.eye_open = 1.4 if hic > 0.05 else 1.0
+		d.mouth = 9 if hic > 0.05 else 1
+		d.brow = -0.6
+
+func _star_hiccup(t: float) -> Vector4:
+	var fd: float = gm_d
+	cur_look = Vector2(fd,0.1)
+	cur_star_mood = 2
+	var beat: float = _pulse(t,HIC_S,0.3)
+	var hop: float = (24.0 if t >= 7.9 else 14.0) * beat
+	if t >= 2.55 and t < 3.3:
+		hop += 9.0 * sin(PI * _seg(t,2.55,2.9))
+		cur_star_mood = 1
+	elif beat > 0.0:
+		cur_star_mood = 1
+	var s: Vector4 = _star_rest(t,1.0,HICCUP_END,hop)
+	cur_star_sq += 0.25 * beat
+	return s
+
+func _hiccup_events(prev: float, cur: float) -> void:
+	_geom()
+	var xt: float = _hiccup_spot()
+	if _crossed(prev,cur,1.0):
+		_add_ring(gm_ax,3.0)
+		_burst(gm_home,5,GOLD_HI,56.0,true)
+		_burst(Vector2(gm_yc,FLOOR_Y - 2.0),3,DUST,48.0,true)
+	if _crossed(prev,cur,2.55):
 		_add_ring(gm_ax,3.5)
-		_burst(gm_home,5,GOLD,48.0,false)
-	if _crossed(prev,cur,T_OFF):
-		_burst(Vector2(gm_xb,FLOOR_Y - 2.0),3,DUST,45.0,true)
-		_burst(Vector2(gm_yc,FLOOR_Y - 2.0),3,DUST,45.0,true)
+		_burst(Vector2(xt,FLOOR_Y - 62.0),6,CREAM,74.0,true,1)
+	for s in HIC_Y:
+		if _crossed(prev,cur,float(s)): _burst(Vector2(xt,FLOOR_Y - 48.0),2,GOLD_HI,34.0,true,2)
+	for s in HIC_B:
+		if _crossed(prev,cur,float(s)): _burst(Vector2(gm_xb,FLOOR_Y - 48.0),2,GOLD_HI,34.0,true,2)
+	for s in HIC_S:
+		if _crossed(prev,cur,float(s)):
+			_add_ring(gm_ax,6.0 if float(s) >= 7.9 else 3.5)
+			_burst(gm_home,3,GOLD_HI,44.0,true,2)
+	if _crossed(prev,cur,HICCUP_END):
+		_burst(Vector2(gm_xb,FLOOR_Y - 2.0),3,DUST,48.0,true)
+		_burst(Vector2(xt,FLOOR_Y - 2.0),3,DUST,48.0,true)
 
 func _heist_events(prev: float, cur: float) -> void:
 	_geom()
@@ -1640,21 +2374,12 @@ func _static_pose() -> void:
 	cur_trail = false
 
 func _compose() -> void:
+	_clear_props()
 	if _reduced:
 		_static_pose()
 		return
 	blue.reset()
 	yellow.reset()
-	cur_gap = 0.0
-	cur_pull = 0.0
-	cur_star = Vector4.ZERO
-	cur_star_sq = 0.0
-	cur_star_mood = 0
-	cur_star_back = false
-	cur_ghost = 0.0
-	cur_board = Vector4.ZERO
-	cur_pebble = 0.0
-	cur_trail = false
 	if mode == MODE_INTRO:
 		_intro_pose(iu)
 	else:
@@ -1671,6 +2396,8 @@ func _compose() -> void:
 		cur_ghost *= 1.0 - e
 		cur_board.w *= 1.0 - e
 		cur_pebble *= 1.0 - e
+		cur_pencil.w *= 1.0 - e
+		cur_word_f *= 1.0 - e
 		cur_trail = false
 
 # ---------------------------------------------------------------- sparks
@@ -1829,8 +2556,37 @@ func _draw() -> void:
 	if not cur_star_back: _draw_star(cur_star)
 	_draw_marks(blue)
 	_draw_marks(yellow)
+	_draw_pencil()
 	if not _reduced: _draw_sparks()
 	else: _draw_static_glints()
+	_draw_word()
+
+## The pencil Yellow draws the moustaches with: pink eraser, gold barrel, wood cone, graphite tip.
+func _draw_pencil() -> void:
+	if cur_pencil.w < 0.03: return
+	var a: float = clampf(cur_pencil.w,0.0,1.0)
+	var dir: Vector2 = Vector2.from_angle(cur_pencil.z)
+	var p: Vector2 = Vector2(cur_pencil.x,cur_pencil.y)
+	var tail: Vector2 = p - dir * 9.0
+	var neck: Vector2 = p + dir * 6.0
+	var tip: Vector2 = p + dir * 12.0
+	draw_line(tail,neck,Color(INK,a),6.4,true)
+	draw_line(tail,neck,Color(GOLD,a),3.6,true)
+	draw_line(neck,tip,Color(INK,a),5.0,true)
+	draw_line(neck,tip - dir * 1.5,Color(CREAM,a),2.4,true)
+	draw_circle(tail,3.3,Color(INK,a))
+	draw_circle(tail,2.1,Color(PINK,a))
+	draw_circle(tip,1.5,Color(INK,a))
+
+## Handwritten sound effects: cream lettering with a heavy ink outline, popping in and fading out.
+func _draw_word() -> void:
+	if cur_word_f < 0.03 or cur_word.is_empty(): return
+	var a: float = clampf(cur_word_f,0.0,1.0)
+	draw_set_transform(cur_word_at,cur_word_tilt,Vector2.ONE * clampf(cur_word_f,0.0,1.25))
+	var origin: Vector2 = Vector2(-100.0,0.0)
+	draw_string_outline(FONT,origin,cur_word,HORIZONTAL_ALIGNMENT_CENTER,200.0,cur_word_size,8,Color(INK,a))
+	draw_string(FONT,origin,cur_word,HORIZONTAL_ALIGNMENT_CENTER,200.0,cur_word_size,Color(CREAM,a))
+	draw_set_transform(Vector2.ZERO,0.0,Vector2.ONE)
 
 func _draw_static_glints() -> void:
 	if cur_ghost > 0.5: return
@@ -1853,14 +2609,21 @@ func _draw_star(c: Vector4) -> void:
 	if r >= 7.0:
 		var worried: bool = cur_star_mood == 1
 		var er: float = 0.15 if worried else 0.12
-		draw_circle(Vector2(-0.23,0.04),er,INK)
-		draw_circle(Vector2(0.23,0.04),er,INK)
+		var gaze: Vector2 = cur_look * 0.06
+		draw_circle(Vector2(-0.23,0.04) + gaze,er,INK)
+		draw_circle(Vector2(0.23,0.04) + gaze,er,INK)
 		if worried:
 			draw_circle(Vector2(0.0,0.3),0.08,INK)
 		elif cur_star_mood == 2:
 			draw_polyline(PackedVector2Array([Vector2(-0.18,0.2),Vector2(0.0,0.36),Vector2(0.18,0.2)]),INK,1.5 / r,true)
 		else:
 			draw_polyline(PackedVector2Array([Vector2(-0.15,0.23),Vector2(0.0,0.32),Vector2(0.15,0.23)]),INK,1.4 / r,true)
+		if cur_stache:
+			# Pencilled on by Yellow: two curled strokes over the mouth.
+			for si in range(2):
+				var sgn: float = -1.0 if si == 0 else 1.0
+				var curl: PackedVector2Array = PackedVector2Array([Vector2(sgn * 0.03,0.22),Vector2(sgn * 0.14,0.19),Vector2(sgn * 0.28,0.24),Vector2(sgn * 0.37,0.33),Vector2(sgn * 0.43,0.24)])
+				draw_polyline(curl,INK,2.8 / r,true)
 	draw_set_transform(Vector2.ZERO,0.0,Vector2.ONE)
 
 ## One skateboard shape around the local origin: deck on top, two wheels below.
@@ -1968,6 +2731,7 @@ func _draw_doodle(d: Doodle) -> void:
 		d.echo_pts[i] = hc + (d.echo[i] * HR).rotated(d.tilt)
 	draw_polyline(d.echo_pts,Color(col,0.4),1.3 / sc,true)
 	_draw_face(d,hc,sc)
+	_draw_face_props(d,hc,1.7 / sc * CS)
 	var front_arm: PackedVector2Array = _limbs[4]
 	draw_polyline(front_arm,INK,wi,true)
 	draw_polyline(front_arm,col,w,true)
@@ -2062,6 +2826,40 @@ func _draw_face(d: Doodle, hc: Vector2, sc: float) -> void:
 			for p: Vector2 in [Vector2(-3.4,4.6),Vector2(0.0,6.8),Vector2(3.4,4.6)]:
 				pts.append(hc + (Vector2(mx,my) + p).rotated(rot))
 			draw_polyline(pts,CREAM,thin,true)
+
+## The first `frac` of a path, with the last point interpolated: lets a stroke be drawn on progressively.
+func _partial_path(pts: PackedVector2Array, frac: float) -> PackedVector2Array:
+	var out: PackedVector2Array = PackedVector2Array()
+	var span: float = clampf(frac,0.0,1.0) * float(pts.size() - 1)
+	var whole: int = floori(span)
+	for i in range(mini(whole + 1,pts.size())): out.append(pts[i])
+	if whole < pts.size() - 1: out.append(pts[whole].lerp(pts[whole + 1],span - float(whole)))
+	return out
+
+## Snot bubble radius in body-local units.
+func _bubble_r(d: Doodle) -> float:
+	return 1.0 + 5.2 * d.bubble
+
+## Props that live on the face: Yellow's pencil moustache (drawn on stroke by stroke) and Blue's snot bubble.
+func _draw_face_props(d: Doodle, hc: Vector2, thin: float) -> void:
+	var rot: float = d.tilt
+	var f: float = _ef(d)
+	var mx: float = d.look.x * 1.9 * 0.8
+	if d.stache > 0.03:
+		for si in range(2):
+			var sgn: float = -1.0 if si == 0 else 1.0
+			var curl: PackedVector2Array = PackedVector2Array([Vector2(mx + sgn * 0.6,3.9),Vector2(mx + sgn * 2.0,3.3),Vector2(mx + sgn * 3.6,3.7),Vector2(mx + sgn * 5.0,4.7),Vector2(mx + sgn * 5.8,3.6)])
+			var stroke: PackedVector2Array = _partial_path(curl,d.stache)
+			for k in range(stroke.size()): stroke[k] = hc + stroke[k].rotated(rot)
+			draw_polyline(stroke,PENCIL,thin * 2.3,true)
+	if d.bubble > 0.03:
+		var r: float = _bubble_r(d)
+		var nose: Vector2 = hc + Vector2(mx + f * 3.2,3.6).rotated(rot)
+		var c: Vector2 = hc + Vector2(mx + f * (3.0 + r * 0.9),4.4).rotated(rot)
+		draw_line(nose,c - Vector2(f * r * 0.8,0.0),Color(SWEAT,0.7),thin * 1.2,true)
+		draw_circle(c,r,Color(SWEAT,0.28))
+		draw_arc(c,r,0.0,TAU,20,Color(CREAM,0.85),thin,true)
+		draw_arc(c,r * 0.62,PI * 1.15,PI * 1.55,6,Color(CREAM,0.8),thin * 0.8,true)
 
 # ---------------------------------------------------------------- reaction marks (hand-inked, canvas space)
 
