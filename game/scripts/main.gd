@@ -490,6 +490,9 @@ func open_stage_selection() -> void:
 func _combat_difficulty() -> int:
 	return difficulty_level if mode in ["solo","arcade"] else 0
 
+func _damage_difficulty() -> int:
+	return _combat_difficulty() if mode in ["solo","arcade"] else Difficulty.MEDIUM
+
 func start_arcade() -> void:
 	arcade_stage = 0
 	mode = "arcade"
@@ -593,6 +596,10 @@ func start_match() -> void:
 	world.add_child(second)
 	first.setup(selected[0],1)
 	second.setup(selected[1],2)
+	var damage_difficulty := _damage_difficulty()
+	first.combat_difficulty = damage_difficulty
+	second.combat_difficulty = damage_difficulty
+	hazards.combat_difficulty = damage_difficulty
 	for fighter in [first,second]:
 		fighter.z_index = 5
 		fighter.attacked.connect(_on_attack)

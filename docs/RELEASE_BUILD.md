@@ -1,6 +1,6 @@
 # Build and distribute Doodle Rumble
 
-The current public release is [v0.7.13 / build 31](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.13). Its playable Universal Mac ZIP and source revision are verified in [TESTING_0_7_13.md](TESTING_0_7_13.md). `MAC_SETUP.md` is the archived starter plan.
+The current public release is [v0.7.14 / build 32](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.14). Its playable Universal Mac ZIP and source revision are verified in [TESTING_0_7_14.md](TESTING_0_7_14.md). `MAC_SETUP.md` is the archived starter plan.
 
 ## Run from source
 
@@ -13,21 +13,21 @@ Install matching Godot 4.7.2 export templates. From the repository root, replace
 ```sh
 /path/to/Godot --headless --editor --path game --import --quit
 /path/to/Godot --headless --fixed-fps 60 --path game --script res://tests/test_menus.gd -- --isolated-qa
-mkdir -p builds/mac-v0.7.13
+mkdir -p builds/mac-v0.7.14
 /path/to/Godot --headless --path game --export-release macOS
-codesign --verify --deep --strict 'builds/mac-v0.7.13/Doodle Rumble.app'
+codesign --verify --deep --strict 'builds/mac-v0.7.14/Doodle Rumble.app'
 ```
 
-The preset creates a Universal Apple Silicon/Intel app in `builds/mac-v0.7.13/`. The release pass also runs native motion/reduced-motion checks and tests the exact exported pack, as recorded in the verification report. `python3 game/tools/run_tests.py --godot /path/to/Godot` runs the broader source regression with isolated preferences when a change requires it; that full regression was not needed for this menu-only release.
+The preset creates a Universal Apple Silicon/Intel app in `builds/mac-v0.7.14/`. The release pass runs the full source regression and tests the exact exported pack, as recorded in the verification report. `python3 game/tools/run_tests.py --godot /path/to/Godot` runs the broader source regression with isolated preferences.
 
 A distributable app-only archive can be staged with license notices:
 
 ```sh
-release_stage='builds/mac-v0.7.13/delivery/Doodle_Rumble_Mac_v0.7.13'
+release_stage='builds/mac-v0.7.14/delivery/Doodle_Rumble_Mac_v0.7.14'
 mkdir -p "$release_stage"
-ditto 'builds/mac-v0.7.13/Doodle Rumble.app' "$release_stage/Doodle Rumble.app"
+ditto 'builds/mac-v0.7.14/Doodle Rumble.app' "$release_stage/Doodle Rumble.app"
 ditto docs/licenses "$release_stage/Licenses"
-ditto -c -k --norsrc --keepParent "$release_stage" 'builds/mac-v0.7.13/Doodle_Rumble_Mac_v0.7.13.zip'
+ditto -c -k --norsrc --keepParent "$release_stage" 'builds/mac-v0.7.14/Doodle_Rumble_Mac_v0.7.14.zip'
 ```
 
 The published archive also includes launch instructions and testing notes. Verify ZIP integrity, the extracted app's signature/startup, and SHA-256 before upload; check GitHub's asset digest against the local archive before publication. `python3 game/tools/test_package_release.py` checks archive policy without packaging a release. Preserve private references, credentials and family preferences outside distribution.

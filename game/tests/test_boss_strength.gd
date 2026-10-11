@@ -3,6 +3,7 @@ var game
 var checks = 0
 var failures = 0
 const DT = 1.0/60
+const Difficulty = preload("res://scripts/difficulty.gd")
 func _initialize(): call_deferred("run")
 func check(value, label):
 	checks += 1
@@ -19,6 +20,7 @@ func run():
 	game.set_physics_process(false)
 	check(game.optional_hazards,"stage hazards are on by default")
 	game.mode = "arcade"
+	game.difficulty_level = Difficulty.MEDIUM
 	var capacities = []
 	for stage in [4,5,6,7]:
 		game.arcade_stage = stage
@@ -31,6 +33,8 @@ func run():
 	check(is_equal_approx(float(strength.MULTIPLIERS.dark_lord)/1.50,1.30),"Dark lord attack damage tier rises exactly 30 percent before final rounding")
 	check(is_equal_approx(float(strength.MULTIPLIERS.fuse)/1.375,1.50),"Fuse attack damage tier rises exactly 50 percent before final rounding")
 	check(strength.damage("dark_lord",26) == 51 and strength.damage("h4ck3r",13) == 17 and strength.damage("red",20) == 20,"Dark lord has a higher damage tier while H4CK3R and other fighters keep their own values")
+	check(strength.damage("dark_lord",26,Difficulty.EASY) == 36 and strength.damage("dark_lord",26,Difficulty.MEDIUM) == 51 and strength.damage("dark_lord",26,Difficulty.HARD) == 51,"Easy reduces Dark lord damage by about 30 percent while Medium and Hard keep the current value")
+	check(strength.damage("fuse",20,Difficulty.EASY) == 42 and strength.damage("red",20,Difficulty.EASY) == 20,"Easy damage tuning leaves Fuse and ordinary fighters unchanged")
 	game.countdown = 0
 	game.first.reset_at(Vector2(400,599))
 	game.second.reset_at(Vector2(680,599))
@@ -143,6 +147,41 @@ func run():
 	game.countdown=0
 	game._physics_process(DT)
 	check(game.rules.last_winner == -1,"full-health timeout is a tie despite boss health capacity")
+	game.difficulty_level = Difficulty.EASY
+	game.arcade_stage = 7
+	game.start_match()
+	game.countdown = 0
+	check(game.second.combat_difficulty == Difficulty.EASY and game.hazards.combat_difficulty == Difficulty.EASY,"Easy campaign difficulty reaches Dark lord attacks and boss hazards")
+	var easy_boss = game.second
+	easy_boss.start_attack(false)
+	check(int(easy_boss.attack_spec.damage) == 36,"Easy Dark lord melee is reduced by about 30 percent")
+	easy_boss.attack_time = -1
+	easy_boss.start_attack(true)
+	check(int(easy_boss.attack_spec.damage) == 44,"Easy Dark lord special is reduced by about 30 percent")
+	var easy_wave = load("res://scripts/attack_effect.gd").new()
+	game.world.add_child(easy_wave)
+	easy_wave.configure(easy_boss,"shockwave",-1)
+	check(easy_wave.damage == 44,"Easy Dark lord shockwave is reduced by about 30 percent")
+	easy_wave.queue_free()
+	for kind in ["void_orb","pellet_fan","eclipse_volley"]:
+		var easy_shot = load("res://scripts/boss_projectile.gd").new()
+		game.world.add_child(easy_shot)
+		easy_shot.configure(easy_boss,kind,-1)
+		var expected_easy: int = 33 if kind == "void_orb" else 25 if kind == "pellet_fan" else 21
+		check(easy_shot.damage == expected_easy,"Easy Dark lord %s projectile is reduced by about 30 percent" % kind)
+		easy_shot.queue_free()
+	game.hazards.clear()
+	game.first.reset_at(Vector2(450,599))
+	game.hazards.mark_target(450,0,"dark_rift","dark_lord")
+	game.hazards.tick(1.14,[game.first,game.second])
+	game.hazards.tick(0.02,[game.first,game.second])
+	check(game.first.health == 73,"Easy Dark lord signature hazard is reduced by about 30 percent")
+	game.hazards.clear()
+	game.first.reset_at(Vector2(450,599))
+	game.hazards.mark_target(450,0,"dark_rift")
+	game.hazards.tick(1.14,[game.first,game.second])
+	game.hazards.tick(0.02,[game.first,game.second])
+	check(game.first.health == 80,"Easy ordinary arena hazards keep their original damage")
 	game.queue_free()
 	await process_frame
 	root.get_node("Sound").shutdown()

@@ -23,6 +23,7 @@ const DODGE_SPEED = 430.0
 const COUNTER_DURATION = 2.5
 const COUNTER_DAMAGE_MULTIPLIER = 1.25
 const BossStrength = preload("res://scripts/boss_strength.gd")
+const Difficulty = preload("res://scripts/difficulty.gd")
 const CustomKits = preload("res://scripts/custom_kits.gd")
 const SHIELD_REFLECT_START = 0.065
 const SHIELD_REFLECT_END = 0.155
@@ -30,6 +31,7 @@ const PLAYABLE_IDS = ["orange", "red", "green", "blue", "purple", "yellow"]
 var body_scale = BODY_SCALE
 var definition: Dictionary
 var weapon: Dictionary
+var combat_difficulty := Difficulty.MEDIUM
 var slot = 1
 var max_health = 100
 var health = 100
@@ -280,7 +282,7 @@ func start_attack(special: bool) -> bool:
 			counter_time = 0
 	# Keep the outgoing payload authoritative for melee and any derived shot.
 	# Projectile scripts with their own base values apply this rule separately.
-	attack_spec.damage = BossStrength.damage(str(definition.id), int(attack_spec.damage))
+	attack_spec.damage = BossStrength.damage(str(definition.id), int(attack_spec.damage), combat_difficulty)
 	if not special:
 		if str(definition.get("basic_projectile", "")) != "":
 			attack_spec.projectile_damage = int(attack_spec.damage)

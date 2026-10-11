@@ -3,6 +3,7 @@ extends Node2D
 const FONT = preload("res://assets/fonts/Kalam-Bold.ttf")
 const WarningOverlay = preload("res://scripts/hazard_warning_overlay.gd")
 const BossStrength = preload("res://scripts/boss_strength.gd")
+const Difficulty = preload("res://scripts/difficulty.gd")
 const INK = Color("080d1d")
 const TYPES = {
 	"dark_rift":{"color":"d783ff","width":186.0,"top":472.0,"tell":1.15,"active":0.38,"damage":20,"label":"RIFT! MOVE!"},
@@ -21,6 +22,7 @@ const TYPES = {
 const HACKER_SIGNATURE_DAMAGE := {"cursor_stamp":14,"ink_geyser":13,"eraser_drop":15}
 var camera_bugs = false
 var reduced_motion = false
+var combat_difficulty := Difficulty.MEDIUM
 var marks: Array = []
 var pending: Array = []
 var time = 0.0
@@ -70,7 +72,7 @@ func tick(delta: float, fighters: Array) -> void:
 				if not mark.hit.has(fighter.slot) and damage_rect(mark).intersects(fighter.hurtbox()):
 					mark.hit[fighter.slot] = true
 					var damage: int = int(HACKER_SIGNATURE_DAMAGE.get(mark.kind, spec.get("damage", 9))) if mark.immune == "h4ck3r" else int(spec.get("damage", 9))
-					damage = BossStrength.damage(str(mark.immune), damage)
+					damage = BossStrength.damage(str(mark.immune), damage, combat_difficulty)
 					fighter.take_hit(damage,1 if fighter.position.x > mark.x else -1,210)
 	marks = marks.filter(func(mark): return mark.age < TYPES[mark.kind].tell+TYPES[mark.kind].active+0.28)
 	if marks.is_empty() and not pending.is_empty(): marks.append(pending.pop_front())

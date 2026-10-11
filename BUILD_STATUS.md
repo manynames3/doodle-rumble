@@ -2,6 +2,12 @@
 
 Updated 2026-10-11. Godot 4.7.2 / GDScript. Current menu/release verification ran on Apple M4; earlier published builds retain their recorded Apple M1 evidence.
 
+## Prepared v0.7.14 — Easier Dark Lord on Easy
+
+- Reduced Dark lord's outgoing melee, special, projectile, shockwave and signature-hazard damage to 70% on Easy, with integer rounding. Medium/Hard tuning, other fighters and ordinary arena hazards are unchanged.
+- Godot import passed. The full source regression passed **34 suites / 3,164 checks / zero failures**; the six package-policy tests passed. The Universal Mac build contains arm64 and x86_64 slices, passed strict ad-hoc signature verification and an isolated 120-frame startup. Five exact-exported-pack suites passed **459 checks / zero failures**. See [TESTING_0_7_14.md](docs/TESTING_0_7_14.md).
+- Prepared Universal Mac **v0.7.14 / build 32** using Godot 4.7.2. It remains ad-hoc signed and not Apple-notarized.
+
 ## Published v0.7.13 — Five-Gag Title Motion
 
 - Replaced the single repeating title gag with five varied hand-drawn vignettes: The Underline Heist, a guitar-string “boing,” a sleepy moustache doodle, a peekaboo whack and a hiccup chain reaction. The 47.9-second cycle follows the 2.6-second greeting; reduced motion remains static. Menu controls and gameplay are unchanged.

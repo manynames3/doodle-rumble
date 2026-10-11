@@ -60,7 +60,7 @@ func configure(fighter, effect_kind: String, direction: int) -> void:
 	# Arrow damage was derived from the fighter's scaled attack specification.
 	# All other effects have independent base payloads and are scaled here once.
 	if kind != "arrow":
-		damage = BossStrength.damage(str(fighter.definition.id), damage)
+		damage = BossStrength.damage(str(fighter.definition.id), damage, int(fighter.combat_difficulty))
 
 func hitbox() -> Rect2:
 	match kind:

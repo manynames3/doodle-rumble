@@ -1,6 +1,7 @@
 extends SceneTree
 ## Focused live-stage checks for Fuse's committed missiles and reload window.
 const DT := 1.0 / 60.0
+const Difficulty = preload("res://scripts/difficulty.gd")
 var game
 var checks := 0
 var failures := 0
@@ -109,6 +110,7 @@ func run() -> void:
 	game.test_mode = true
 	game.set_physics_process(false)
 	game.mode = "arcade"
+	game.difficulty_level = Difficulty.MEDIUM
 	game.optional_hazards = false
 	game.arcade_stage = 6
 	game.start_match()

@@ -105,7 +105,7 @@ func configure(fighter, effect_kind: String, direction: int, angle: float = 0) -
 		damage = 15
 		knockback = 390
 		lifetime = 2.15
-	damage = BossStrength.damage(str(fighter.definition.id), damage)
+	damage = BossStrength.damage(str(fighter.definition.id), damage, int(fighter.combat_difficulty))
 	velocity = Vector2(direction*cos(angle),sin(angle))*(650 if kind.begins_with("missile_") else 610 if kind == "rocket_single" else 565 if kind == "firework_fan" else 560 if kind == "firecracker_arc" else 590 if kind == "eclipse_volley" else 520 if kind == "checksum_volley" else 470 if kind == "pellet_fan" else 390)
 	if kind == "firecracker_arc": velocity.y = -440.0 + sin(angle) * 170.0
 
