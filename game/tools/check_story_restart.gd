@@ -23,7 +23,7 @@ func run() -> void:
 			quit(1)
 			return
 		game.continue_journey()
-		if game.state!="playing" or game.second.definition.id!="pac_man" or game.first.health!=game.first.max_health:
+		if game.state!="playing" or game.second.definition.id!="crackle" or game.first.health!=game.first.max_health:
 			push_error("Resumed chapter did not start a fresh healthy match")
 			quit(1)
 			return

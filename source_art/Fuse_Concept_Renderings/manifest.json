@@ -1,0 +1,52 @@
+{
+  "name": "Fuse",
+  "status": "concept_only",
+  "created": "2026-10-10",
+  "generator": "built-in image_gen",
+  "intended_story_position": "Proposed new enemy after H4CK3R and before Dark lord; runtime story ladder has not changed.",
+  "visual_identity": "Hollow faceless ivory ring head, graphite and bone-white stick limbs, sparse coral accents, oversized shoulder launcher, ivory missile with coral nose and graphite fins.",
+  "references": [
+    "source_art/Orange_Transparent_Asset_Pack/character/canonical/orange_canonical_hero.png",
+    "source_art/H4ck3r_Transparent_Asset_Pack/character/canonical/h4ck3r_canonical_hero.png",
+    "source_art/Darklord_Transparent_Asset_Pack/character/canonical/darklord_canonical_hero.png",
+    "game/assets/arenas/network_v2.png"
+  ],
+  "deliverables": [
+    {
+      "file": "fuse_hero.png",
+      "purpose": "Canonical full-body concept with transparent background",
+      "prompt": "Use case: stylized-concept. Asset type: new Doodle Rumble enemy character concept, single full-body transparent cutout. Input images: Image 1 Orange canonical is the PRIMARY reference for hollow circular head, stick body proportions and brushwork; Image 2 H4CK3R canonical guides scuffed gadget materials; Image 3 Darklord canonical guides lively ink edge texture and emissive brush effects only. Create an original missile-using stick figure, working name Fuse, a proposed enemy fought after H4CK3R but before Dark Lord. STRICT STYLE: match the supplied actual production character art: rough uneven black ink contours, substantial angular marker stick limbs, faceless hollow circular head with black void center, chipped ivory and warm graphite painted ring, thick dry-brush texture, sparse broken highlights, expressive triangular chunky feet, long narrow limbs. NOT a humanoid soldier, not a muscular robot. Keep open negative space between arms, torso and legs. Graphite and bone-white body with small coral-red accents. No face, eyes, visor, screen, helmet, hood, crown or cape. Signature prop: ONE very oversized playful shoulder-mounted missile launcher, scratchy graphite casing, chipped ivory bands, one coral aiming lamp, rear exhaust; a visible chunky cartoon missile with ivory cylindrical body, coral conical nose, small triangular black fins, no markings. One hand on trigger, other under tube, launcher sits on shoulder pointed to upper right, black void head fully unobstructed. Both feet grounded in a wide ready stance, head tilts with cocky energy. Coral glow restrained to aiming lamp and two tiny engine sparks; no surrounding explosion, no stage. Same illustration family as references, painterly raster, hand-drawn comic ink with rough brush shading, not 3D. Composition: centered single complete character and complete weapon, generous transparent safety margin, no cropping. Genuine transparent alpha background. No text, UI, watermark, extra character, military insignia, extra weapons or detailed armor.",
+      "dimensions": [
+        1333,
+        1180
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "file": "fuse_attack_poses.png",
+      "purpose": "Transparent three-pose concept sheet: anticipation, launch, reload. Not a runtime animation atlas.",
+      "prompt": "Use case: stylized-concept. Asset type: Doodle Rumble missile enemy three-pose concept sheet on a genuinely transparent background. Image 1 is the EXACT identity reference: Fuse, a bone-white and graphite stick figure with a hollow black circular head and chipped ivory ring, sparse coral accent patches, angular chunky feet, extremely oversized shoulder missile launcher. Preserve this exact character identity, body shape, launcher design, scuffed marker texture, rough uneven black contours and faceless head across ALL poses. Image 2 Orange guides the same game's stick proportions and hand-painted comic ink. Create exactly THREE FULL-BODY renderings in a spacious horizontal row with equal scale and aligned grounded foot baseline; no overlaps, each clearly separate, no clipping, wide safety margins. Left: launch anticipation, knees bend and figure braces, launcher held at shoulder aimed horizontally right with coral aiming lamp bright, missile seated in front of barrel. Center: actual launch, leaning back from recoil with both feet braced, exact same shoulder launcher now an OPEN EMPTY muzzle ring, ONE matching missile flying to right separated from launcher by visible space, short coral-white propulsion brush flame and charcoal smoke at missile rear; do not draw missile as beam. Right: reload, figure turns slightly three-quarter and kneels on one knee, launcher resting diagonally against shoulder; both hands fit a spare ivory/coral conical-nose missile with triangular dark fins into open tube. No extra heads, no armor chest, no military outfit, no eyes, no visor, no face, no screen, no cape, no crown. Keep minimal stick torso and limbs with black gaps between them, expressive physical poses. Only a few local comic sparks and wispy smoke near launch; avoid enormous explosion clouds obscuring silhouette. Same hand-inked painterly raster style as reference, NOT 3D, not smooth vector. No text or annotations or labels, no panels or borders, no stage, no ground plane, no UI. This is an art concept sheet, not animation frames for runtime.",
+      "dimensions": [
+        1942,
+        809
+      ],
+      "mode": "RGBA"
+    },
+    {
+      "file": "fuse_arena_concept.png",
+      "purpose": "Generated illustration of Fuse in Neon Switchyard. Not a runtime screenshot.",
+      "prompt": "Use case: stylized-concept. Asset type: Doodle Rumble proposed missile enemy arena concept rendering, landscape 16:9. Image 1 Fuse canonical cutout is EXACT identity; Image 2 Fuse attack poses is EXACT identity and rocket construction reference; Image 3 is the actual game's Neon Switchyard painted arena and sets exact background/composition/art style. Create an arena concept illustration of Fuse firing a missile in that existing arena. Preserve the arena architecture, hand-inked blue industrial depth, cable bridges, luminous cyan circuit arch, gold window accents, and level continuous horizontal foreground walkway at about 70% image height, as shown by background reference. Keep side-on fighting-game framing, no cinematic tilt. Place ONE full-body Fuse toward left of center on walkway, facing and aiming right, feet exactly touching floor. Fighter body plus head occupies about 30% of image height, launcher visibly oversized, readable silhouette. Exact hollow black round head with chipped bone-white ring, graphite/ivory textured stick limbs with sparse coral patches, long narrow body, angular triangular feet, rough thick black ink and marker scratches. Same complete shoulder launcher with ivory barrel rim, graphite tube and small coral aiming light, now open empty muzzle. ONE detached chunky matching ivory missile with coral conical nose and triangular dark fins flies horizontally to the right, in open center-right space; short brilliant white-coral jagged painted propulsion flame, broken orange-red exhaust streak and loose charcoal smoke that do not hide body or head. Add subtle warm light spill on nearby floor and restrained hand-drawn recoil marks. Communicate a powerful but playful penultimate boss with a clear mechanical missile attack, distinct from cyan H4CK3R and violet Dark Lord. No other fighters. Keep stick figure, no face, eyes, helmet, visor, chest armor, cape, crown, robot screen. Painterly raster comic game art consistent with all references, scratchy brush shading and lively uneven edges, not 3D, not photoreal, not smooth vector. No title, labels, HUD, UI, text, watermark or healthbars. This is a generated arena concept illustration, not a runtime screenshot.",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "mode": "RGB"
+    }
+  ],
+  "integration": "Concept art saved outside game/; no gameplay, story data, runtime sprite pack, balance, or exported build changes.",
+  "verification": {
+    "visual_review": "All three generated outputs inspected against the actual character pack references and Neon Switchyard arena.",
+    "file_validation": "All PNGs decode; hero and pose sheet have RGBA alpha spanning 0 to 255; arena is opaque RGB.",
+    "runtime_testing": "Not applicable: concept art only, no gameplay changes."
+  }
+}

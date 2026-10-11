@@ -57,10 +57,10 @@ func run() -> void:
 	_finish(0)
 	await _save("round_result_orange_wins",24)
 	await _save("round_result_orange_wins_later",34)
-	_begin("red","dark_lord",5)
+	_begin("red","dark_lord",7)
 	_finish(0)
 	await _save("round_result_dark_lord_loses",24)
-	_begin("red","dark_lord",5)
+	_begin("red","dark_lord",7)
 	_finish(1)
 	await _save("round_result_dark_lord_wins",24)
 	root.get_node("Settings").reduced_motion = true

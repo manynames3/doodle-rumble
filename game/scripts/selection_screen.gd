@@ -40,7 +40,7 @@ func build(owner_node) -> void:
 	if host.mode != "arcade":
 		host._button(self,("Player 2: " if host.mode=="local" else "Opponent: ")+Data.fighter(host.selected[1]).name,Rect2(886,109,350,38),func(): host.selecting_player=1; host.open_selection(host.mode),Color("80ccff") if host.selecting_player==1 else Color("12172b"))
 	else:
-		host._text(self,"CHAPTER %d / 6" % (host.journey_selection_stage()+1),Rect2(886,109,350,38),20,Color("cda5ff"),true)
+		host._text(self,"CHAPTER %d / %d" % [host.journey_selection_stage()+1,Chapters.CHAPTERS.size()],Rect2(886,109,350,38),20,Color("cda5ff"),true)
 	host._button(self,"Original Fighters",Rect2(515,153,350,32),func(): host.selection_tab="original"; host.open_selection(host.mode),Color("343251") if host.selection_tab=="original" else Color("12172b"))
 	host._button(self,"My Doodles  /  %d of 6" % Doodles.records().size(),Rect2(887,153,350,32),func(): host.selection_tab="custom"; host.open_selection(host.mode),Color("345047") if host.selection_tab=="custom" else Color("12172b"))
 	_build_cards(id)

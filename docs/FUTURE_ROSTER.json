@@ -1,6 +1,6 @@
 {
-  "status": "Playable v0.4.0 includes six selectable fighters with dodge/counters and aerial moves, plus Pac-Man, H4CK3R (penultimate), Dark lord (final) and camera-bug helpers. Other entries remain future concepts.",
-  "updated": "2026-09-13",
+  "status": "Current source has six selectable fighters, plus Crackle, Pac-Man, H4CK3R, Fuse and Dark lord as story bosses. The eight-stage journey ends with Fuse followed by Dark lord. Other entries remain future concepts.",
+  "updated": "2026-10-10",
   "working_title": "Doodle Rumble",
   "main_influence": "Animator vs. Animation",
   "secondary_influence": "Minecraft-style tools and block environments",
@@ -27,12 +27,22 @@
     {
       "id": "h4ck3r",
       "name": "H4CK3R",
-      "role": "Penultimate story boss",
+      "role": "Sixth story boss",
       "proposal": "Glitch step and a temporary decoy. Keep the Victim reference with this entry for review.",
       "phase": "Implemented boss",
       "implementation_status": "implemented_boss",
       "starting_weapon": "cursor_wand",
-      "implemented_behavior": "Fifth of six story opponents, 190 HP: title-inspired tilted monitor, cyan camera eye, cables, pale armor and handheld tablet; cursor melee, packet shot, cursor stamp, eraser and ink patterns. Not selectable. Decoy remains a future concept."
+      "implemented_behavior": "Sixth of eight story opponents, 190 HP: title-inspired tilted monitor, cyan camera eye, cables, pale armor and handheld tablet; cursor melee, packet shot, cursor stamp, eraser and ink patterns. Not selectable. Decoy remains a future concept."
+    },
+    {
+      "id": "fuse",
+      "name": "Fuse",
+      "role": "Seventh story boss",
+      "proposal": "Oversized shoulder launcher, warned single shot, salvo and high/low missile lanes, with a close-range launcher bash.",
+      "phase": "Implemented boss",
+      "implementation_status": "implemented_boss",
+      "starting_weapon": "missile_launcher",
+      "implemented_behavior": "Seventh of eight story opponents, 215 HP and 10% larger: warm-coral fighter with bone-white and graphite armor, an oversized shoulder launcher, melee bash and telegraphed missile patterns. Guards the core door after H4CK3R; not selectable."
     },
     {
       "id": "red",
@@ -65,14 +75,24 @@
       "starting_weapon": "pitchfork"
     },
     {
+      "id": "crackle",
+      "name": "Crackle",
+      "role": "Fourth story boss",
+      "proposal": "Diamond helmet, oversized boots, a close-range spear and fireworks or firecrackers.",
+      "phase": "Implemented boss",
+      "implementation_status": "implemented_boss",
+      "starting_weapon": "spear",
+      "implemented_behavior": "Fourth of eight story opponents, 170 HP and 8% larger: spear thrusts and telegraphed firecracker patterns in Block Quarry. Guides the player toward Pac-Man's arcade; not selectable."
+    },
+    {
       "id": "pac_man",
       "name": "Pac-man",
       "role": "Guest concept",
       "proposal": "Short chomp dash and a bouncing pellet.",
-      "phase": "Implemented fourth-stage boss",
+      "phase": "Implemented fifth-stage boss",
       "implementation_status": "implemented_boss",
       "starting_weapon": "chomp",
-      "implemented_behavior": "Fourth of six story opponents, 150 HP: faster serrated yellow creature with warned bites, charged dashes, pellet fans and leaping chomps. Not selectable."
+      "implemented_behavior": "Fifth of eight story opponents, 150 HP: faster serrated yellow creature with warned bites, charged dashes, pellet fans and leaping chomps. Not selectable."
     },
     {
       "id": "sign_guy",
@@ -110,7 +130,7 @@
       "proposal": "Oversized dark blade, camera bugs, and slow powerful attacks.",
       "phase": "Implemented arcade boss",
       "implementation_status": "implemented_boss",
-      "implemented_behavior": "Final sixth story boss, 240 HP and 50% bigger: ragged black/purple crowned figure with scythe sweeps, ground waves, void volleys, rising rifts and camera hazards. Finite damage-taking windup guard, then recovery. Not selectable.",
+      "implemented_behavior": "Final eighth story boss, 240 HP and 50% bigger: ragged black/purple crowned figure with scythe sweeps, ground waves, void volleys, rising rifts and camera hazards. Finite damage-taking windup guard, then recovery. Not selectable.",
       "starting_weapon": "dark_blade"
     },
     {

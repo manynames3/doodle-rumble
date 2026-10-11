@@ -2,6 +2,9 @@ extends RefCounted
 ## Final boss uses eight committed attacks with readable tells and short punish windows.
 const Difficulty = preload("res://scripts/difficulty.gd")
 signal pattern_released(kind: String)
+const PURSUIT_GAIN := 1.30
+const APPROACH_SECONDS := 0.78 / PURSUIT_GAIN
+const HIT_REST_SECONDS := 0.10
 var state = "rest"
 var time_left = 0.40
 var pattern = 0
@@ -18,7 +21,7 @@ const TELLS = ["REAPER SWEEP!","JUMP THE WAVE!","VOID VOLLEY!","RIFT INCOMING!",
 func configure_difficulty(selected_level: int) -> void:
 	var previous_factor: float = Difficulty.rest_factor(difficulty_level)
 	difficulty_level = Difficulty.normalized_level(selected_level)
-	approach_speed = 1.22 * Difficulty.move_factor(difficulty_level)
+	approach_speed = 1.22 * Difficulty.move_factor(difficulty_level) * PURSUIT_GAIN
 	recovery_duration = 0.34 * Difficulty.rest_factor(difficulty_level)
 	if state == "rest": time_left *= Difficulty.rest_factor(difficulty_level) / previous_factor
 	# Boss cast tells remain fully readable at every difficulty.
@@ -35,11 +38,17 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 	var command = {"move":0.0,"jump":false,"attack":false,"special":false,"lock_facing":false}
 	if fighter.health <= 0 or opponent.health <= 0: return command
 	if fighter.hurt_time > 0:
-		tell = ""
-		fighter.boss_cast = ""
-		# Keep the pending pattern; damage buys a short window, never a whole AI reset.
-		state = "rest"
-		time_left = 0.28
+		if state != "rest":
+			tell = ""
+			fighter.boss_cast = ""
+			fighter.boss_charge = 0.0
+			fighter.guard_remaining = 0.0
+			fighter.boss_guard = false
+			# Keep the pending pattern; damage still grants recovery before its full tell.
+			state = "rest"
+			time_left = HIT_REST_SECONDS
+		else:
+			time_left = minf(time_left, HIT_REST_SECONDS)
 		return command
 	jump_wait = maxf(0.0,jump_wait-delta)
 	time_left -= delta
@@ -48,8 +57,15 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 		"rest":
 			fighter.boss_cast = ""
 			if time_left <= 0:
+				var distance: float = absf(opponent.position.x-fighter.position.x)
+				var height: float = opponent.position.y-fighter.position.y
+				# Campers force a ranged choice; a high platform calls for a full-height pillar.
+				if height < -120.0 and distance > 300.0 and pattern < 6:
+					pattern = 6
+				elif distance > 470.0 and pattern < 2:
+					pattern = 2
 				state = "approach"
-				time_left = 0.78
+				time_left = APPROACH_SECONDS
 		"approach":
 			var dx = opponent.position.x-fighter.position.x
 			var dy: float = opponent.position.y-fighter.position.y

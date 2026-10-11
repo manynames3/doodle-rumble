@@ -71,11 +71,11 @@ func run() -> void:
 	check(story_stream != null and story_stream.loop_mode == AudioStreamWAV.LOOP_FORWARD and story_stream.get_length() > 10.0, "story bed is a long loop")
 	sound._process(FADE)
 	check(sound.get("_music").stream == story_stream, "story bed crossfade completes")
-	var story_contexts := ["desktop", "quarry", "journey_green", "pac_man", "glitch", "dark_lord"]
+	var story_contexts := ["desktop", "quarry", "journey_green", "quarry", "pac_man", "glitch", "glitch", "dark_lord"]
 	for stage_index in range(story_contexts.size()):
 		sound.set_story_stage(stage_index)
 		var expected: AudioStreamWAV = sound._get_music_stream(story_contexts[stage_index], "intro")
-		check(sound.get("_music_phase") == "intro" and sound.get("_music_other").stream == expected, "chapter %d uses its arena's intro arrangement" % (stage_index + 1))
+		check(sound.get("_music_phase") == "intro" and (sound.get("_music_other").stream == expected or sound.get("_music").stream == expected), "chapter %d uses its arena's intro arrangement" % (stage_index + 1))
 		sound._process(FADE)
 		check(sound.get("_music").stream == expected, "chapter %d intro arrangement crossfades cleanly" % (stage_index + 1))
 	sound.set_music_context("story")

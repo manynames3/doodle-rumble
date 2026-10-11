@@ -118,6 +118,7 @@ func run() -> void:
 
 func test_six_player_choices() -> void:
 	check(root.get_node("Data").ORDER == IDS, "exactly six ordinary fighters are selectable, with bosses outside the roster")
+	check(not root.get_node("Data").is_playable("crackle"), "Crackle remains a story-only boss")
 	game.selected = ["orange", "blue"]
 	game.open_selection("local")
 	await process_frame
@@ -147,7 +148,7 @@ func test_six_player_choices() -> void:
 		check(game.mode == "arcade" and game.arcade_stage == 0 and game.first.definition.id == id and game.second.definition.id == "blue", id + " can begin the complete journey from Blue")
 	var opponents: Array[String] = []
 	for stage in range(game.Journey.STAGES.size()): opponents.append(game.journey_stage_data(stage).opponent)
-	check(opponents == ["blue", "red", "green", "pac_man", "h4ck3r", "dark_lord"], "expanding the playable roster preserves the six-stage journey order")
+	check(opponents == ["blue", "red", "green", "crackle", "pac_man", "h4ck3r", "fuse", "dark_lord"], "the eight-stage journey adds Crackle before Pac-Man")
 	print("PASS group: six selectable fighters for both players, Purple/Yellow persistence and journey entry")
 
 func test_integrated_attacks() -> void:

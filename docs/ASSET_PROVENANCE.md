@@ -1,5 +1,17 @@
 # Art and audio sources
 
+## October 10, 2026: Crackle fireworks opponent
+
+The user supplied a pencil drawing as the motif for Crackle: diamond helmet, hollow head, large boots, star-marked firework and spear. Built-in imagegen translated it into the existing rough ink/marker style using Orange and Fuse as visual references, then generated canonical art, four three-pose movement/jump/spear/cast strips, three standalone projectile sprites and a six-effect atlas. All seven unchanged outputs, exact prompts in `generation.json` and authored extraction geometry in `extraction.json` are preserved under `source_art/Crackle_Production_Assets/`. The original family photo stays outside the repository and export.
+
+The generated diamond/cyan boots and helmet, ivory stick limbs, red paper launcher and gold/cyan/scarlet effects are runtime artwork. `game/tools/import_crackle_art.py` preserves alpha while extracting 13 poses, six effects and rocket/firecracker/spark textures with authored foot/head/muzzle points. Timing, physics, reflection and firecracker fragment ownership remain code-owned. Crackle appears before Pac-Man in Block Quarry and reuses its existing original music and synthesized audio. No production dependencies or external samples were added; the nine supplied packs are unchanged.
+
+## October 10, 2026: Fuse missile opponent
+
+Fuse is an original generated character based on the game's Orange hollow-head proportions, H4CK3R gadget materials and textured ink effects. The previous concept images remain under `source_art/Fuse_Concept_Renderings/`. Built-in imagegen created four three-pose production strips (movement, jumping, missile aim/fire/reload and launcher melee), a standalone missile and a six-effect atlas. Their complete prompts remain in `source_art/Fuse_Production_Assets/generation.json`. The unchanged generated atlases and extracted transparent assets remain outside `game/`; `game/tools/import_fuse_art.py` uses the authored regions, pivots and head dimensions in `extraction.json` to reproduce runtime copies. No new third-party art, fonts, audio samples or production dependencies were introduced.
+
+The separate missile and exhaust are rendered by the existing projectile system. Fixed facing and aim, swept hit detection, reflection and damage remain code-owned. Fuse's warning, melee and missile cues reuse the original synthesized sound vocabulary; the existing Neon Switchyard background and Glitch score serve the new chapter. The story now places Fuse after H4CK3R and before Dark lord, while the nine owner-supplied packs stay unchanged.
+
 The original owner-supplied Stick Souls / Dark Lord poster is preserved in `game/assets/intro_poster.png`. The title uses `game/assets/intro_poster_v060.png`, a generated edit that replaces the title lettering with Doodle Rumble and, in v0.6.7, clears the old lower-right arcade copy; see the exact prompts below. Characters visible in the poster beyond the implemented roster are illustration, not locked playable content.
 
 The original implementation used procedural Godot drawings for fighters, weapons, particles and UI brushwork. The original four fighters preserve the children's silhouettes; Purple and Yellow follow the later user-supplied special-attack illustrations. Those illustrations also guide the neon ink, special effects and scene lighting. Racing cars and racing courses remain procedural. Combat collision and damage are independent of artwork.

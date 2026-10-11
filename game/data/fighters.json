@@ -92,6 +92,21 @@
     "hurtbox_height": 94,
     "hurtbox_top": 96
   },
+  "crackle": {
+    "id": "crackle",
+    "name": "Crackle",
+    "color": "ff914d",
+    "weapon": "spear",
+    "special": "fireworks",
+    "special_name": "Firecracker fan",
+    "tagline": "Tiny fuse. Very big finale.",
+    "description": "Read the fuse before the fireworks burst. Step inside the spear's reach while Crackle resets.",
+    "head": "diamond",
+    "size_multiplier": 1.08,
+    "max_health": 170,
+    "move_multiplier": 1.04,
+    "special_damage": 25
+  },
   "dark_lord": {
     "id": "dark_lord",
     "name": "Dark lord",
@@ -106,6 +121,21 @@
     "max_health": 240,
     "move_multiplier": 1.12,
     "special_damage": 32
+  },
+  "fuse": {
+    "id": "fuse",
+    "name": "Fuse",
+    "color": "ff6548",
+    "weapon": "missile_launcher",
+    "special": "missile",
+    "special_name": "Missile salvo",
+    "tagline": "Safety first. Rockets second. Also first.",
+    "description": "Watch the launch warning. Dodge between the high and low missiles, then strike while Fuse reloads.",
+    "head": "round",
+    "size_multiplier": 1.1,
+    "max_health": 215,
+    "move_multiplier": 0.95,
+    "special_damage": 29
   },
   "h4ck3r": {
     "id": "h4ck3r",

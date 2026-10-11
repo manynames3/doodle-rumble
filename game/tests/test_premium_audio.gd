@@ -69,7 +69,7 @@ func run() -> void:
 		sound._process(0.75)
 		check(sound.get("_music").stream == streams["climax"] and sound.get("_music_other").stream == null, "%s completes climax fade" % context)
 
-	for weapon in ["pitchfork", "hammer", "sword", "pickaxe", "bow", "staff", "chomp", "dark_blade", "cursor_wand", "custom_pick", "custom_bone", "custom_bat", "custom_ball", "custom_chicken", "custom_crayon"]:
+	for weapon in ["pitchfork", "hammer", "sword", "pickaxe", "bow", "staff", "chomp", "dark_blade", "cursor_wand", "missile_launcher", "custom_pick", "custom_bone", "custom_bat", "custom_ball", "custom_chicken", "custom_crayon"]:
 		var light: AudioStreamWAV = sound._impact_stream(weapon, false, "paper")
 		var heavy: AudioStreamWAV = sound._impact_stream(weapon, true, "paper")
 		var paper_stats := signal_stats(light)
@@ -95,7 +95,9 @@ func run() -> void:
 	for style in ["pellet", "cursor_stamp", "ink_geyser", "eraser", "firewall", "dark_slash", "dark_rift", "eclipse", "dark_quake", "camera_flash", "packet_blast"]:
 		check(sound.get("_sounds").has("signature_" + style), "%s boss pattern has its own release cue" % style)
 	var boss_styles: Dictionary = sound.get_script().get_script_constant_map()["BOSS_PATTERN_STYLE"]
+	check(boss_styles["crackle"] == {"rocket_single":"dash", "firecracker_arc":"pellet", "firecracker_pop":"blocks", "firework_fan":"eclipse", "spear_thrust":"dark_slash"}, "Crackle's attacks and delayed pop route to existing distinct release cues")
 	check(boss_styles["h4ck3r"]["packet_blast"] == "packet_blast", "H4CK3R packet blast uses its digital burst cue")
+	check(boss_styles["fuse"]["missile_single"] == "dash" and boss_styles["fuse"]["missile_salvo"] == "eclipse" and boss_styles["fuse"]["missile_high_low"] == "dark_quake", "Fuse's missile patterns route to existing distinct release cues")
 	check(boss_styles["dark_lord"]["quake"] == "dark_quake", "Dark lord quake has its own heavier impact cue")
 	check(boss_styles["dark_lord"]["camera"] == "camera_flash", "Dark lord camera attack has its own snapshot-glitch cue")
 	for cue in ["pac_bite", "cursor_tap", "dark_blade_swing"]:

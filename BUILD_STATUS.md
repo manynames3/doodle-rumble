@@ -1,6 +1,21 @@
 # Build status — Doodle Rumble
 
-Updated 2026-09-24. Godot 4.7.2 / GDScript. The Universal Mac build was prepared on an Apple M1 Mac.
+Updated 2026-10-10. Godot 4.7.2 / GDScript. The Universal Mac build was prepared on an Apple M1 Mac.
+
+## Local Crackle expansion and Dark lord upgrade (not yet released)
+
+- Added **Crackle**, guided by the supplied drawing: a diamond helmet, huge crystal boots, firework launcher and spear. He appears after Green and immediately before Pac-Man. The eight-chapter story includes his dialogue and journal card. Version-one and version-two saves preserve existing checkpoints, completions and bonus stickers.
+- Generated and integrated 13 authored poses, six effects and three projectile sprites. The single rocket, popping firecracker, three-lane firework fan and close-range spear strike have fixed tells and vulnerable recovery. Exact built-in image prompts and extraction geometry are preserved in `source_art/Crackle_Production_Assets/`; all 23 runtime PNG/JSON outputs reproduced byte-for-byte in an independent rebuild. The original private drawing remains outside the repository.
+- Dark lord's attack damage multiplier rose from 1.50 to 1.95, exactly **30%** before rounding. Faster pursuit, ranged attack selection and the warned full-height pillar counter distant/elevated shooters. Shorter hit stun and controller recovery reduce hesitation while preserving existing damage tells and invulnerability. A real held-bow scenario fired 19 arrows while Dark lord closed from 1,080 to 438.3 pixels and dealt 203 damage.
+- Focused source verification passed **19 suites / 2,379 checks / zero failures**, including the full eight-fight authored-art journey with no retries. Crackle's 15-second pressure was between Green and Pac-Man. Inspected 26 native captures covering combat, authored effects, results, reduced motion, story dialogue and the eight-card journal. This is automated and visual verification; the new fights have not received family playtesting.
+- Prepared local **v0.7.10 / build 28** in `builds/mac-v0.7.10/`, including a Universal Mac app and app-only ZIP. Both architecture slices, strict ad-hoc signature verification, ZIP integrity and a 120-frame exported-app startup passed. The exact exported PCK passed **654 asset, story and boss checks / zero failures**. See [TESTING_0_7_10.md](docs/TESTING_0_7_10.md). The app is not notarized. No GitHub release was created.
+
+## Local Fuse expansion (not yet released)
+
+- Added **Fuse**, a missile-wielding stick-figure boss after H4CK3R and before Dark lord. The story now has seven chapters, with new dialogue, journal entry, fixed-aim missile volleys, a launcher bash and visible reload windows. Existing saves keep their old Dark lord checkpoint, completion and bonus stickers.
+- Generated and integrated 13 authored poses, six effects and a separate missile. Original atlases, exact prompts and extraction geometry are preserved in `source_art/Fuse_Production_Assets/`; the three earlier concepts remain in `source_art/Fuse_Concept_Renderings/`. All 21 runtime PNG/JSON outputs reproduced byte-for-byte in an independent rebuild. The nine supplied packs remain unchanged.
+- Focused source verification passed **16 suites / 2,076 checks / zero failures**, including the full seven-stage live-bot journey with no retries. Fuse's 25-second passive pressure measured 236 damage, between H4CK3R's 224 and Dark lord's 376. Native captures cover the missile warning, launch, reload, impact, results, reduced motion, seven-card journal and before/after dialogue. This is automated and visual verification; the new fight has not received family playtesting.
+- Prepared the local **v0.7.9 / build 27** Universal Mac app and app-only ZIP in `builds/mac-v0.7.9/`. Both architecture slices, strict ad-hoc signature verification, archive integrity and a 120-frame exported-app startup passed. The exact exported PCK passed another **499 asset, story and Fuse combat checks / zero failures**. See [TESTING_0_7_9.md](docs/TESTING_0_7_9.md). The app is not notarized. No GitHub release was created.
 
 ## Local project follow-up (not yet released)
 

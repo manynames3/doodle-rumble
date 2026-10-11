@@ -1,5 +1,5 @@
 extends RefCounted
-## Player-selected pace layered over the six chapter-specific AI profiles.
+## Player-selected pace layered over the chapter-specific AI profiles.
 const EASY := 0
 const MEDIUM := 1
 const HARD := 2

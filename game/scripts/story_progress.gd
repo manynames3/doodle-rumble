@@ -1,7 +1,10 @@
 extends Node
 ## Separate, versioned fighting journal. Never touches Rally saves or bindings.
 const Difficulty = preload("res://scripts/difficulty.gd")
+const Chapters = preload("res://scripts/story_chapters.gd")
 const SAVE_PATH := "user://story_v1.cfg"
+const SAVE_VERSION := 3
+const LEGACY_STAGE_MAP := {1: [0,1,2,4,5,7], 2: [0,1,2,4,5,6,7]}
 var active := false
 var stage := 0
 var fighter := "orange"
@@ -19,27 +22,33 @@ func _ready() -> void:
 func load_profile(path: String = SAVE_PATH) -> void:
 	var cfg := ConfigFile.new()
 	if cfg.load(path) != OK and cfg.load(path+".bak") != OK: return
-	if cfg.get_value("meta","version",0) != 1: return
+	var version = cfg.get_value("meta","version",0)
+	if version not in [1,2,SAVE_VERSION]: return
 	var saved_stage = cfg.get_value("run","stage",0)
 	var saved_fighter = cfg.get_value("run","fighter","orange")
-	if not saved_stage is int or saved_stage < 0 or saved_stage > 5 or not saved_fighter is String: return
-	stage = saved_stage
+	var legacy_map: Array = LEGACY_STAGE_MAP.get(version,[])
+	var chapter_limit: int = Chapters.CHAPTERS.size() if version == SAVE_VERSION else legacy_map.size()
+	if not saved_stage is int or saved_stage < 0 or saved_stage >= chapter_limit or not saved_fighter is String: return
+	stage = saved_stage if legacy_map.is_empty() else legacy_map[saved_stage]
 	missing_fighter = not _playable(saved_fighter)
 	fighter = saved_fighter if not missing_fighter else "orange"
 	active = cfg.get_value("run","active",false) == true
 	hazards = cfg.get_value("run","hazards",true) != false
 	var saved_difficulty = cfg.get_value("run","difficulty_level",Difficulty.EASY)
 	difficulty_level = saved_difficulty if Difficulty.valid_level(saved_difficulty) else Difficulty.EASY
-	completed = _valid_indices(cfg.get_value("book","completed",[]))
-	challenges = _valid_indices(cfg.get_value("book","challenges",[]))
+	completed = _valid_indices(cfg.get_value("book","completed",[]),chapter_limit)
+	challenges = _valid_indices(cfg.get_value("book","challenges",[]),chapter_limit)
+	if not legacy_map.is_empty():
+		for chapters in [completed,challenges]:
+			for i in range(chapters.size()): chapters[i] = legacy_map[chapters[i]]
 	var raw_runs = cfg.get_value("book","runs",0)
 	runs = maxi(0,raw_runs) if raw_runs is int else 0
 
-func _valid_indices(value: Variant) -> Array[int]:
+func _valid_indices(value: Variant, chapter_limit: int = Chapters.CHAPTERS.size()) -> Array[int]:
 	var result: Array[int] = []
 	if value is Array:
 		for item in value:
-			if item is int and item >= 0 and item < 6 and item not in result: result.append(item)
+			if item is int and item >= 0 and item < chapter_limit and item not in result: result.append(item)
 	return result
 
 func _playable(id: String) -> bool:
@@ -50,7 +59,7 @@ func _playable(id: String) -> bool:
 
 func save_profile(path: String = SAVE_PATH) -> bool:
 	var cfg := ConfigFile.new()
-	cfg.set_value("meta","version",1)
+	cfg.set_value("meta","version",SAVE_VERSION)
 	for pair in [["active",active],["stage",stage],["fighter",fighter],["hazards",hazards],["difficulty_level",difficulty_level]]: cfg.set_value("run",pair[0],pair[1])
 	for pair in [["completed",completed],["challenges",challenges],["runs",runs]]: cfg.set_value("book",pair[0],pair[1])
 	var err := cfg.save(path+".tmp")
@@ -72,7 +81,7 @@ func begin_run(id: String, use_hazards: bool, selected_difficulty: int = Difficu
 
 func checkpoint(index: int, id: String, use_hazards: bool, selected_difficulty: int = -1) -> void:
 	active = true
-	stage = clampi(index,0,5)
+	stage = clampi(index,0,Chapters.CHAPTERS.size()-1)
 	fighter = id if _playable(id) else "orange"
 	missing_fighter = false
 	hazards = use_hazards
@@ -80,10 +89,10 @@ func checkpoint(index: int, id: String, use_hazards: bool, selected_difficulty: 
 	save_profile()
 
 func finish_stage(index: int, bonus: bool) -> void:
-	if index < 0 or index > 5: return
+	if index < 0 or index >= Chapters.CHAPTERS.size(): return
 	if index not in completed: completed.append(index)
 	if bonus and index not in challenges: challenges.append(index)
-	if index == 5:
+	if index == Chapters.CHAPTERS.size()-1:
 		if active: runs += 1
 		active = false
 	else:

@@ -1,0 +1,469 @@
+{
+  "schema": 1,
+  "id": "crackle",
+  "local_height": 160,
+  "reference_head_diameter": 160,
+  "poses": {
+    "canonical": {
+      "atlas": "canonical.png",
+      "region": [
+        [
+          0,
+          0
+        ],
+        [
+          1333,
+          0
+        ],
+        [
+          1333,
+          1180
+        ],
+        [
+          0,
+          1180
+        ]
+      ],
+      "pivot": [
+        560,
+        1156
+      ],
+      "head": [
+        550,
+        350
+      ],
+      "head_diameter": 280
+    },
+    "idle": {
+      "atlas": "movement.png",
+      "region": [
+        [
+          0,
+          0
+        ],
+        [
+          745,
+          0
+        ],
+        [
+          745,
+          724
+        ],
+        [
+          0,
+          724
+        ]
+      ],
+      "pivot": [
+        300,
+        690
+      ],
+      "head": [
+        287,
+        278
+      ],
+      "head_diameter": 160
+    },
+    "run_start": {
+      "atlas": "movement.png",
+      "region": [
+        [
+          745,
+          0
+        ],
+        [
+          1390,
+          0
+        ],
+        [
+          1390,
+          724
+        ],
+        [
+          745,
+          724
+        ]
+      ],
+      "pivot": [
+        1110,
+        690
+      ],
+      "head": [
+        1150,
+        297
+      ],
+      "head_diameter": 160
+    },
+    "run": {
+      "atlas": "movement.png",
+      "region": [
+        [
+          1390,
+          0
+        ],
+        [
+          2172,
+          0
+        ],
+        [
+          2172,
+          724
+        ],
+        [
+          1390,
+          724
+        ]
+      ],
+      "pivot": [
+        1800,
+        677
+      ],
+      "head": [
+        1810,
+        294
+      ],
+      "head_diameter": 160
+    },
+    "jump_takeoff": {
+      "atlas": "jump.png",
+      "region": [
+        [
+          0,
+          0
+        ],
+        [
+          765,
+          0
+        ],
+        [
+          765,
+          724
+        ],
+        [
+          0,
+          724
+        ]
+      ],
+      "pivot": [
+        320,
+        694
+      ],
+      "head": [
+        380,
+        313
+      ],
+      "head_diameter": 170
+    },
+    "jump_apex": {
+      "atlas": "jump.png",
+      "region": [
+        [
+          765,
+          0
+        ],
+        [
+          1460,
+          0
+        ],
+        [
+          1460,
+          724
+        ],
+        [
+          765,
+          724
+        ]
+      ],
+      "pivot": [
+        1080,
+        620
+      ],
+      "head": [
+        1060,
+        182
+      ],
+      "head_diameter": 170
+    },
+    "jump_landing": {
+      "atlas": "jump.png",
+      "region": [
+        [
+          1460,
+          0
+        ],
+        [
+          2172,
+          0
+        ],
+        [
+          2172,
+          724
+        ],
+        [
+          1460,
+          724
+        ]
+      ],
+      "pivot": [
+        1803,
+        679
+      ],
+      "head": [
+        1824,
+        352
+      ],
+      "head_diameter": 172
+    },
+    "attack_windup": {
+      "atlas": "melee.png",
+      "region": [
+        [
+          0,
+          0
+        ],
+        [
+          582,
+          0
+        ],
+        [
+          582,
+          724
+        ],
+        [
+          0,
+          724
+        ]
+      ],
+      "pivot": [
+        276,
+        655
+      ],
+      "head": [
+        286,
+        276
+      ],
+      "head_diameter": 150
+    },
+    "basic_impact": {
+      "atlas": "melee.png",
+      "region": [
+        [
+          582,
+          0
+        ],
+        [
+          1537,
+          0
+        ],
+        [
+          1537,
+          724
+        ],
+        [
+          582,
+          724
+        ]
+      ],
+      "pivot": [
+        945,
+        642
+      ],
+      "head": [
+        923,
+        283
+      ],
+      "head_diameter": 150
+    },
+    "attack_recover": {
+      "atlas": "melee.png",
+      "region": [
+        [
+          1537,
+          0
+        ],
+        [
+          2172,
+          0
+        ],
+        [
+          2172,
+          724
+        ],
+        [
+          1537,
+          724
+        ]
+      ],
+      "pivot": [
+        1824,
+        654
+      ],
+      "head": [
+        1807,
+        312
+      ],
+      "head_diameter": 150
+    },
+    "cast_windup": {
+      "atlas": "casting.png",
+      "region": [
+        [
+          0,
+          0
+        ],
+        [
+          670,
+          0
+        ],
+        [
+          670,
+          733
+        ],
+        [
+          0,
+          733
+        ]
+      ],
+      "pivot": [
+        325,
+        718
+      ],
+      "head": [
+        361,
+        291
+      ],
+      "head_diameter": 178,
+      "muzzle": [
+        611,
+        386
+      ]
+    },
+    "cast_impact": {
+      "atlas": "casting.png",
+      "region": [
+        [
+          670,
+          0
+        ],
+        [
+          1500,
+          0
+        ],
+        [
+          1500,
+          733
+        ],
+        [
+          670,
+          733
+        ]
+      ],
+      "pivot": [
+        1100,
+        710
+      ],
+      "head": [
+        1111,
+        294
+      ],
+      "head_diameter": 178,
+      "muzzle": [
+        1430,
+        383
+      ]
+    },
+    "cast_recover": {
+      "atlas": "casting.png",
+      "region": [
+        [
+          1500,
+          0
+        ],
+        [
+          2146,
+          0
+        ],
+        [
+          2146,
+          733
+        ],
+        [
+          1500,
+          733
+        ]
+      ],
+      "pivot": [
+        1792,
+        720
+      ],
+      "head": [
+        1802,
+        263
+      ],
+      "head_diameter": 178
+    }
+  },
+  "aliases": {
+    "heavy_windup": "attack_windup",
+    "heavy_impact": "basic_impact",
+    "special_impact": "cast_impact"
+  },
+  "effects": {
+    "swing_trail": [
+      0,
+      0,
+      512,
+      600
+    ],
+    "impact_burst": [
+      512,
+      0,
+      1050,
+      600
+    ],
+    "debris": [
+      1050,
+      0,
+      1536,
+      600
+    ],
+    "speed_lines": [
+      0,
+      600,
+      512,
+      1024
+    ],
+    "dust": [
+      512,
+      600,
+      1050,
+      1024
+    ],
+    "exhaust": [
+      1050,
+      600,
+      1536,
+      1024
+    ]
+  },
+  "projectiles": {
+    "rocket": [
+      0,
+      0,
+      850,
+      724
+    ],
+    "firecracker": [
+      850,
+      0,
+      1500,
+      724
+    ],
+    "spark": [
+      1500,
+      0,
+      2172,
+      724
+    ]
+  }
+}

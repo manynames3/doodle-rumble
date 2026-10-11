@@ -2,8 +2,8 @@ extends SceneTree
 ## Full-scene integration. Run with --headless --path game --script res://tests/test_game.gd.
 ## Uses public game/input paths; forced KOs are limited to explicit scoring-path tests.
 const DT = 1.0/60.0
-const JOURNEY_OPPONENTS = ["blue", "red", "green", "pac_man", "h4ck3r", "dark_lord"]
-const JOURNEY_ARENAS = ["desktop", "quarry", "canopy", "arcade", "network", "glitch"]
+const JOURNEY_OPPONENTS = ["blue", "red", "green", "crackle", "pac_man", "h4ck3r", "fuse", "dark_lord"]
+const JOURNEY_ARENAS = ["desktop", "quarry", "canopy", "quarry", "arcade", "network", "network", "glitch"]
 var game
 var settings
 var checks = 0
@@ -295,8 +295,8 @@ func test_difficulty_pressure() -> void:
 	for decreasing in ["think_min", "think_max", "rest_min", "rest_max", "tell"]:
 		check(profiles[0][decreasing] > profiles[1][decreasing] and profiles[1][decreasing] > profiles[2][decreasing],"early-stage challenge strictly reduces " + decreasing)
 	var ranks: Array[int] = []
-	for stage in range(6): ranks.append(int(game.journey_stage_data(stage).challenge_rank))
-	check(ranks == [1,2,3,4,5,6],"all six opponents have strictly rising challenge ranks")
+	for stage in range(JOURNEY_OPPONENTS.size()): ranks.append(int(game.journey_stage_data(stage).challenge_rank))
+	check(ranks == [1,2,3,4,5,6,7,8],"all eight opponents have strictly rising challenge ranks")
 	print("DIFFICULTY_PRESSURE attacks=%s first_attack_frames=%s" % [str(counts),str(first_decisions)])
 	print("PASS group: actual early-stage difficulty wiring, reaction speed and attack pressure")
 
@@ -338,7 +338,7 @@ func test_arcade_paths_and_boss() -> void:
 	game.countdown = 0
 	game.advance_arcade()
 	check(game.arcade_stage == 0 and game.selected[1] == "blue","journey cannot advance before winning its current stage")
-	for stage in range(6):
+	for stage in range(JOURNEY_OPPONENTS.size()):
 		check(game.arcade_stage == stage and game.arena_kind == JOURNEY_ARENAS[stage],"journey enters arena " + str(stage+1))
 		check(game.selected[1] == JOURNEY_OPPONENTS[stage],"journey selects required opponent " + str(stage+1))
 		check(game.first.health == game.first.max_health and game.second.health == game.second.max_health,"journey stage %d starts both fighters at their full health" % (stage+1))
@@ -358,7 +358,7 @@ func test_arcade_paths_and_boss() -> void:
 			game.rematch()
 			game.countdown = 0
 			check(game.arcade_stage == stage and game.selected[1] == "green" and game.rules.scores == [0,0] and game.first.health == 100,"retry resets the fight while preserving stage and opponent")
-		if stage == 3:
+		if stage == 4:
 			game.first.reset_at(Vector2(300,599))
 			game.second.reset_at(Vector2(425,599))
 			var tells: Dictionary = {}
@@ -372,10 +372,10 @@ func test_arcade_paths_and_boss() -> void:
 				warning_visible = warning_visible or (game.enemy_warning_label.visible and game.enemy_warning_label.text == game.pac_ai.tell and game.pac_ai.tell != "")
 				saw_damage = saw_damage or game.first.health < 100
 			pac_tell_count = tells.size()
-			check(tells.has("BITE!") and tells.has("CHARGE!"),"penultimate Pac-Man uses both telegraphed attack patterns through the real coordinator")
-			check(saw_damage,"penultimate Pac-Man can land shared-rules combat damage")
+			check(tells.has("BITE!") and tells.has("CHARGE!"),"Pac-Man uses both telegraphed attack patterns through the real coordinator")
+			check(saw_damage,"Pac-Man can land shared-rules combat damage")
 			check(warning_visible,"Pac-Man warning is visible in the HUD above the arena artwork")
-		if stage == 5:
+		if stage == JOURNEY_OPPONENTS.size()-1:
 			game.first.reset_at(Vector2(300,599))
 			game.second.reset_at(Vector2(425,599))
 			var tells: Dictionary = {}
@@ -404,18 +404,24 @@ func test_arcade_paths_and_boss() -> void:
 				game.next_round()
 				game.countdown = 0
 		check(game.state == "match_over" and game.rules.scores == [2,0],"journey stage %d requires and records two wins" % (stage+1))
-		if stage < 5:
+		if stage < JOURNEY_OPPONENTS.size()-1:
 			check(settings.arcade_wins == prior_wins,"stage %d victory gives no premature final reward" % (stage+1))
 			game.advance_arcade()
 			game.countdown = 0
 			if stage == 3:
-				check(game.arcade_stage == 4 and game.second.definition.id == "h4ck3r","Pac-Man victory leads to H4CK3R before the final Dark lord")
+				check(game.arcade_stage == 4 and game.second.definition.id == "pac_man","Crackle victory leads to Pac-Man")
+			if stage == 4:
+				check(game.arcade_stage == 5 and game.second.definition.id == "h4ck3r","Pac-Man victory leads to H4CK3R")
+			if stage == 5:
+				check(game.arcade_stage == 6 and game.second.definition.id == "fuse","H4CK3R victory leads to Fuse")
+			if stage == 6:
+				check(game.arcade_stage == 7 and game.second.definition.id == "dark_lord","Fuse victory leads to the final Dark lord")
 	check(settings.arcade_wins == prior_wins+1,"only final Dark lord victory persists the journey completion reward")
 	game._finish_round()
 	check(settings.arcade_wins == prior_wins+1,"repeated final-result callback cannot award the journey twice")
 	game.advance_arcade()
-	check(game.arcade_stage == 5 and settings.arcade_wins == prior_wins+1,"final stage cannot advance out of bounds or award again")
-	print("PASS group: six-stage journey, loss/retry, final boss patterns and single final reward")
+	check(game.arcade_stage == JOURNEY_OPPONENTS.size()-1 and settings.arcade_wins == prior_wins+1,"final stage cannot advance out of bounds or award again")
+	print("PASS group: eight-stage journey, loss/retry, final boss patterns and single final reward")
 
 func drive_bot(slot: int, frame: int, aggressive: bool = true) -> void:
 	var fighter = game.first if slot == 0 else game.second
@@ -483,7 +489,26 @@ func drive_bot(slot: int, frame: int, aggressive: bool = true) -> void:
 			move = -signf(dx)
 			attack = false
 			special = false
-		if game.boss_ai.tell == "JUMP THE WAVE!" and game.boss_ai.time_left<0.1: jump = fighter.is_on_floor()
+		if game.boss_ai.state == "executing" and opponent.boss_cast == "reaper" and opponent.attack_time >= 0 and opponent.attack_time < float(opponent.attack_spec.windup)+float(opponent.attack_spec.active):
+			attack = false
+			special = false
+			if opponent.attack_time >= float(opponent.attack_spec.windup)-0.06 and fighter.attack_time < 0 and fighter.dodge_cooldown <= 0:
+				dodge = true
+				move = -signf(dx)
+		if game.boss_ai.tell in ["VOID VOLLEY!", "ECLIPSE SHARDS!"]:
+			attack = false
+			special = false
+		if game.boss_ai.tell == "JUMP THE WAVE!": jump = false
+		for shot in game.projectiles:
+			if shot.owner_fighter != fighter and shot.kind == "shockwave" and absf(shot.position.x-fighter.position.x) < 185:
+				jump = fighter.is_on_floor()
+			if shot.owner_fighter != fighter and shot.velocity.x * (fighter.position.x-shot.position.x) > 0 and absf(shot.position.x-fighter.position.x) < 145:
+				attack = false
+				special = false
+				if absf(shot.position.x-fighter.position.x) < 105 and fighter.attack_time < 0 and fighter.dodge_cooldown <= 0:
+					dodge = true
+					move = -signf(dx)
+					jump = false
 		for mark in game.hazards.marks:
 			if absf(fighter.position.x-mark.x)<game.hazards.TYPES[mark.kind].width/2+50:
 				move = -1 if fighter.position.x<mark.x else 1
@@ -533,7 +558,7 @@ func test_live_arcade() -> void:
 	var won_stages = 0
 	var start_wins = settings.arcade_wins
 	game.ai.rng.seed = 41903
-	for stage in range(6):
+	for stage in range(JOURNEY_OPPONENTS.size()):
 		var stage_won = false
 		for attempt in range(3):
 			var frames = 0
@@ -561,12 +586,12 @@ func test_live_arcade() -> void:
 		if not stage_won: break
 		won_stages += 1
 		check(game.second.definition.id == JOURNEY_OPPONENTS[stage],"live journey beats the required opponent at stage " + str(stage+1))
-		check(root.get_node("Sound")._music_context == ["desktop","quarry","journey_green","pac_man","glitch","dark_lord"][stage],"journey stage uses its own music context")
-		if stage < 5:
+		check(root.get_node("Sound")._music_context == ["desktop","quarry","journey_green","quarry","pac_man","glitch","glitch","dark_lord"][stage],"journey stage uses its assigned music context")
+		if stage < JOURNEY_OPPONENTS.size()-1:
 			check(settings.arcade_wins == start_wins,"live stage %d gives no reward before the final boss" % (stage+1))
-			if stage == 4: game.selected[0] = "purple"
+			if stage == 5: game.selected[0] = "purple"
 			game.advance_arcade()
 			game.countdown = 0
-	check(won_stages == 6,"live input bot wins all six journey matches through real combat")
-	check(settings.arcade_wins == start_wins+1,"real combat six-stage journey completion triggers one final unlock")
+	check(won_stages == JOURNEY_OPPONENTS.size(),"live input bot wins all eight journey matches through real combat")
+	check(settings.arcade_wins == start_wins+1,"real combat eight-stage journey completion triggers one final unlock")
 	print("LIVE_JOURNEY total_frames=%d won_stages=%d retries=%d" % [total_frames,won_stages,live_retries])

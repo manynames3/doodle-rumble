@@ -1,5 +1,5 @@
 extends SceneTree
-## Render corrected Pac-Man frames in the real fourth-stage fight scene.
+## Render corrected Pac-Man frames in the real fifth-stage fight scene.
 const OUT := "res://../docs/test-results/v0610/visuals/"
 var viewport: SubViewport
 var game
@@ -32,11 +32,11 @@ func run() -> void:
 	game.set_process(false)
 	game.set_physics_process(false)
 	game.mode = "arcade"
-	game.arcade_stage = 3
+	game.arcade_stage = 4
 	game.start_match()
 	game.countdown = 0.0
 	if game.second.definition.id != "pac_man":
-		push_error("Fourth story stage did not load Pac-Man")
+		push_error("Fifth story stage did not load Pac-Man")
 		quit(1)
 		return
 	game.first.reset_at(Vector2(360,599))

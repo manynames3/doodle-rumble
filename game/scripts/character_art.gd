@@ -2,7 +2,7 @@ extends Node2D
 ## Packed RGBA pose/effect renderer. Fighter physics and attack timing stay in fighter.gd.
 const SIZE_MATCH: float = 1.22
 # Support heights of the supplied idle silhouettes after the fallen rotation.
-const FALL_FLOOR_LIFT := {"orange":37.0,"red":62.0,"green":62.0,"blue":54.0,"purple":43.0,"yellow":54.0,"pac_man":41.0,"h4ck3r":42.0,"dark_lord":49.0}
+const FALL_FLOOR_LIFT := {"orange":37.0,"red":62.0,"green":62.0,"blue":54.0,"purple":43.0,"yellow":54.0,"pac_man":41.0,"h4ck3r":42.0,"fuse":70.0,"crackle":61.0,"dark_lord":49.0}
 var fighter_id: String = ""
 var frames: Dictionary = {}
 var effects: Dictionary = {}
@@ -20,6 +20,7 @@ var was_grounded: bool = true
 var landing_age: float = 1.0
 var frame_position: Vector2 = Vector2.ZERO
 var frame_factor: float = 1.0
+var frame_head: Vector2 = Vector2.ZERO
 var visual_height: float = 145.0
 var visual_head: Vector2 = Vector2(0,-110)
 var result_kind: String = ""
@@ -102,6 +103,8 @@ func _show_frame(key: String) -> void:
 	var offset: Array = frame.get("offset",[0,0])
 	frame_position = Vector2(float(offset[0]),float(offset[1])) * pixels_to_local
 	frame_factor = pixels_to_local * float(frame.get("source_per_pixel",1.0))
+	var head_point: Array = frame.get("head",[-5.0 / pixels_to_local,-visual_height * 0.77 / pixels_to_local])
+	frame_head = Vector2(float(head_point[0]),float(head_point[1])) * pixels_to_local
 	body.position = frame_position
 	body.scale = Vector2.ONE * frame_factor
 	shown_frame = key
@@ -198,6 +201,20 @@ func pose(delta: float, state: Dictionary, phase: float, absolute_result_age: fl
 			frame = "special_impact" if release_age < 0.17 else "attack_recover"
 		elif attack < 0.0:
 			frame = "attack_recover"
+	if fighter_id == "fuse":
+		if cast == "reload":
+			frame = "reload"
+		elif cast.begins_with("missile_"):
+			frame = "aim" if charge < 1.0 else "fire"
+		elif cast == "launcher_bash" and charge < 1.0:
+			frame = "attack_windup"
+	if fighter_id == "crackle":
+		if cast == "reload":
+			frame = "cast_recover"
+		elif cast in ["rocket_single","firecracker_arc","firework_fan"]:
+			frame = "cast_windup" if charge < 1.0 else "cast_impact"
+		elif cast == "spear_thrust" and charge < 1.0:
+			frame = "attack_windup"
 	if victory:
 		frame = "jump_takeoff" if not reduced and fposmod(result_age,1.15) < 0.44 else "idle"
 	elif defeated:
@@ -236,7 +253,7 @@ func pose(delta: float, state: Dictionary, phase: float, absolute_result_age: fl
 	body.rotation = angle
 	body.scale = Vector2(frame_factor * stretch.x,frame_factor * stretch.y)
 	body.position = (frame_position * stretch).rotated(angle) + offset
-	visual_head = (Vector2(-5,-visual_height * 0.77) * stretch).rotated(angle) + offset
+	visual_head = (frame_head * stretch).rotated(angle) + offset
 	body.modulate = Color(1.0,0.87,0.87,1.0) if bool(state.get("hurt",false)) else Color.WHITE
 	var attack_active: bool = attack >= windup and attack < windup+active and attack >= 0.0
 	var burst_age: float = attack-windup
@@ -257,7 +274,7 @@ func pose(delta: float, state: Dictionary, phase: float, absolute_result_age: fl
 	elif attack_active and special and fighter_id in ["red","blue","pac_man"]:
 		_set_effect(ground,"dust",Vector2(43,-3),155.0,0.46)
 	else: ground.visible = false
-	if (attack_active and burst_age < 0.12) or boss_burst:
+	if ((attack_active and burst_age < 0.12) or boss_burst) and fighter_id not in ["fuse","crackle"]:
 		var ground_hit: bool = fighter_id == "red" and special
 		_set_effect(in_front,"impact_burst",Vector2(50,-20) if ground_hit else Vector2(77,-84),173.0,0.68)
 	else: in_front.visible = false

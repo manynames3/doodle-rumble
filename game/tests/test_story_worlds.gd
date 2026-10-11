@@ -27,8 +27,8 @@ func check(ok: bool, message: String) -> void:
 
 func run() -> void:
 	check(Catalog.ORDER.size() == 6,"Six selectable arenas")
-	var expected = ["desktop","quarry","canopy","arcade","network","glitch"]
-	for i in range(6):
+	var expected = ["desktop","quarry","canopy","quarry","arcade","network","network","glitch"]
+	for i in range(expected.size()):
 		check(Ladder.stage(i).arena == expected[i],"Story arena progression " + str(i))
 	for kind in Catalog.ORDER:
 		check(ResourceLoader.exists("res://assets/arenas/" + kind + "_v2.png"),kind + " painted background is included")

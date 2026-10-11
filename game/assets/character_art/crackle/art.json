@@ -1,0 +1,439 @@
+{
+  "schema": 1,
+  "id": "crackle",
+  "role": "boss",
+  "local_height": 160,
+  "idle_alpha_height": 669,
+  "frames": {
+    "canonical": {
+      "path": "res://assets/character_art/crackle/canonical.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/canonical.png",
+      "offset": [
+        -303.4285714285714,
+        -659.4285714285714
+      ],
+      "source_per_pixel": 0.9650297619047619,
+      "runtime_size": [
+        768,
+        693
+      ],
+      "alpha_bbox": [
+        0,
+        10,
+        1288,
+        1162
+      ],
+      "head": [
+        -5.7142857142857135,
+        -460.57142857142856
+      ]
+    },
+    "idle": {
+      "path": "res://assets/character_art/crackle/idle.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/idle.png",
+      "offset": [
+        -275.0,
+        -676.0
+      ],
+      "source_per_pixel": 1.0,
+      "runtime_size": [
+        656,
+        693
+      ],
+      "alpha_bbox": [
+        9,
+        10,
+        655,
+        684
+      ],
+      "head": [
+        -13.0,
+        -412.0
+      ]
+    },
+    "run_start": {
+      "path": "res://assets/character_art/crackle/run_start.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/run_start.png",
+      "offset": [
+        -303.0,
+        -676.0
+      ],
+      "source_per_pixel": 1.0,
+      "runtime_size": [
+        524,
+        693
+      ],
+      "alpha_bbox": [
+        10,
+        10,
+        515,
+        683
+      ],
+      "head": [
+        40.0,
+        -393.0
+      ]
+    },
+    "run": {
+      "path": "res://assets/character_art/crackle/run.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/run.png",
+      "offset": [
+        -375.0,
+        -604.0
+      ],
+      "source_per_pixel": 1.0,
+      "runtime_size": [
+        710,
+        617
+      ],
+      "alpha_bbox": [
+        10,
+        6,
+        700,
+        617
+      ],
+      "head": [
+        10.0,
+        -383.0
+      ]
+    },
+    "jump_takeoff": {
+      "path": "res://assets/character_art/crackle/jump_takeoff.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/jump_takeoff.png",
+      "offset": [
+        -289.88235294117646,
+        -633.4117647058823
+      ],
+      "source_per_pixel": 0.9411764705882353,
+      "runtime_size": [
+        728,
+        690
+      ],
+      "alpha_bbox": [
+        10,
+        9,
+        718,
+        684
+      ],
+      "head": [
+        56.470588235294116,
+        -358.5882352941176
+      ]
+    },
+    "jump_apex": {
+      "path": "res://assets/character_art/crackle/jump_apex.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/jump_apex.png",
+      "offset": [
+        -266.3529411764706,
+        -571.2941176470588
+      ],
+      "source_per_pixel": 0.9411764705882353,
+      "runtime_size": [
+        654,
+        623
+      ],
+      "alpha_bbox": [
+        8,
+        9,
+        645,
+        613
+      ],
+      "head": [
+        -18.823529411764707,
+        -412.2352941176471
+      ]
+    },
+    "jump_landing": {
+      "path": "res://assets/character_art/crackle/jump_landing.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/jump_landing.png",
+      "offset": [
+        -299.5348837209302,
+        -502.3255813953488
+      ],
+      "source_per_pixel": 0.9302325581395349,
+      "runtime_size": [
+        681,
+        551
+      ],
+      "alpha_bbox": [
+        9,
+        0,
+        672,
+        541
+      ],
+      "head": [
+        19.53488372093023,
+        -304.1860465116279
+      ]
+    },
+    "attack_windup": {
+      "path": "res://assets/character_art/crackle/attack_windup.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/attack_windup.png",
+      "offset": [
+        -294.4,
+        -647.4666666666667
+      ],
+      "source_per_pixel": 1.0666666666666667,
+      "runtime_size": [
+        538,
+        622
+      ],
+      "alpha_bbox": [
+        0,
+        9,
+        537,
+        612
+      ],
+      "head": [
+        10.666666666666666,
+        -404.26666666666665
+      ]
+    },
+    "basic_impact": {
+      "path": "res://assets/character_art/crackle/basic_impact.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/basic_impact.png",
+      "offset": [
+        -379.73333333333335,
+        -507.73333333333335
+      ],
+      "source_per_pixel": 1.3347222222222224,
+      "runtime_size": [
+        768,
+        394
+      ],
+      "alpha_bbox": [
+        7,
+        2,
+        949,
+        492
+      ],
+      "head": [
+        -23.466666666666665,
+        -382.93333333333334
+      ]
+    },
+    "attack_recover": {
+      "path": "res://assets/character_art/crackle/attack_recover.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/attack_recover.png",
+      "offset": [
+        -318.93333333333334,
+        -586.6666666666666
+      ],
+      "source_per_pixel": 1.0666666666666667,
+      "runtime_size": [
+        646,
+        566
+      ],
+      "alpha_bbox": [
+        12,
+        10,
+        637,
+        556
+      ],
+      "head": [
+        -18.133333333333333,
+        -364.8
+      ]
+    },
+    "cast_windup": {
+      "path": "res://assets/character_art/crackle/cast_windup.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/cast_windup.png",
+      "offset": [
+        -290.3370786516854,
+        -642.6966292134831
+      ],
+      "source_per_pixel": 0.898876404494382,
+      "runtime_size": [
+        650,
+        730
+      ],
+      "alpha_bbox": [
+        1,
+        10,
+        640,
+        730
+      ],
+      "head": [
+        32.359550561797754,
+        -383.82022471910113
+      ],
+      "muzzle": [
+        257.07865168539325,
+        -298.4269662921348
+      ]
+    },
+    "cast_impact": {
+      "path": "res://assets/character_art/crackle/cast_impact.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/cast_impact.png",
+      "offset": [
+        -373.9325842696629,
+        -636.4044943820224
+      ],
+      "source_per_pixel": 0.9152621722846441,
+      "runtime_size": [
+        768,
+        704
+      ],
+      "alpha_bbox": [
+        6,
+        10,
+        773,
+        715
+      ],
+      "head": [
+        9.887640449438202,
+        -373.9325842696629
+      ],
+      "muzzle": [
+        296.62921348314603,
+        -293.9325842696629
+      ]
+    },
+    "cast_recover": {
+      "path": "res://assets/character_art/crackle/cast_recover.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/cast_recover.png",
+      "offset": [
+        -244.4943820224719,
+        -647.191011235955
+      ],
+      "source_per_pixel": 0.898876404494382,
+      "runtime_size": [
+        622,
+        731
+      ],
+      "alpha_bbox": [
+        2,
+        9,
+        612,
+        721
+      ],
+      "head": [
+        8.98876404494382,
+        -410.7865168539326
+      ]
+    },
+    "heavy_windup": {
+      "path": "res://assets/character_art/crackle/attack_windup.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/attack_windup.png",
+      "offset": [
+        -294.4,
+        -647.4666666666667
+      ],
+      "source_per_pixel": 1.0666666666666667,
+      "runtime_size": [
+        538,
+        622
+      ],
+      "alpha_bbox": [
+        0,
+        9,
+        537,
+        612
+      ],
+      "head": [
+        10.666666666666666,
+        -404.26666666666665
+      ]
+    },
+    "heavy_impact": {
+      "path": "res://assets/character_art/crackle/basic_impact.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/basic_impact.png",
+      "offset": [
+        -379.73333333333335,
+        -507.73333333333335
+      ],
+      "source_per_pixel": 1.3347222222222224,
+      "runtime_size": [
+        768,
+        394
+      ],
+      "alpha_bbox": [
+        7,
+        2,
+        949,
+        492
+      ],
+      "head": [
+        -23.466666666666665,
+        -382.93333333333334
+      ]
+    },
+    "special_impact": {
+      "path": "res://assets/character_art/crackle/cast_impact.png",
+      "source": "derived:source_art/Crackle_Production_Assets/poses/cast_impact.png",
+      "offset": [
+        -373.9325842696629,
+        -636.4044943820224
+      ],
+      "source_per_pixel": 0.9152621722846441,
+      "runtime_size": [
+        768,
+        704
+      ],
+      "alpha_bbox": [
+        6,
+        10,
+        773,
+        715
+      ],
+      "head": [
+        9.887640449438202,
+        -373.9325842696629
+      ],
+      "muzzle": [
+        296.62921348314603,
+        -293.9325842696629
+      ]
+    }
+  },
+  "effects": {
+    "swing_trail": {
+      "path": "res://assets/character_art/crackle/effect_swing_trail.png",
+      "runtime_size": [
+        476,
+        454
+      ],
+      "source": "derived:source_art/Crackle_Production_Assets/effects/swing_trail.png"
+    },
+    "impact_burst": {
+      "path": "res://assets/character_art/crackle/effect_impact_burst.png",
+      "runtime_size": [
+        529,
+        484
+      ],
+      "source": "derived:source_art/Crackle_Production_Assets/effects/impact_burst.png"
+    },
+    "debris": {
+      "path": "res://assets/character_art/crackle/effect_debris.png",
+      "runtime_size": [
+        351,
+        363
+      ],
+      "source": "derived:source_art/Crackle_Production_Assets/effects/debris.png"
+    },
+    "speed_lines": {
+      "path": "res://assets/character_art/crackle/effect_speed_lines.png",
+      "runtime_size": [
+        476,
+        208
+      ],
+      "source": "derived:source_art/Crackle_Production_Assets/effects/speed_lines.png"
+    },
+    "dust": {
+      "path": "res://assets/character_art/crackle/effect_dust.png",
+      "runtime_size": [
+        518,
+        231
+      ],
+      "source": "derived:source_art/Crackle_Production_Assets/effects/dust.png"
+    },
+    "exhaust": {
+      "path": "res://assets/character_art/crackle/effect_exhaust.png",
+      "runtime_size": [
+        459,
+        280
+      ],
+      "source": "derived:source_art/Crackle_Production_Assets/effects/exhaust.png"
+    }
+  }
+}

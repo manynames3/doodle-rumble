@@ -2,7 +2,7 @@ extends SceneTree
 ## Asset wiring smoke test for source and exported PCK runs.
 const Rig = preload("res://scripts/fighter_rig.gd")
 const Card = preload("res://scripts/selection_card.gd")
-const IDS = ["orange","red","green","blue","purple","yellow","pac_man","h4ck3r","dark_lord"]
+const IDS = ["orange","red","green","blue","purple","yellow","pac_man","h4ck3r","dark_lord","fuse","crackle"]
 var checks: int = 0
 var failures: Array[String] = []
 
@@ -27,7 +27,7 @@ func run() -> void:
 		var manifest: String = "res://assets/character_art/%s/art.json" % id
 		check(FileAccess.file_exists(manifest),id + " runtime manifest in project/PCK")
 		check(art.frames.size() >= 12,id + " mapped pose set")
-		check(art.effects.size() == 5,id + " mapped effects")
+		check(art.effects.size() == (6 if id in ["fuse","crackle"] else 5),id + " mapped effects")
 		if id == "pac_man":
 			for key in art.frames:
 				check(str(art.frames[key].get("source","")).begins_with("derived:source_art/Pac_Man_One_Eye_Runtime_Overrides/"),"Pac-Man "+str(key)+" uses the one-eye runtime pose")
@@ -64,6 +64,26 @@ func run() -> void:
 			check(not art.in_front.visible,"H4CK3R scan burst never repeats during execution")
 			rig.pose(0.016,{"grounded":true,"boss_cast":"ink_geyser","boss_charge":0.8})
 			check(art.shown_frame == "attack_windup","H4CK3R other commands hold their tell")
+		if id == "fuse":
+			for kind in ["missile_single","missile_salvo","missile_high_low"]:
+				rig.pose(0.016,{"grounded":true,"boss_cast":kind,"boss_charge":0.7})
+				check(art.shown_frame == "aim","Fuse loaded launcher holds its warning")
+				rig.pose(0.016,{"grounded":true,"boss_cast":kind,"boss_charge":1.0})
+				check(art.shown_frame == "fire" and not art.in_front.visible,"Fuse releases with an empty muzzle and separate projectile effects")
+			rig.pose(0.016,{"grounded":true,"boss_cast":"reload"})
+			check(art.shown_frame == "reload","Fuse reload has an authored vulnerable pose")
+			check(ResourceLoader.exists("res://assets/character_art/fuse/missile.png","Texture2D"),"Fuse separate missile sprite loads")
+		if id == "crackle":
+			for kind in ["rocket_single","firecracker_arc","firework_fan"]:
+				rig.pose(0.016,{"grounded":true,"boss_cast":kind,"boss_charge":0.7})
+				check(art.shown_frame == "cast_windup","Crackle holds the loaded launcher during its warning")
+				rig.pose(0.016,{"grounded":true,"boss_cast":kind,"boss_charge":1.0})
+				check(art.shown_frame == "cast_impact" and not art.in_front.visible,"Crackle firing pose has separate projectile effects")
+			rig.pose(0.016,{"grounded":true,"boss_cast":"reload"})
+			check(art.shown_frame == "cast_recover","Crackle has authored vulnerable recovery")
+			for projectile in ["rocket","firecracker","spark"]:
+				check(ResourceLoader.exists("res://assets/character_art/crackle/%s.png" % projectile,"Texture2D"),"Crackle separate %s sprite loads" % projectile)
+			check(art.frames.cast_impact.has("muzzle"),"Crackle firing muzzle is authored")
 		if id == "dark_lord":
 			rig.pose(0.016,{"grounded":true,"boss_cast":"void_orb","boss_charge":0.7})
 			check(art.shown_frame == "attack_windup","Dark lord orb holds the tell until release")

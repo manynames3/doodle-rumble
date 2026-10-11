@@ -1,0 +1,439 @@
+{
+  "schema": 1,
+  "id": "fuse",
+  "role": "boss",
+  "local_height": 160,
+  "idle_alpha_height": 614,
+  "frames": {
+    "canonical": {
+      "path": "res://assets/character_art/fuse/canonical.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/canonical.png",
+      "offset": [
+        -323.36134453781517,
+        -705.8823529411766
+      ],
+      "source_per_pixel": 0.9742647058823529,
+      "runtime_size": [
+        768,
+        732
+      ],
+      "alpha_bbox": [
+        0,
+        0,
+        1106,
+        1061
+      ],
+      "head": [
+        -73.94957983193278,
+        -467.22689075630257
+      ]
+    },
+    "idle": {
+      "path": "res://assets/character_art/fuse/idle.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/idle.png",
+      "offset": [
+        -258.0,
+        -626.0
+      ],
+      "source_per_pixel": 1.0,
+      "runtime_size": [
+        642,
+        638
+      ],
+      "alpha_bbox": [
+        10,
+        2,
+        636,
+        630
+      ],
+      "head": [
+        -56.0,
+        -411.0
+      ]
+    },
+    "run_start": {
+      "path": "res://assets/character_art/fuse/run_start.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/run_start.png",
+      "offset": [
+        -261.1042944785276,
+        -524.1717791411043
+      ],
+      "source_per_pixel": 0.9815950920245399,
+      "runtime_size": [
+        718,
+        545
+      ],
+      "alpha_bbox": [
+        9,
+        8,
+        709,
+        542
+      ],
+      "head": [
+        56.93251533742331,
+        -331.77914110429447
+      ]
+    },
+    "run": {
+      "path": "res://assets/character_art/fuse/run.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/run.png",
+      "offset": [
+        -323.83233532934133,
+        -548.0239520958083
+      ],
+      "source_per_pixel": 0.9580838323353293,
+      "runtime_size": [
+        676,
+        586
+      ],
+      "alpha_bbox": [
+        9,
+        10,
+        671,
+        584
+      ],
+      "head": [
+        -68.98203592814372,
+        -359.2814371257485
+      ]
+    },
+    "jump_takeoff": {
+      "path": "res://assets/character_art/fuse/jump_takeoff.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/jump_takeoff.png",
+      "offset": [
+        -208.60759493670886,
+        -635.9493670886077
+      ],
+      "source_per_pixel": 1.0126582278481013,
+      "runtime_size": [
+        567,
+        640
+      ],
+      "alpha_bbox": [
+        9,
+        10,
+        558,
+        633
+      ],
+      "head": [
+        11.139240506329115,
+        -473.9240506329114
+      ]
+    },
+    "jump_apex": {
+      "path": "res://assets/character_art/fuse/jump_apex.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/jump_apex.png",
+      "offset": [
+        -235.4140127388535,
+        -438.21656050955414
+      ],
+      "source_per_pixel": 1.019108280254777,
+      "runtime_size": [
+        582,
+        442
+      ],
+      "alpha_bbox": [
+        5,
+        9,
+        582,
+        435
+      ],
+      "head": [
+        -32.611464968152866,
+        -343.43949044585986
+      ]
+    },
+    "jump_landing": {
+      "path": "res://assets/character_art/fuse/jump_landing.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/jump_landing.png",
+      "offset": [
+        -250.83870967741936,
+        -427.3548387096774
+      ],
+      "source_per_pixel": 1.032258064516129,
+      "runtime_size": [
+        525,
+        426
+      ],
+      "alpha_bbox": [
+        10,
+        7,
+        516,
+        418
+      ],
+      "head": [
+        -29.93548387096774,
+        -335.48387096774195
+      ]
+    },
+    "aim": {
+      "path": "res://assets/character_art/fuse/aim.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/aim.png",
+      "offset": [
+        -301.5028901734104,
+        -527.1676300578034
+      ],
+      "source_per_pixel": 0.9405105973025049,
+      "runtime_size": [
+        768,
+        572
+      ],
+      "alpha_bbox": [
+        7,
+        10,
+        771,
+        576
+      ],
+      "head": [
+        -51.79190751445087,
+        -415.2601156069364
+      ],
+      "muzzle": [
+        318.15028901734104,
+        -407.8612716763006
+      ]
+    },
+    "fire": {
+      "path": "res://assets/character_art/fuse/fire.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/fire.png",
+      "offset": [
+        -302.11764705882354,
+        -527.0588235294117
+      ],
+      "source_per_pixel": 0.9411764705882353,
+      "runtime_size": [
+        644,
+        570
+      ],
+      "alpha_bbox": [
+        9,
+        9,
+        644,
+        560
+      ],
+      "head": [
+        -137.41176470588235,
+        -416.94117647058823
+      ],
+      "muzzle": [
+        155.2941176470588,
+        -430.11764705882354
+      ]
+    },
+    "reload": {
+      "path": "res://assets/character_art/fuse/reload.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/reload.png",
+      "offset": [
+        -295.59322033898303,
+        -590.2824858757062
+      ],
+      "source_per_pixel": 0.903954802259887,
+      "runtime_size": [
+        625,
+        665
+      ],
+      "alpha_bbox": [
+        8,
+        10,
+        620,
+        655
+      ],
+      "head": [
+        -129.26553672316385,
+        -329.03954802259886
+      ]
+    },
+    "attack_windup": {
+      "path": "res://assets/character_art/fuse/attack_windup.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/attack_windup.png",
+      "offset": [
+        -260.7734806629834,
+        -624.0883977900552
+      ],
+      "source_per_pixel": 0.8839779005524862,
+      "runtime_size": [
+        575,
+        718
+      ],
+      "alpha_bbox": [
+        9,
+        10,
+        565,
+        708
+      ],
+      "head": [
+        37.12707182320442,
+        -374.8066298342541
+      ]
+    },
+    "basic_impact": {
+      "path": "res://assets/character_art/fuse/basic_impact.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/basic_impact.png",
+      "offset": [
+        -299.6685082872928,
+        -471.16022099447514
+      ],
+      "source_per_pixel": 1.0589318600368325,
+      "runtime_size": [
+        768,
+        455
+      ],
+      "alpha_bbox": [
+        10,
+        10,
+        911,
+        540
+      ],
+      "head": [
+        79.55801104972376,
+        -378.34254143646405
+      ]
+    },
+    "attack_recover": {
+      "path": "res://assets/character_art/fuse/attack_recover.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/attack_recover.png",
+      "offset": [
+        -245.33333333333331,
+        -595.5555555555555
+      ],
+      "source_per_pixel": 0.8888888888888888,
+      "runtime_size": [
+        570,
+        682
+      ],
+      "alpha_bbox": [
+        10,
+        7,
+        561,
+        678
+      ],
+      "head": [
+        97.77777777777777,
+        -366.22222222222223
+      ]
+    },
+    "heavy_windup": {
+      "path": "res://assets/character_art/fuse/attack_windup.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/attack_windup.png",
+      "offset": [
+        -260.7734806629834,
+        -624.0883977900552
+      ],
+      "source_per_pixel": 0.8839779005524862,
+      "runtime_size": [
+        575,
+        718
+      ],
+      "alpha_bbox": [
+        9,
+        10,
+        565,
+        708
+      ],
+      "head": [
+        37.12707182320442,
+        -374.8066298342541
+      ]
+    },
+    "heavy_impact": {
+      "path": "res://assets/character_art/fuse/basic_impact.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/basic_impact.png",
+      "offset": [
+        -299.6685082872928,
+        -471.16022099447514
+      ],
+      "source_per_pixel": 1.0589318600368325,
+      "runtime_size": [
+        768,
+        455
+      ],
+      "alpha_bbox": [
+        10,
+        10,
+        911,
+        540
+      ],
+      "head": [
+        79.55801104972376,
+        -378.34254143646405
+      ]
+    },
+    "special_impact": {
+      "path": "res://assets/character_art/fuse/fire.png",
+      "source": "derived:source_art/Fuse_Production_Assets/poses/fire.png",
+      "offset": [
+        -302.11764705882354,
+        -527.0588235294117
+      ],
+      "source_per_pixel": 0.9411764705882353,
+      "runtime_size": [
+        644,
+        570
+      ],
+      "alpha_bbox": [
+        9,
+        9,
+        644,
+        560
+      ],
+      "head": [
+        -137.41176470588235,
+        -416.94117647058823
+      ],
+      "muzzle": [
+        155.2941176470588,
+        -430.11764705882354
+      ]
+    }
+  },
+  "effects": {
+    "swing_trail": {
+      "path": "res://assets/character_art/fuse/effect_swing_trail.png",
+      "runtime_size": [
+        459,
+        441
+      ],
+      "source": "derived:source_art/Fuse_Production_Assets/effects/swing_trail.png"
+    },
+    "impact_burst": {
+      "path": "res://assets/character_art/fuse/effect_impact_burst.png",
+      "runtime_size": [
+        506,
+        445
+      ],
+      "source": "derived:source_art/Fuse_Production_Assets/effects/impact_burst.png"
+    },
+    "debris": {
+      "path": "res://assets/character_art/fuse/effect_debris.png",
+      "runtime_size": [
+        390,
+        418
+      ],
+      "source": "derived:source_art/Fuse_Production_Assets/effects/debris.png"
+    },
+    "speed_lines": {
+      "path": "res://assets/character_art/fuse/effect_speed_lines.png",
+      "runtime_size": [
+        475,
+        408
+      ],
+      "source": "derived:source_art/Fuse_Production_Assets/effects/speed_lines.png"
+    },
+    "dust": {
+      "path": "res://assets/character_art/fuse/effect_dust.png",
+      "runtime_size": [
+        493,
+        409
+      ],
+      "source": "derived:source_art/Fuse_Production_Assets/effects/dust.png"
+    },
+    "exhaust": {
+      "path": "res://assets/character_art/fuse/effect_exhaust.png",
+      "runtime_size": [
+        446,
+        233
+      ],
+      "source": "derived:source_art/Fuse_Production_Assets/effects/exhaust.png"
+    }
+  }
+}

@@ -23,12 +23,12 @@ func run():
 	var old_wins = settings.arcade_wins
 	game.mode = "arcade"
 	game.optional_hazards = false
-	game.arcade_stage = 4
+	game.arcade_stage = 5
 	game.start_match()
 	game.countdown = 0
 	game.first.reset_at(Vector2(450,599))
 	game.second.reset_at(Vector2(770,599))
-	check(game.second.definition.id == "h4ck3r","sixth journey inserts H4CK3R at stage five")
+	check(game.second.definition.id == "h4ck3r","eight-stage journey keeps H4CK3R at stage six")
 	check(is_equal_approx(game.second.body_scale,game.first.BODY_SCALE*1.25) and is_equal_approx(absf(game.second.rig.scale.x),game.second.body_scale*game.second.VISUAL_SCALE_MULTIPLIER),"H4CK3R keeps his 125 percent combat scale with the shared 15 percent art-size boost")
 	check(is_equal_approx(game.second.hurtbox().size.x,float(game.second.definition.get("hurtbox_width",46))*game.first.BODY_SCALE*1.25),"H4CK3R's hurtbox follows the enlarged body scale")
 	check(not root.get_node("Data").ORDER.has("h4ck3r"),"six selectable fighters remain distinct from story bosses")
@@ -152,7 +152,7 @@ func run():
 		if jumping_shot.tick(DT,game.first): break
 	check(game.first.health == 100,"jumping completely above a checksum lane avoids the shot")
 	jumping_shot.queue_free()
-	game.arcade_stage = 3
+	game.arcade_stage = 4
 	game.start_match()
 	game.countdown = 0
 	game.first.reset_at(Vector2(450,599))
@@ -165,7 +165,7 @@ func run():
 		pac_damage += 100-game.first.health
 	print("BOSS_STAGE_PRESSURE pac_40s=%d hacker_40s=%d" % [pac_damage,hacker_damage])
 	check(hacker_damage > pac_damage,"H4CK3R deals more passive-opponent pressure than preceding Pac-Man stage")
-	game.arcade_stage = 5
+	game.arcade_stage = 7
 	game.start_match()
 	game.countdown = 0
 	game.first.reset_at(Vector2(450,599))

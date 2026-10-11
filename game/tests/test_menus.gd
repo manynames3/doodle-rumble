@@ -431,14 +431,28 @@ func test_result_navigation() -> void:
 	await process_frame
 	result_focus("Next match  >")
 	await tap_action("ui_accept")
-	check(game.arcade_stage == 4 and game.second.definition.id == "h4ck3r","Pac-Man result continues to H4CK3R")
+	check(game.arcade_stage == 4 and game.second.definition.id == "pac_man","Crackle result continues to Pac-Man")
 	game.rules.scores = [2,0]
 	game.rules.last_winner = 0
 	game.rules.finished = true
 	game._finish_round()
 	await process_frame
 	press("Next match  >")
-	check(game.arcade_stage == 5 and game.second.definition.id == "dark_lord","H4CK3R result continues to final Dark lord")
+	check(game.arcade_stage == 5 and game.second.definition.id == "h4ck3r","Pac-Man result continues to H4CK3R")
+	game.rules.scores = [2,0]
+	game.rules.last_winner = 0
+	game.rules.finished = true
+	game._finish_round()
+	await process_frame
+	press("Next match  >")
+	check(game.arcade_stage == 6 and game.second.definition.id == "fuse","H4CK3R result continues to Fuse")
+	game.rules.scores = [2,0]
+	game.rules.last_winner = 0
+	game.rules.finished = true
+	game._finish_round()
+	await process_frame
+	press("Next match  >")
+	check(game.arcade_stage == 7 and game.second.definition.id == "dark_lord","Fuse result continues to final Dark lord")
 	game.start_match()
 	game.rules.scores = [2, 0]
 	game.rules.last_winner = 0

@@ -104,7 +104,7 @@ func run() -> void:
 	game.new_journey_selection()
 	game.selected[0]=ids[2]
 	game.continue_journey()
-	for stage in range(6):
+	for stage in range(game.Journey.STAGES.size()):
 		game.arcade_stage=stage
 		game.start_match()
 		check(game.first.definition.id==ids[2],"Custom hero survives story chapter %d" % stage)
@@ -113,7 +113,7 @@ func run() -> void:
 		game.rules.finished=true
 		game._finish_round()
 		check(stage in chronicle.completed,"Custom victory awards story chapter %d" % stage)
-		if stage<5:
+		if stage<game.Journey.STAGES.size()-1:
 			game.show_title()
 			game.resume_story()
 			check(game.selected[0]==ids[2] and game.arcade_stage==stage+1,"Story resumes the same hero and next chapter")
@@ -131,7 +131,7 @@ func run() -> void:
 	check(library.delete_record(ids[2]),"The hero can be deleted without editing story data")
 	chronicle.load_profile()
 	check(chronicle.active and chronicle.stage==4 and chronicle.missing_fighter,"Missing drawing preserves chapter progress and offers a replacement")
-	check(chronicle.fighter=="orange" and chronicle.completed.size()==6,"Recovery retains earned chapters")
+	check(chronicle.fighter=="orange" and chronicle.completed.size()==game.Journey.STAGES.size(),"Recovery retains earned chapters")
 	game.queue_free()
 	await process_frame
 	await process_frame

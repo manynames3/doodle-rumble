@@ -92,7 +92,7 @@ func run():
 	game.test_mode=true
 	game.set_physics_process(false)
 	game.mode="arcade"
-	game.arcade_stage=5
+	game.arcade_stage=7
 	game.selected=["orange","dark_lord"]
 	game.start_match()
 	game.rules.finished=true

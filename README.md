@@ -2,7 +2,7 @@
 
 **Small sticks. Big imaginations. Draw, fight, repeat.**
 
-Doodle Rumble is a hand-drawn 2D arcade fighter for macOS, with an imaginative racing side game. Six hollow-headed doodles throw oversized weapons around a living computer desk while a funny six-battle story climbs from a gentle first fight to Pac-Man, H4CK3R and the Dark lord.
+Doodle Rumble is a hand-drawn 2D arcade fighter for macOS, with an imaginative racing side game. Six hollow-headed doodles throw oversized weapons around a living computer desk while a funny eight-battle story climbs from a gentle first fight to Crackle, Pac-Man, H4CK3R, Fuse and the Dark lord.
 
 ![Doodle Rumble title menu](docs/screenshots/01-title-menu.png)
 
@@ -10,9 +10,9 @@ Doodle Rumble is a hand-drawn 2D arcade fighter for macOS, with an imaginative r
 
 Doodle Rumble started with a drawing my kids made: little stick figures with hollow heads, huge tools, and enough attitude to look as if they were already arguing over who won. I wanted to keep that energy, not tidy it away. The first question was simple: what if these doodles could climb off the page and fight inside the computer they were drawn on?
 
-I built the answer in Godot. The first Mac prototype proved the basics with a desk arena, movement, attacks, health and rematches. Then the kids' characters became a six-fighter cast with distinct specials. The desk became one stop in a bigger, sillier journey through quarries, paper worlds, arcades and a glitching computer core. The story now builds toward Pac-Man, H4CK3R and Dark lord, with each match raising the challenge and giving the doodles another reason to show off.
+I built the answer in Godot. The first Mac prototype proved the basics with a desk arena, movement, attacks, health and rematches. Then the kids' characters became a six-fighter cast with distinct specials. The desk became one stop in a bigger, sillier journey through quarries, paper worlds, arcades and a glitching computer core. The story now builds toward Crackle, Pac-Man, H4CK3R, missile-happy Fuse and Dark lord, with each match raising the challenge and giving the doodles another reason to show off.
 
-The art has grown alongside the game. Illustrated backgrounds set the scene; ink-style HUD and oversized effects make the action feel like the drawing is fighting back. The latest character pass uses **individual transparent pose and effect sprites** for all six fighters and three bosses. A small importer trims the source images' transparent safety borders, creates lighter runtime copies, and records each pose's pivot so the characters still meet the floor and their existing hitboxes. These are separate PNGs, rather than a conventional sprite sheet. Godot's fixed-step combat remains independent of the art. The original high-resolution pack images are preserved under `source_art/`.
+The art has grown alongside the game. Illustrated backgrounds set the scene; ink-style HUD and oversized effects make the action feel like the drawing is fighting back. The latest character pass uses **individual transparent pose and effect sprites** for all six fighters and five bosses. A small importer trims the source images' transparent safety borders, creates lighter runtime copies, and records each pose's pivot so the characters still meet the floor and their existing hitboxes. These are separate PNGs, rather than a conventional sprite sheet. Godot's fixed-step combat remains independent of the art. The original high-resolution pack images are preserved under `source_art/`.
 
 ## How it grew
 
@@ -20,9 +20,9 @@ The art has grown alongside the game. Illustrated backgrounds set the scene; ink
 | --- | --- |
 | First playable build | Four fighters, a desktop arena, solo play, training, local battles and quick rematches established the game loop. |
 | Cast and visual identity | Purple and Yellow joined Orange, Red, Green and Blue. The title poster, hand-drawn HUD, larger attacks and illustrated arenas gave the game its sketchbook-meets-computer look. |
-| A journey worth finishing | The six-stage Save Star Saga added Pac-Man, H4CK3R and Dark lord, rising difficulty, hazards, new worlds, stage-specific music, a short ending and small jokes between fights. Doodle Rally became a separate racing side game. |
+| A journey worth finishing | The eight-stage Save Star Saga includes Crackle, Pac-Man, H4CK3R, Fuse and Dark lord, rising difficulty, hazards, new worlds, stage-specific music, a short ending and small jokes between fights. Doodle Rally became a separate racing side game. |
 | A livelier hard setting | The regular color-fighter AI now re-engages quickly after getting hit. On Hard it makes about 31% more attack decisions in a fixed 45-second comparison, moves 10% faster and chooses specials 25% more often. |
-| Bringing the drawings closer | Nine transparent art packs now animate the playable cast and bosses in selection, story scenes and combat. The latest pass adds moving idle/run poses, clearer boss attack releases, better-fitting selection previews and visible round-result performances. |
+| Bringing the drawings closer | Eleven transparent art packs now animate the playable cast and bosses in selection, story scenes and combat. The latest pass adds moving idle/run poses, clearer boss attack releases, better-fitting selection previews and visible round-result performances. |
 | Making the finale feel final | Pac-Man's runtime poses now keep his single-eye silhouette. Dark lord has eight telegraphed attack patterns, a stronger damage tier, and three new signature hazards with much larger purple effects. |
 | Doodle Workshop | Draw or import a paper character, pose its head, body and limbs, preview movement, and choose from six weapon kits. Custom fighters can enter Story, Quick Match, 2P Battle and Practice, with six local save slots and an optional paper-white edge. |
 | Workshop color and photo clarity | The starter figure and drawing pen now have separate color palettes. Photo import removes page white but does not recognize limbs; it keeps the whole source photo visible until all six usable cutouts are traced and labels joint dots as bend markers. Tiny outlines are rejected and sent back for repair. |
@@ -35,7 +35,8 @@ The best design test is still the original one: does it feel like the kids' draw
 - Six original fighters: Orange, Red, Green, Blue, Purple and Yellow, plus six local custom-fighter slots.
 - Doodle Workshop: draw, erase, pose and animate your own fighter, or bring in a paper photo. Six custom weapon kits, editable source artwork and a white cutout edge that follows the action. New kits include Rubber Chicken's **Cluckquake** and Jumbo Crayon's **Rainbow Ruckus**.
 - Distinct basic attacks and specials, including spin arcs, hammer quakes, pixel slashes, block blasts, signal shots and swarm summons.
-- Six-stage story ladder: **Blue → Red → Green → Pac-Man → H4CK3R → Dark lord**.
+- Eight-stage story ladder: **Blue → Red → Green → Crackle → Pac-Man → H4CK3R → Fuse → Dark lord**. Fuse guards the core with an oversized shoulder launcher and warned missile patterns; he is a story boss, not a selectable fighter.
+- Crackle wears a diamond helmet and huge crystal boots, firing rockets, popping firecrackers and a firework fan before switching to a spear at close range. Dark lord deals 30% more attack damage, pursues distant shooters faster and resumes sooner after a hit.
 - Story, Quick Match and local 2P Battle, with fighter selection and a separate readable stage-selection page.
 - Chill Doodles, Spicy Scribbles and Doodle Mayhem difficulty choices. Computer opponents attack more often and hazards become more active as the challenge rises; the regular color-fighter AI now presses more actively on Hard and no longer adds a long artificial pause after hit-stun.
 - Six illustrated arenas with optional hazards, reachable platforms and animated scenery.
@@ -70,9 +71,19 @@ These are native captures from the running Godot project, after the nine new pac
 | --- | --- | --- |
 | ![Pac-Man in Arcade Afterglow](docs/screenshots/13-pac-man-pack.png) | ![H4CK3R in Neon Switchyard](docs/screenshots/12-h4ck3r-pack.png) | ![Dark lord in Glitch Core](docs/screenshots/11-dark-lord-pack.png) |
 
+Fuse joins the local eight-chapter story between H4CK3R and Dark lord. His launcher has a visible warning, fixed missile lanes and an open reload window.
+
+![Fuse launching a missile salvo in Neon Switchyard](docs/screenshots/14-fuse-pack.png)
+
+Crackle brings the new diamond-helmet drawing to chapter four, just before Pac-Man.
+
+![Crackle firing fireworks in Block Quarry](docs/screenshots/15-crackle-pack.png)
+
 ## Play on a Mac
 
 The latest public downloadable Mac build is **v0.7.7**. It includes independent Fighter/Pen colors, a more effective warm-gray paper cleanup, and clearer manual photo-cutout guidance, alongside the Doodle Workshop, six custom weapon kits and the latest visual/performance pass. Download the Mac app or Godot project from the [v0.7.7 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.7). See the [v0.7.7 verification report](docs/TESTING_0_7_7.md) or run the project in Godot 4.7.2.
+
+The local **v0.7.10 / build 28** includes Fuse, Crackle, the eight-chapter story and a harder Dark lord. Its Universal Mac app and app-only ZIP are in `builds/mac-v0.7.10/`; verification is recorded in [TESTING_0_7_10.md](docs/TESTING_0_7_10.md). This build is ad-hoc signed and not notarized.
 
 The current `main` source also includes the later Workshop preview fixes and expanded stage music/audio cues, with full verification recorded in [`BUILD_STATUS.md`](BUILD_STATUS.md) and [`TESTING_0_7_8.md`](docs/TESTING_0_7_8.md). These source updates are ahead of the latest downloadable release; no v0.7.8 GitHub release has been published yet.
 
@@ -130,7 +141,7 @@ Settings supports remapping, available controllers, music/effects volume, reduce
 | Engine | Godot 4.7.2, GDScript, Compatibility renderer |
 | Gameplay | Fixed 60 Hz physics, reusable fighter/weapon data, deterministic hit phases, recovery protection and shared AI controllers |
 | Rendering | 2D `Node2D`/`CanvasItem` drawing, individual transparent RGBA pose/effect sprites with measured pivots, procedural ink/VFX fallbacks, layered PNG arena paintings, glows, shadows and animated UI |
-| Asset pipeline | Pillow build script preserves 306 original PNGs outside Godot and creates 155 trimmed runtime copies with per-pose pivot metadata; no Python dependency is needed to play |
+| Asset pipeline | Pillow build scripts preserve 306 supplied PNGs plus generated Fuse/Crackle source art outside Godot and create 197 runtime PNGs with per-pose pivot metadata; no Python dependency is needed to play |
 | Doodle Workshop | Editable stroke layers and imported photo cutouts, shared joint animation, composited alpha-outline shader, atomic local saves and macOS HEIC conversion |
 | Audio | Original synthesized WAV battle loops and sound effects, context crossfades, separate story/racing music and shared volume settings |
 | Ending | Godot-authored storyboard with Ogg Theora/Vorbis playback |
@@ -147,7 +158,7 @@ See [`BUILD_STATUS.md`](BUILD_STATUS.md) for the current feature and limitation 
 
 ```text
 game/                 Godot project, scripts, scenes, assets and tests
-source_art/           Untouched originals from all nine packs plus Pac-Man eye-correction source art
+source_art/           Nine original packs, Pac-Man eye corrections, and generated Fuse/Crackle production art
 docs/screenshots/     Curated public gameplay gallery
 docs/                 Build, testing, audio, ending and provenance notes
 ```

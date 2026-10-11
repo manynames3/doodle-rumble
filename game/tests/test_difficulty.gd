@@ -259,12 +259,12 @@ func _test_story_saves() -> void:
 	var profile = Profile.new()
 	profile.difficulty_level = 2
 	profile.load_profile(legacy_path)
-	check(profile.stage == 4 and profile.difficulty_level == 0, "old story save migrates to Easy")
+	check(profile.stage == 5 and profile.difficulty_level == 0, "old story save keeps H4CK3R checkpoint and migrates to Easy")
 	profile.difficulty_level = 2
 	check(profile.save_profile(save_path), "Hard story choice saves")
 	var loaded = Profile.new()
 	loaded.load_profile(save_path)
-	check(loaded.stage == 4 and loaded.difficulty_level == 2, "story choice survives reload")
+	check(loaded.stage == 5 and loaded.difficulty_level == 2, "story choice survives reload")
 	loaded.checkpoint(5, "orange", true)
 	check(loaded.stage == 5 and loaded.difficulty_level == 2, "existing checkpoint calls retain chosen difficulty")
 	loaded.begin_run("orange", true, 1)

@@ -1,0 +1,484 @@
+{
+  "schema": 1,
+  "id": "fuse",
+  "local_height": 160,
+  "reference_head_diameter": 160,
+  "poses": {
+    "canonical": {
+      "atlas": "../../Fuse_Concept_Renderings/fuse_hero.png",
+      "region": [
+        [
+          0,
+          0
+        ],
+        [
+          1333,
+          0
+        ],
+        [
+          1333,
+          1180
+        ],
+        [
+          0,
+          1180
+        ]
+      ],
+      "pivot": [
+        660,
+        1112
+      ],
+      "head": [
+        550,
+        417
+      ],
+      "head_diameter": 238
+    },
+    "idle": {
+      "atlas": "movement.png",
+      "region": [
+        [
+          0,
+          0
+        ],
+        [
+          710,
+          0
+        ],
+        [
+          710,
+          390
+        ],
+        [
+          555,
+          600
+        ],
+        [
+          555,
+          780
+        ],
+        [
+          0,
+          780
+        ]
+      ],
+      "pivot": [
+        280,
+        706
+      ],
+      "head": [
+        224,
+        295
+      ],
+      "head_diameter": 160
+    },
+    "run_start": {
+      "atlas": "movement.png",
+      "region": [
+        [
+          710,
+          0
+        ],
+        [
+          1315,
+          0
+        ],
+        [
+          1315,
+          780
+        ],
+        [
+          555,
+          780
+        ],
+        [
+          555,
+          600
+        ],
+        [
+          710,
+          390
+        ]
+      ],
+      "pivot": [
+        862,
+        705
+      ],
+      "head": [
+        920,
+        367
+      ],
+      "head_diameter": 163
+    },
+    "run": {
+      "atlas": "movement.png",
+      "region": [
+        [
+          1315,
+          0
+        ],
+        [
+          2017,
+          0
+        ],
+        [
+          2017,
+          780
+        ],
+        [
+          1315,
+          780
+        ]
+      ],
+      "pivot": [
+        1650,
+        707
+      ],
+      "head": [
+        1578,
+        332
+      ],
+      "head_diameter": 167
+    },
+    "jump_takeoff": {
+      "atlas": "jump.png",
+      "region": [
+        [
+          0,
+          0
+        ],
+        [
+          685,
+          0
+        ],
+        [
+          685,
+          765
+        ],
+        [
+          0,
+          765
+        ]
+      ],
+      "pivot": [
+        260,
+        705
+      ],
+      "head": [
+        271,
+        237
+      ],
+      "head_diameter": 158
+    },
+    "jump_apex": {
+      "atlas": "jump.png",
+      "region": [
+        [
+          685,
+          0
+        ],
+        [
+          1435,
+          0
+        ],
+        [
+          1435,
+          765
+        ],
+        [
+          685,
+          765
+        ]
+      ],
+      "pivot": [
+        1020,
+        546
+      ],
+      "head": [
+        988,
+        209
+      ],
+      "head_diameter": 157
+    },
+    "jump_landing": {
+      "atlas": "jump.png",
+      "region": [
+        [
+          1435,
+          0
+        ],
+        [
+          2056,
+          0
+        ],
+        [
+          2056,
+          765
+        ],
+        [
+          1435,
+          765
+        ]
+      ],
+      "pivot": [
+        1750,
+        684
+      ],
+      "head": [
+        1721,
+        359
+      ],
+      "head_diameter": 155
+    },
+    "aim": {
+      "atlas": "firing.png",
+      "region": [
+        [
+          0,
+          0
+        ],
+        [
+          812,
+          0
+        ],
+        [
+          812,
+          724
+        ],
+        [
+          0,
+          724
+        ]
+      ],
+      "pivot": [
+        366,
+        680
+      ],
+      "head": [
+        310,
+        231
+      ],
+      "head_diameter": 173,
+      "muzzle": [
+        710,
+        239
+      ]
+    },
+    "fire": {
+      "atlas": "firing.png",
+      "region": [
+        [
+          812,
+          0
+        ],
+        [
+          1485,
+          0
+        ],
+        [
+          1485,
+          724
+        ],
+        [
+          812,
+          724
+        ]
+      ],
+      "pivot": [
+        1125,
+        680
+      ],
+      "head": [
+        979,
+        237
+      ],
+      "head_diameter": 170,
+      "muzzle": [
+        1290,
+        223
+      ]
+    },
+    "reload": {
+      "atlas": "firing.png",
+      "region": [
+        [
+          1485,
+          0
+        ],
+        [
+          2172,
+          0
+        ],
+        [
+          2172,
+          724
+        ],
+        [
+          1485,
+          724
+        ]
+      ],
+      "pivot": [
+        1855,
+        677
+      ],
+      "head": [
+        1712,
+        313
+      ],
+      "head_diameter": 177
+    },
+    "attack_windup": {
+      "atlas": "melee.png",
+      "region": [
+        [
+          0,
+          0
+        ],
+        [
+          640,
+          0
+        ],
+        [
+          640,
+          724
+        ],
+        [
+          0,
+          724
+        ]
+      ],
+      "pivot": [
+        330,
+        706
+      ],
+      "head": [
+        372,
+        282
+      ],
+      "head_diameter": 181
+    },
+    "basic_impact": {
+      "atlas": "melee.png",
+      "region": [
+        [
+          640,
+          0
+        ],
+        [
+          1610,
+          0
+        ],
+        [
+          1610,
+          435
+        ],
+        [
+          1530,
+          540
+        ],
+        [
+          1530,
+          724
+        ],
+        [
+          640,
+          724
+        ]
+      ],
+      "pivot": [
+        1010,
+        698
+      ],
+      "head": [
+        1100,
+        270
+      ],
+      "head_diameter": 181
+    },
+    "attack_recover": {
+      "atlas": "melee.png",
+      "region": [
+        [
+          1610,
+          0
+        ],
+        [
+          2172,
+          0
+        ],
+        [
+          2172,
+          724
+        ],
+        [
+          1530,
+          724
+        ],
+        [
+          1530,
+          540
+        ],
+        [
+          1610,
+          435
+        ]
+      ],
+      "pivot": [
+        1840,
+        698
+      ],
+      "head": [
+        1950,
+        286
+      ],
+      "head_diameter": 180
+    }
+  },
+  "aliases": {
+    "heavy_windup": "attack_windup",
+    "heavy_impact": "basic_impact",
+    "special_impact": "fire"
+  },
+  "effects": {
+    "swing_trail": [
+      0,
+      0,
+      512,
+      512
+    ],
+    "impact_burst": [
+      512,
+      0,
+      1024,
+      512
+    ],
+    "debris": [
+      1024,
+      0,
+      1536,
+      512
+    ],
+    "speed_lines": [
+      0,
+      512,
+      512,
+      1024
+    ],
+    "dust": [
+      512,
+      512,
+      1024,
+      1024
+    ],
+    "exhaust": [
+      1024,
+      512,
+      1536,
+      1024
+    ]
+  },
+  "projectile": {
+    "atlas": "missile.png"
+  }
+}

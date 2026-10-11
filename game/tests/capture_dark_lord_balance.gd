@@ -34,7 +34,7 @@ func run() -> void:
 	game.mode = "arcade"
 	game.selected[0] = "orange"
 	game.optional_hazards = true
-	game.arcade_stage = 5
+	game.arcade_stage = 7
 	game.start_match()
 	game.countdown = 0.0
 	game.first.reset_at(Vector2(360,599))

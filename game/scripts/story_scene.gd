@@ -56,7 +56,9 @@ func _show_line() -> void:
 	var cue := "story_page" if index == 0 else "story_pencil" if hero else "story_bonk"
 	match speaker:
 		"pac_man": cue = "story_chomp"
+		"crackle": cue = "story_spark"
 		"h4ck3r": cue = "story_glitch"
+		"fuse": cue = "story_bonk"
 		"dark_lord": cue = "story_magic"
 		"green": cue = "story_swish"
 		"yellow": cue = "story_spark"

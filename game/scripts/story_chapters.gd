@@ -20,7 +20,14 @@ const CHAPTERS := [
 		"setup":"Green is pruning the Paper Canopy. The trees are fine.\nThe paper dragons have filed a strongly folded complaint.",
 		"before":[["green","Quiet! I'm teaching this tree to be a helicopter."],["hero","Have you seen the Save Star?"],["green","A hungry yellow circle took it. Catch me and I'll show you the shortcut!"]],
 		"after":[["green","Good footwork. Terrible gardening. I like it."],["hero","Is that tree actually flying?"],["green","Eventually. For now it's a ceiling fan with ambitions."]],
-		"clue":"Arcade Afterglow is open. The snack machine is suspiciously quiet.", "challenge":"Land two special attacks", "goal":"specials", "tip":"Green recovers after a dash. Let the slash pass, then take your turn."
+		"clue":"A shower of paper sparks points back toward Block Quarry.", "challenge":"Land two special attacks", "goal":"specials", "tip":"Green recovers after a dash. Let the slash pass, then take your turn."
+	},
+	{
+		"title":"THE SKY IS FULL OF OOPS", "short":"Firework detour", "color":"ff914d",
+		"setup":"Crackle found a box of firecrackers in Block Quarry.\nHe calls the sparks a shortcut. The map calls them a problem.",
+		"before":[["crackle","Welcome to my grand opening! Please ignore the small explosions."],["hero","We're looking for the Save Star, not a fireworks show."],["crackle","The yellow snack thief ran toward the arcade. First, dodge my grand finale!"]],
+		"after":[["crackle","That was amazing! My helmet is still on, right?"],["hero","Mostly. Which way did the yellow thief go?"],["crackle","Past the arcade gate! I'll light the path. With a lantern this time."]],
+		"clue":"Arcade Afterglow is open. The snack machine is suspiciously quiet.", "challenge":"Dodge through one attack", "goal":"counter", "tip":"Watch the firecracker fuse. Dodge the burst, then close in while Crackle resets his spear."
 	},
 	{
 		"title":"THE ALL-YOU-CAN-BYTE BUFFET", "short":"Snack attack", "color":"ffdc53",
@@ -32,9 +39,16 @@ const CHAPTERS := [
 	{
 		"title":"PLEASE ACCEPT THESE COOKIES", "short":"Cookie trouble", "color":"6ceaff",
 		"setup":"H4CK3R runs the network. His password is extremely secret.\nIt is written on seven sticky notes and one camera bug.",
-		"before":[["h4ck3r","Access denied! First, accept all cookies."],["hero","Chocolate chip?"],["h4ck3r","Browser cookies. Dark lord took the good ones AND your star. Initiating dramatic firewall!"]],
-		"after":[["h4ck3r","Firewall disabled. It was mostly a screensaver."],["hero","Will you open the core?"],["h4ck3r","Yes. If anyone asks, you guessed my password. It was NOT password123. There was a four."]],
-		"clue":"One final page. One very dramatic doodle. Bring the colors home.", "challenge":"Land an aerial attack and a special", "goal":"mix", "tip":"Move away from the cursor stamp. Attack while H4CK3R reboots."
+		"before":[["h4ck3r","Access denied! First, accept all cookies."],["hero","Chocolate chip?"],["h4ck3r","Browser cookies. Dark lord took the good ones AND your star. Fuse is guarding the core. Initiating dramatic firewall!"]],
+		"after":[["h4ck3r","Firewall disabled. It was mostly a screensaver."],["hero","Will you open the core?"],["h4ck3r","I can open the door. Fuse has the key. And far too many missiles."]],
+		"clue":"Fuse guards the core door at the far end of Neon Switchyard.", "challenge":"Land an aerial attack and a special", "goal":"mix", "tip":"Move away from the cursor stamp. Attack while H4CK3R reboots."
+	},
+	{
+		"title":"THE SAFETY INSPECTION EXPLODES", "short":"Safety inspection", "color":"ff6548",
+		"setup":"Fuse is the core's safety officer. His checklist has one item:\n'Launch missiles.' The pencil added a question mark. Fuse erased it.",
+		"before":[["fuse","Halt! This door is protected by a carefully measured amount of missiles."],["hero","How many is carefully measured?"],["fuse","I lost count at twelve. Stand still while I recount!"]],
+		"after":[["fuse","Inspection failed. My launcher needs a snack break."],["hero","We call that reloading. Can we reach the star now?"],["fuse","Fine. Dark lord is inside. Tell him his 'NO FUN' sign is a fire hazard."]],
+		"clue":"The core door is open. Dark lord and the Save Star wait inside.", "challenge":"Dodge through one attack", "goal":"counter", "tip":"Dodge the missile warning, then strike while Fuse reloads."
 	},
 	{
 		"title":"HIS ROYAL DARKNESS NEEDS A NAP", "short":"Lights, please!", "color":"d397ff",
@@ -46,9 +60,9 @@ const CHAPTERS := [
 ]
 const HERO_REPLIES := {"orange":"Orange", "red":"Red", "green":"Green", "blue":"Blue", "purple":"Purple", "yellow":"Yellow"}
 static func chapter(index: int) -> Dictionary:
-	return CHAPTERS[clampi(index,0,5)].duplicate(true)
+	return CHAPTERS[clampi(index,0,CHAPTERS.size()-1)].duplicate(true)
 static func goal_met(index: int, stats: Dictionary) -> bool:
-	match CHAPTERS[clampi(index,0,5)].goal:
+	match CHAPTERS[clampi(index,0,CHAPTERS.size()-1)].goal:
 		"air": return stats.get("air",false)
 		"counter": return stats.get("counter",false)
 		"specials": return int(stats.get("special_hits",0)) >= 2

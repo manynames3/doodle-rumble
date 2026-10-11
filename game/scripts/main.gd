@@ -5,6 +5,8 @@ const Rules = preload("res://scripts/match_rules.gd")
 const AI = preload("res://scripts/ai_controller.gd")
 const BossAI = preload("res://scripts/boss_controller.gd")
 const HackerAI = preload("res://scripts/hacker_controller.gd")
+const FuseAI = preload("res://scripts/fuse_controller.gd")
+const CrackleAI = preload("res://scripts/crackle_controller.gd")
 const PacAI = preload("res://scripts/pacman_controller.gd")
 const Journey = preload("res://scripts/solo_ladder.gd")
 const BossProjectile = preload("res://scripts/boss_projectile.gd")
@@ -40,6 +42,8 @@ var ai = AI.new()
 var boss_ai = BossAI.new()
 var pac_ai = PacAI.new()
 var hacker_ai = HackerAI.new()
+var fuse_ai = FuseAI.new()
+var crackle_ai = CrackleAI.new()
 var hazard_sequence = 0
 var projectiles: Array = []
 var state = "title"
@@ -135,6 +139,8 @@ func _ready() -> void:
 	boss_ai.pattern_released.connect(func(kind): _boss_pattern(kind))
 	pac_ai.pattern_released.connect(func(kind): _boss_pattern(kind))
 	hacker_ai.pattern_released.connect(func(kind): _hacker_pattern(kind))
+	fuse_ai.pattern_released.connect(func(kind, angle): _fuse_pattern(kind, angle))
+	crackle_ai.pattern_released.connect(func(kind, angle): _crackle_pattern(kind, angle))
 	show_title()
 
 func _add_surface(rect: Rect2, one_way: bool = false) -> StaticBody2D:
@@ -295,7 +301,7 @@ func show_title() -> void:
 	var menu = load("res://scripts/title_menu.gd").new()
 	ui.add_child(menu)
 	menu.build([
-		["Story Mode",show_story_hub,"Six battles. One big adventure. Choose your doodle."],
+		["Story Mode",show_story_hub,"Eight battles. One big adventure. Choose your doodle."],
 		["Quick Match",func(): selecting_player = 0; open_selection("solo"),"Choose two fighters and a stage for a quick rumble."],
 		["2P Battle",func(): selecting_player = 0; open_selection("local"),"Two players, your doodles, one great showdown."],
 		["Doodle Rally",start_racing,"Take your imagination for a spin."],
@@ -335,6 +341,33 @@ func _hacker_pattern(kind: String) -> void:
 			projectiles.append(projectile)
 	else:
 		_boss_hazard("h4ck3r",kind)
+
+func _fuse_pattern(kind: String, angle: float) -> void:
+	if state != "playing" or not is_instance_valid(second): return
+	Sound.play_boss_pattern("fuse", kind)
+	var angles: Array = [angle]
+	if kind == "missile_salvo": angles = [angle - 0.20, angle, angle + 0.20]
+	elif kind == "missile_high_low": angles = [angle - 0.35, angle + 0.18]
+	for shot_angle in angles:
+		var projectile = BossProjectile.new()
+		world.add_child(projectile)
+		projectile.configure(second, kind, second.facing, shot_angle)
+		projectile.z_index = 6
+		projectiles.append(projectile)
+	juice.burst(BossProjectile.muzzle_position(second, second.facing), Color("ff6548"))
+
+func _crackle_pattern(kind: String, angle: float) -> void:
+	if state != "playing" or not is_instance_valid(second): return
+	Sound.play_boss_pattern("crackle", kind)
+	var angles: Array = [angle]
+	if kind == "firework_fan": angles = [angle - 0.28, angle, angle + 0.28]
+	for shot_angle in angles:
+		var projectile = BossProjectile.new()
+		world.add_child(projectile)
+		projectile.configure(second, kind, second.facing, shot_angle)
+		projectile.z_index = 6
+		projectiles.append(projectile)
+	juice.burst(BossProjectile.muzzle_position(second, second.facing, "cast_impact"), Color("51dff2"))
 
 func _boss_hazard(owner_id: String, kind: String = "") -> void:
 	if state != "playing" or not is_instance_valid(first): return
@@ -601,12 +634,14 @@ func _reset_round() -> void:
 	second.facing = -1
 	first.update_art(0)
 	second.update_art(0)
-	for controller in [ai,boss_ai,pac_ai,hacker_ai]:
+	for controller in [ai,boss_ai,pac_ai,hacker_ai,fuse_ai,crackle_ai]:
 		controller.configure_difficulty(_combat_difficulty())
 	ai.reset()
 	boss_ai.reset()
 	pac_ai.reset()
 	hacker_ai.reset()
+	fuse_ai.reset()
+	crackle_ai.reset()
 	hazard_sequence = 0
 	hazards.clear()
 	hazard_clock = Difficulty.opening_hazard_delay(_combat_difficulty())
@@ -736,13 +771,13 @@ func _update_hud() -> void:
 		cooldown_bars[i].value = 6-fighter.cooldown
 		special_labels[i].text = ("✦ READY  /  " + fighter.definition.special_name) if fighter.cooldown <= 0 else "⌁ %.1fs  /  %s" % [fighter.cooldown,fighter.definition.special_name]
 		score_labels[i].text = ("●" if rules.scores[i]>0 else "○") + "   " + ("●" if rules.scores[i]>1 else "○")
-		prompts[i].text = _control_prompt(i) if i == 0 or mode == "local" else "Training dummy  /  Auto-refill" if mode == "training" else "Dark lord  /  Dodge, then strike!" if selected[1] == "dark_lord" else "Pac-Man  /  Hop over the charge!" if selected[1] == "pac_man" else str(journey_stage_data().difficulty) + " opponent  /  Watch the windup!" if mode == "arcade" else ["Easy","Medium","Hard"][difficulty_level]+" opponent  /  Watch the windup!"
+		prompts[i].text = _control_prompt(i) if i == 0 or mode == "local" else "Training dummy  /  Auto-refill" if mode == "training" else "Dark lord  /  Dodge, then strike!" if selected[1] == "dark_lord" else "Fuse  /  Dodge, then punish the reload!" if selected[1] == "fuse" else "Crackle  /  Dodge the burst, then counter!" if selected[1] == "crackle" else "Pac-Man  /  Hop over the charge!" if selected[1] == "pac_man" else str(journey_stage_data().difficulty) + " opponent  /  Watch the windup!" if mode == "arcade" else ["Easy","Medium","Hard"][difficulty_level]+" opponent  /  Watch the windup!"
 		prompts[i].size.x = 584
 	timer_label.text = "FREE" if mode == "training" else str(ceili(rules.remaining))
 	if mode == "training":
 		hint_label.text = "NO PRESSURE. EXPERIMENT AWAY."
 	else:
-		hint_label.text = "JUMP THE WAVE. WATCH THE FLOOR." if selected[1] == "dark_lord" else "SIDESTEP THE CURSOR. JUMP THE INK!" if selected[1] == "h4ck3r" else "WATCH THE MOUTH. HOP OVER THE CHARGE!" if selected[1] == "pac_man" else ("Hold attack to repeat. Jump + hit: air move. Dodge to counter!" if Settings.hold_to_attack else "Press attack to swing. Jump + hit: air move. Dodge to counter!")
+		hint_label.text = "DODGE THE FIREWORKS. STRIKE AFTER THE POP!" if selected[1] == "crackle" else "DODGE THE MISSILES. STRIKE DURING RELOAD!" if selected[1] == "fuse" else "JUMP THE WAVE. WATCH THE FLOOR." if selected[1] == "dark_lord" else "SIDESTEP THE CURSOR. JUMP THE INK!" if selected[1] == "h4ck3r" else "WATCH THE MOUTH. HOP OVER THE CHARGE!" if selected[1] == "pac_man" else ("Hold attack to repeat. Jump + hit: air move. Dodge to counter!" if Settings.hold_to_attack else "Press attack to swing. Jump + hit: air move. Dodge to counter!")
 	var note_alpha = 1.0 if mode == "training" else clampf(1.0 - (Time.get_ticks_msec() - hud_note_started_at - 4300.0) / 1500.0,0.0,1.0)
 	hint_label.modulate.a = note_alpha
 	for prompt in prompts: prompt.modulate.a = note_alpha
@@ -754,14 +789,17 @@ func _update_enemy_warning() -> void:
 	if not is_instance_valid(enemy_warning_label): return
 	var warning = ""
 	if state == "playing" and countdown <= 0 and is_instance_valid(second):
-		warning = boss_ai.tell if selected[1] == "dark_lord" else hacker_ai.tell if selected[1] == "h4ck3r" else pac_ai.tell if selected[1] == "pac_man" else "WATCH THE SWING!" if ai.tell_time > 0 and mode in ["solo","arcade"] else ""
+		warning = boss_ai.tell if selected[1] == "dark_lord" else fuse_ai.tell if selected[1] == "fuse" else crackle_ai.tell if selected[1] == "crackle" else hacker_ai.tell if selected[1] == "h4ck3r" else pac_ai.tell if selected[1] == "pac_man" else "WATCH THE SWING!" if ai.tell_time > 0 and mode in ["solo","arcade"] else ""
 	if mode=="training" and is_instance_valid(coach) and coach.step==5 and second.attack_time>=0 and not second.is_active(): warning="PRACTICE SWING!"
 	enemy_warning_label.visible = warning != ""
 	enemy_warning_label.text = warning
-	if warning != "" and warning != previous_warning: Sound.play_warning("boss" if selected[1] in ["dark_lord","pac_man","h4ck3r"] else "hazard")
+	if warning != "" and warning != previous_warning: Sound.play_warning("boss" if selected[1] in ["dark_lord","pac_man","h4ck3r","fuse","crackle"] else "hazard")
 	previous_warning = warning
 	if warning != "":
-		enemy_warning_label.position = Vector2(clampf(second.position.x-97,24,1062),clampf(second.position.y-second.visual_head_height()-42,116,526))
+		var warning_y: float = second.position.y - second.visual_head_height() - 42.0
+		if selected[1] in ["fuse","crackle"] and is_instance_valid(second.rig) and second.rig.has_packed_art():
+			warning_y = second.rig.global_position.y + second.rig.packed_art.visual_head.y * absf(second.rig.scale.y) - (175.0 if selected[1] == "crackle" else 78.0)
+		enemy_warning_label.position = Vector2(clampf(second.position.x-97,24,1062),clampf(warning_y,116,526))
 
 func _physics_process(delta: float) -> void:
 	if state != "playing" or get_tree().paused: return
@@ -783,7 +821,7 @@ func _physics_process(delta: float) -> void:
 		if practice_counter_clock<=0: practice_counter_clock=3.2
 		first.health = first.max_health
 	elif mode != "training":
-		command2 = boss_ai.read_input(delta,second,first) if selected[1] == "dark_lord" else hacker_ai.read_input(delta,second,first) if selected[1] == "h4ck3r" else pac_ai.read_input(delta,second,first) if selected[1] == "pac_man" else ai.read_input(delta,second,first)
+		command2 = boss_ai.read_input(delta,second,first) if selected[1] == "dark_lord" else fuse_ai.read_input(delta,second,first) if selected[1] == "fuse" else crackle_ai.read_input(delta,second,first) if selected[1] == "crackle" else hacker_ai.read_input(delta,second,first) if selected[1] == "h4ck3r" else pac_ai.read_input(delta,second,first) if selected[1] == "pac_man" else ai.read_input(delta,second,first)
 	var arena_commands = interactions.begin_tick(delta,[first,second],[command1,command2])
 	first.tick(delta,arena_commands[0],second)
 	second.tick(delta,arena_commands[1],first)
@@ -795,6 +833,14 @@ func _physics_process(delta: float) -> void:
 			projectile.set_platforms(_projectile_platforms())
 		var target = second if projectile.owner_fighter == first else first
 		if projectile.tick(delta,target):
+			if projectile.has_method("spawn_impact"): projectile.spawn_impact(world)
+			if projectile.has_method("spawn_fragments"):
+				var fragments: Array = projectile.spawn_fragments()
+				if not fragments.is_empty(): Sound.play_boss_pattern("crackle", "firecracker_pop")
+				for fragment in fragments:
+					world.add_child(fragment)
+					fragment.z_index = 6
+					projectiles.append(fragment)
 			juice.burst(projectile.position,projectile.tint)
 			projectiles.erase(projectile)
 			_discard_projectile(projectile)
@@ -805,7 +851,7 @@ func _physics_process(delta: float) -> void:
 			var kinds = ArenaCatalog.hazard_cycle(arena_kind)
 			hazards.mark_target(640+sin(rules.remaining)*330,0,kinds[hazard_sequence%kinds.size()])
 			hazard_sequence += 1
-			var interval: float = [12,10,9,8,10,11][clampi(arcade_stage,0,5)] if mode == "arcade" else 8
+			var interval: float = [12,10,9,9,8,10,9,11][clampi(arcade_stage,0,7)] if mode == "arcade" else 8
 			hazard_clock = Difficulty.hazard_interval(interval,_combat_difficulty())
 	practice_moved = practice_moved or absf(first.position.x-420)>30
 	if mode == "training":
@@ -848,6 +894,10 @@ func _process(delta: float) -> void:
 func _on_attack(fighter, special: bool) -> void:
 	if special:
 		Sound.play_fighter_special(str(fighter.definition.id),str(fighter.definition.special))
+	elif fighter.definition.id == "fuse":
+		Sound.play_boss_pattern("fuse", "launcher_bash")
+	elif fighter.definition.id == "crackle":
+		Sound.play_boss_pattern("crackle", "spear_thrust")
 	else:
 		var cue: String = "dark_blade_swing" if fighter.definition.id == "dark_lord" else "pac_bite" if fighter.definition.id == "pac_man" else "cursor_tap" if fighter.definition.id == "h4ck3r" else str(fighter.definition.weapon)
 		Sound.play(cue)

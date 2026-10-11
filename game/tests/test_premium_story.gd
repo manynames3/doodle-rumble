@@ -40,10 +40,34 @@ func run() -> void:
 	loaded.load_profile(path)
 	Engine.print_error_messages = true
 	check(loaded.stage==4,"Interrupted/corrupt primary save recovers previous checkpoint")
-	check(loaded._valid_indices([0,0,7,-1,"2",3])==[0,3],"Malformed chapter entries cannot unlock progress")
-	check(loaded.save_profile(path),"Recovered profile saves without obsolete badge setting")
-	var cleaned := ConfigFile.new()
-	check(cleaned.load(path)==OK and not cleaned.has_section_key("book","equipped"),"Retired badge choice is removed on save")
+	check(loaded._valid_indices([0,0,8,-1,"2",3])==[0,3],"Malformed chapter entries cannot unlock progress")
+	for migration in [{"version":1,"map":[0,1,2,4,5,7]}, {"version":2,"map":[0,1,2,4,5,6,7]}]:
+		for old_index in range(migration.map.size()):
+			var old_save := ConfigFile.new()
+			old_save.set_value("meta","version",migration.version)
+			old_save.set_value("run","stage",old_index)
+			old_save.set_value("run","fighter","purple")
+			old_save.set_value("run","active",true)
+			old_save.set_value("book","completed",[old_index])
+			old_save.set_value("book","challenges",[old_index])
+			check(old_save.save(path)==OK,"Older chapter fixture saves")
+			loaded.load_profile(path)
+			var new_index: int = migration.map[old_index]
+			check(loaded.active and loaded.stage==new_index and loaded.completed==[new_index] and loaded.challenges==[new_index] and 3 not in loaded.completed and 3 not in loaded.challenges,"Version %d chapter %d keeps checkpoint, completion and sticker identity without clearing Crackle" % [migration.version,old_index])
+			check(loaded.save_profile(path),"Migrated profile saves without obsolete badge setting")
+			var cleaned := ConfigFile.new()
+			check(cleaned.load(path)==OK and cleaned.get_value("meta","version")==3 and not cleaned.has_section_key("book","equipped"),"Migrated save records version three")
+			loaded.load_profile(path)
+			check(loaded.stage==new_index and loaded.completed==[new_index] and loaded.challenges==[new_index],"Migrated chapter does not move again on reload")
+	var old_save := ConfigFile.new()
+	old_save.set_value("meta","version",1)
+	old_save.set_value("run","stage",5)
+	old_save.set_value("run","fighter","purple")
+	old_save.set_value("book","completed",[0,1,2,3,4,5])
+	old_save.set_value("book","challenges",[3,5])
+	check(old_save.save(path)==OK,"Complete original journey fixture saves")
+	loaded.load_profile(path)
+	check(loaded.completed==[0,1,2,4,5,7] and loaded.challenges==[4,7] and 3 not in loaded.completed,"Complete older journey retains every boss and leaves Crackle uncleared")
 	profile.free()
 	loaded.free()
 	game = load("res://scenes/main.tscn").instantiate()
@@ -59,7 +83,7 @@ func run() -> void:
 	game.continue_journey()
 	check(game.state=="playing" and chronicle.active and chronicle.fighter=="purple","Starting records the selected fighter")
 	check(game.first.definition.id=="purple" and game.second.definition.id=="blue","Story starts with chosen fighter and ordered opponent")
-	for stage in range(6):
+	for stage in range(Chapters.CHAPTERS.size()):
 		var chapter = Chapters.chapter(stage)
 		check(chapter.before.size()==3 and chapter.after.size()==3,"Each chapter has a full setup and payoff: "+str(stage))
 		check(not Chapters.goal_met(stage,{}),"Bonus stickers require demonstrated play: "+str(stage))
@@ -83,7 +107,7 @@ func run() -> void:
 		game.rules.finished=true
 		game._finish_round()
 		check(stage in chronicle.completed and stage in chronicle.challenges,"Victory records earned chapter + bonus sticker: "+str(stage))
-		if stage<5:
+		if stage<Chapters.CHAPTERS.size()-1:
 			check(chronicle.active and chronicle.stage==stage+1,"Victory checkpoints the NEXT chapter: "+str(stage))
 			game.show_title()
 			game.resume_story()
@@ -94,6 +118,7 @@ func run() -> void:
 	check(chronicle.runs==1 and root.get_node("Settings").arcade_wins==wins,"Duplicate final-result delivery never grants another completion")
 	game.show_story_hub()
 	check(game.state=="journal","Completed journey returns to collection")
+	check(game.ui.find_children("*","Button",true,false).filter(func(button): return button.text=="Replay tale").size()==8,"Eight cleared chapters fit in the story journal")
 	game.mode="training"
 	game.selected=["orange","blue"]
 	game.start_match()
@@ -112,7 +137,7 @@ func run() -> void:
 	game._on_perfect_dodge(game.first)
 	check(game.match_stats.counter,"Actual counter signal progresses challenge")
 	root.get_node("Settings").reduced_motion=true
-	game._show_story_scene(true,func(): pass,5)
+	game._show_story_scene(true,func(): pass,Chapters.CHAPTERS.size()-1)
 	check(game.story_scene.actors.all(func(actor): return not actor.preview),"Reduced-motion story actors remain still")
 	game.queue_free()
 	await process_frame

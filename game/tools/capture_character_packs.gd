@@ -34,7 +34,7 @@ func run() -> void:
 	game.mode = "arcade"
 	game.selected[0] = "orange"
 	game.optional_hazards = false
-	for stage in [3,4,5]:
+	for stage in [4,5,7]:
 		game.arcade_stage = stage
 		game.start_match()
 		game.countdown = 0.0
@@ -42,9 +42,9 @@ func run() -> void:
 		game.first.reset_at(Vector2(362,599))
 		game.second.reset_at(Vector2(886,599))
 		game.first.rig.pose(0.016,{"grounded":true,"facing":1})
-		var command := "" if stage == 3 else "firewall_scan" if stage == 4 else "void_orb"
-		game.second.rig.pose(0.016,{"grounded":true,"facing":-1,"boss_cast":command,"boss_charge":0.69,"attack_progress":0.37 if stage == 3 else -1.0,"attack_windup_ratio":0.2,"attack_active_ratio":0.4})
-		await _save(["pac_man","h4ck3r","dark_lord"][stage-3])
+		var command := "" if stage == 4 else "firewall_scan" if stage == 5 else "void_orb"
+		game.second.rig.pose(0.016,{"grounded":true,"facing":-1,"boss_cast":command,"boss_charge":0.69,"attack_progress":0.37 if stage == 4 else -1.0,"attack_windup_ratio":0.2,"attack_active_ratio":0.4})
+		await _save("pac_man" if stage == 4 else "h4ck3r" if stage == 5 else "dark_lord")
 	game.queue_free()
 	await process_frame
 	root.get_node("Sound").shutdown()

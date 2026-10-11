@@ -1,6 +1,6 @@
 extends SceneTree
 ## Verify every packed silhouette settles inside the arena at either result spawn.
-const IDS = ["orange","red","green","blue","purple","yellow","pac_man","h4ck3r","dark_lord"]
+const IDS = ["orange","red","green","blue","purple","yellow","pac_man","h4ck3r","dark_lord","fuse","crackle"]
 var failures: int = 0
 var checks: int = 0
 

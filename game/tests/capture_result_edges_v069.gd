@@ -24,7 +24,7 @@ func _save(name: String) -> void:
 
 func _begin() -> void:
 	game.mode = "arcade"
-	game.arcade_stage = 5
+	game.arcade_stage = 7
 	game.selected = ["red","dark_lord"]
 	game.optional_hazards = false
 	game.start_match()

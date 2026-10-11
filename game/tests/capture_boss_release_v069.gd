@@ -35,7 +35,7 @@ func run() -> void:
 	game.selected[0] = "orange"
 	game.optional_hazards = false
 	for pattern in ["firewall_scan","void_orb","rift"]:
-		game.arcade_stage = 4 if pattern == "firewall_scan" else 5
+		game.arcade_stage = 5 if pattern == "firewall_scan" else 7
 		game.start_match()
 		game.countdown = 0.0
 		game._update_hud()

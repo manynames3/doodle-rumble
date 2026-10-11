@@ -140,6 +140,11 @@ def main() -> None:
         (runtime_pack / "art.json").write_text(json.dumps(metadata, indent=2) + "\n")
         print(f"{fighter_id}: {len(frames)} poses + {len(effects)} effects")
 
+    from import_fuse_art import build
+    build()
+    from import_crackle_art import build as build_crackle
+    build_crackle()
+
 
 if __name__ == "__main__":
     main()

@@ -6,22 +6,30 @@ const VOICES := 12
 const MUSIC_FADE_SECONDS := 0.75
 const EFFECT_HEADROOM := 0.72
 const MUSIC_PHASES := ["intro", "battle", "climax"]
-const STORY_STAGE_MUSIC := ["desktop", "quarry", "journey_green", "pac_man", "glitch", "dark_lord"]
+const STORY_STAGE_MUSIC := ["desktop", "quarry", "journey_green", "quarry", "pac_man", "glitch", "glitch", "dark_lord"]
 const FIGHTER_SPECIAL_STYLE := {
 	"orange": "spin", "red": "quake", "green": "dash", "blue": "blocks",
-	"purple": "signal", "yellow": "swarm", "pac_man": "chomp",
-	"h4ck3r": "glitch", "dark_lord": "void",
+	"purple": "signal", "yellow": "swarm", "crackle": "eclipse", "pac_man": "chomp",
+	"h4ck3r": "glitch", "fuse": "quake", "dark_lord": "void",
 }
 const KIT_SPECIAL_STYLE := {
 	"ore_pop": "ore", "fossil_fetch": "fossil", "home_run": "home_run",
 	"swerve_shot": "swerve", "cluckquake": "cluck", "rainbow_ruckus": "rainbow",
 }
 const BOSS_PATTERN_STYLE := {
+	"crackle": {
+		"rocket_single": "dash", "firecracker_arc": "pellet", "firecracker_pop": "blocks",
+		"firework_fan": "eclipse", "spear_thrust": "dark_slash",
+	},
 	"pac_man": {"pellet_fan": "pellet", "leap_chomp": "chomp"},
 	"h4ck3r": {
 		"cursor_strike": "dash", "packet_blast": "packet_blast", "cursor_stamp": "cursor_stamp",
 		"ink_geyser": "ink_geyser", "eraser_drop": "eraser", "checksum_volley": "glitch",
 		"firewall_scan": "firewall",
+	},
+	"fuse": {
+		"missile_single": "dash", "missile_salvo": "eclipse",
+		"missile_high_low": "dark_quake", "launcher_bash": "quake",
 	},
 	"dark_lord": {
 		"reaper": "dark_slash", "quake": "dark_quake", "void_orb": "void", "rift": "dark_rift",

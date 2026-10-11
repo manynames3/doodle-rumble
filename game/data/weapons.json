@@ -62,6 +62,15 @@
     "recovery": 0.42,
     "knockback": 370
   },
+  "spear": {
+    "name": "Firework spear",
+    "damage": 19,
+    "reach": 132,
+    "windup": 0.19,
+    "active": 0.12,
+    "recovery": 0.39,
+    "knockback": 350
+  },
   "dark_blade": {
     "name": "Dark blade",
     "damage": 26,
@@ -79,5 +88,14 @@
     "active": 0.14,
     "recovery": 0.54,
     "knockback": 360
+  },
+  "missile_launcher": {
+    "name": "Shoulder launcher",
+    "damage": 20,
+    "reach": 126,
+    "windup": 0.25,
+    "active": 0.15,
+    "recovery": 0.48,
+    "knockback": 380
   }
 }
