@@ -1,6 +1,6 @@
 # Menu motion release verification — v0.7.12
 
-2026-10-11. Godot 4.7.2, Universal Mac build 30. Source, native and export verification ran on Apple M4 with isolated preferences. Publication is in progress.
+2026-10-11. Godot 4.7.2, Universal Mac build 30. Source, native and export verification ran on Apple M4 with isolated preferences. Published as the latest [v0.7.12 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.12), source commit `ba36b824de83b6806cdd967820d7d8f36446a06c`.
 
 ## Change
 
@@ -28,4 +28,6 @@ Exported `builds/mac-v0.7.12/Doodle Rumble.app` as v0.7.12 / build 30 with match
 
 The exact embedded PCK passed **175 checks / zero failures**: `test_menus.gd` (168) and `test_game.gd --live-fuse-only` (five), and the actual native small-window fixture (two). The unchanged live fight completed two rounds, score 2–0, Purple at 42 HP, with no retries. Physical controller input, Intel execution, transfer to another Mac and family fun/playtesting were not performed in this release pass. The app is ad-hoc signed and not Apple-notarized.
 
-Archive integrity, source revision, ZIP digest and public download verification will be added after publication.
+The [playable Mac ZIP](https://github.com/manynames3/doodle-rumble/releases/download/v0.7.12/Doodle_Rumble_Mac_v0.7.12.zip) is **261,201,529 bytes**, SHA-256 `38938a332acfb05e43b2f8156e7ba18fac127adc8b4fb5c0824f6fd32c0fe0a7`. ZIP integrity passed, with no AppleDouble clutter. The extracted app also passed strict signature verification and an isolated 120-frame headless startup. GitHub reports the same digest and size as the verified local ZIP; its uploaded state is complete. The public download returned HTTP 200, and GitHub's latest release and tag point to the matching source commit.
+
+The archive includes the playable app, license notices, launch instructions and verification notes. Matching local app/ZIP and digest receipt remain in `builds/mac-v0.7.12/`. No further Claude invocation or scheduled retry remains.
