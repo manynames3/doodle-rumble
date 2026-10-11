@@ -2,11 +2,11 @@
 
 Updated 2026-10-11. Godot 4.7.2 / GDScript. Current menu/release verification ran on Apple M4; earlier published builds retain their recorded Apple M1 evidence.
 
-## Prepared v0.7.13 — Five-Gag Title Motion
+## Published v0.7.13 — Five-Gag Title Motion
 
 - Replaced the single repeating title gag with five varied hand-drawn vignettes: The Underline Heist, a guitar-string “boing,” a sleepy moustache doodle, a peekaboo whack and a hiccup chain reaction. The 47.9-second cycle follows the 2.6-second greeting; reduced motion remains static. Menu controls and gameplay are unchanged.
 - Source menu suite passed **168 checks / zero failures**. Native motion QA passed **42 checks / 965 captures / zero failures** across the full cycle. Actual 854×480 source and exported-pack windows each passed **two checks / one capture / zero failures**. Six release-archive policy tests passed.
-- Prepared Universal Mac **v0.7.13 / build 31**. The exact exported pack passed 168 menu checks and five live-fight checks. Both arm64/x86_64 slices, strict ad-hoc signature verification and a 120-frame exported-app startup passed. The app is not notarized. Final archive digests and GitHub release URL will be recorded after publication; see [TESTING_0_7_13.md](docs/TESTING_0_7_13.md).
+- Published Universal Mac **v0.7.13 / build 31** from source commit 40d0e44 as the latest [GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.13). The [playable Mac ZIP](https://github.com/manynames3/doodle-rumble/releases/download/v0.7.13/Doodle_Rumble_Mac_v0.7.13.zip) is **261,252,360 bytes**, SHA-256 74850d76b8354b832d16a22551be59ec5b5a2edee90aaff4f089ae7b435cac87. The [complete source project ZIP](https://github.com/manynames3/doodle-rumble/releases/download/v0.7.13/Doodle_Rumble_Project_v0.7.13.zip) is **730,989,695 bytes**, SHA-256 b6c90895978e816932b01f7fd395a46d1c1ae2abe6f96d7e66b21321fbd77c04. GitHub reports both matching digests and complete uploaded state; both public downloads returned HTTP 200. The app is ad-hoc signed and not Apple-notarized. See [TESTING_0_7_13.md](docs/TESTING_0_7_13.md).
 
 ## Published v0.7.12 — The Underline Heist
 
