@@ -14,7 +14,9 @@ const BLUE := Color("4f9dff")
 const YELLOW := Color("ffd52e")
 const MODE_INTRO := 0
 const MODE_LOOP := 1
-const LOOP_LEN: float = 11.9
+const ACT_LEN: float = 11.9
+const ACT_COUNT: int = 3
+const LOOP_LEN: float = ACT_LEN * float(ACT_COUNT)
 const INTRO_LEN: float = 2.6
 const LOOP_REST: float = 0.55
 const T_ON: float = 0.8
@@ -464,13 +466,21 @@ func _probe_yellow(t: float) -> Doodle:
 	_yellow_loop(_py,t)
 	return _py
 
-# ---------------------------------------------------------------- loop choreography (11.9s, ~1.1s of rest)
+# ---------------------------------------------------------------- loop choreography (three 11.9s vignettes before the cycle repeats)
 # 0.8 Blue peeks, 1.3 tiptoes in, 2.0 winds up, 2.4 pulls the star out of the line, 3.15 smirks, 3.75 hops on a board
 # and skates off, 5.05 hits a pebble, 5.4 faceplants while Yellow hurdles him and catches the star, 6.0 Yellow
 # celebrates far too early, 7.3 Yellow tosses the star up and Blue snatches it, 8.05 Blue whistles innocently,
 # 8.45 Yellow's double-take, 8.8 mock offence, 9.35 Blue's sheepish grin, 10.4 Blue punts the star home.
 
 func _loop_pose(t: float) -> void:
+	var act: int = clampi(int(floor(t / ACT_LEN)),0,ACT_COUNT - 1)
+	var beat: float = t - float(act) * ACT_LEN
+	match act:
+		0: _heist_pose(beat)
+		1: _zoomies_pose(beat)
+		_: _dance_pose(beat)
+
+func _heist_pose(t: float) -> void:
 	_geom()
 	_blue_loop(blue,t)
 	_yellow_loop(yellow,t)
@@ -481,6 +491,356 @@ func _loop_pose(t: float) -> void:
 	cur_board = _board_loop(t)
 	cur_pebble = smoothstep(3.7,3.95,t) * (1.0 - smoothstep(6.1,6.5,t))
 	cur_trail = _ball(t).z > 0.5
+
+func _zoomies_star(t: float) -> Vector4:
+	var home: Vector2 = gm_home
+	var head: Vector2 = _world(blue,Vector2(0.0,-42.0))
+	var spin: float = 0.0
+	var p: Vector2 = home
+	cur_star_mood = 0
+	if t < 0.65:
+		return Vector4.ZERO
+	if t < 1.1:
+		p = home + Vector2(0.0,-31.0 * _ease_out(_seg(t,0.65,1.1)))
+		spin = -0.18 * _seg(t,0.65,1.1)
+	elif t < 1.7:
+		p = home.lerp(Vector2(gm_xb,FLOOR_Y - 53.0),_ease_io(_seg(t,1.1,1.7)))
+		spin = -0.18 + TAU * _seg(t,1.1,1.7)
+	elif t < 5.9:
+		var f: float = _seg(t,1.7,5.9)
+		var angle: float = TAU * 1.15 * f
+		var center_x: float = (gm_xb + gm_yc) * 0.5
+		var radius_x: float = (gm_yc - gm_xb) * 0.46
+		p = Vector2(center_x + cos(angle) * radius_x,FLOOR_Y - 37.0 + sin(angle * 2.0) * 11.0)
+		spin = angle * 1.8
+		cur_star_mood = 2
+	elif t < 6.35:
+		var f: float = _seg(t,5.9,6.35)
+		var angle: float = TAU * 1.15
+		var center_x: float = (gm_xb + gm_yc) * 0.5
+		var radius_x: float = (gm_yc - gm_xb) * 0.46
+		var orbit_end: Vector2 = Vector2(center_x + cos(angle) * radius_x,FLOOR_Y - 37.0 + sin(angle * 2.0) * 11.0)
+		p = orbit_end.lerp(head + Vector2(0.0,-3.0),_ease_out(f))
+		spin = TAU * 2.3 * (1.0 - f)
+		cur_star_mood = 1
+	elif t < 9.8:
+		var wobble: float = sin((t - 6.35) * 8.0)
+		p = head + Vector2(wobble * 2.5,-3.0 + absf(wobble) * 2.0)
+		spin = wobble * 0.08
+		cur_star_mood = 2
+	else:
+		var f: float = _seg(t,9.8,10.65)
+		p = head.lerp(home,_ease_out(f))
+		if t > 10.65: p = home
+		spin = TAU * 1.4 * (1.0 - f)
+		cur_star_mood = 2
+	return Vector4(p.x,p.y,SR,spin)
+
+func _zoomies_pose(t: float) -> void:
+	_geom()
+	cur_gap = 0.0
+	cur_pull = 0.0
+	cur_ghost = 0.0
+	cur_board = Vector4.ZERO
+	cur_pebble = 0.0
+	cur_trail = false
+	_blue_zoomies(blue,t)
+	_yellow_zoomies(yellow,t)
+	cur_star = _zoomies_star(t)
+
+func _blue_zoomies(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = -fd
+	if t < 0.55 or t >= 11.6: return
+	d.shown = 1.0
+	d.look = Vector2(-fd,-0.7)
+	if t < 1.5:
+		var f: float = _seg(t,0.55,1.5)
+		_stand(d,gm_xb,-54.0 * (1.0 - _pop(f)))
+		d.arm_f = 1.9
+		d.arm_b = -1.4
+		d.eye_open = 1.15
+		d.mouth = 1
+		d.brow = 0.6
+	elif t < 5.9:
+		var f: float = _seg(t,1.5,5.9)
+		var angle: float = TAU * 1.15 * f
+		var target_x: float = gm_xb + fd * 7.0 * sin(angle + 0.75)
+		d.walk = angle * 2.1
+		d.stride = 1.1
+		_stand(d,target_x,3.0 + 2.5 * absf(sin(d.walk)))
+		d.lean = fd * 0.23 * sin(angle)
+		d.arm_f = 1.3 + 0.6 * sin(d.walk)
+		d.arm_b = -0.5 + 0.6 * sin(d.walk + PI)
+		d.speed = 0.7
+		d.mouth = 2
+		d.brow = 0.7
+		d.look = Vector2(-fd * cos(angle),-0.8)
+	elif t < 6.35:
+		var f: float = _seg(t,5.9,6.35)
+		_stand(d,gm_xb + fd * 5.0 * _ease_out(f),15.0 * sin(PI * f))
+		d.squash = 1.0 + 0.12 * sin(PI * f)
+		d.arm_f = 2.7
+		d.arm_b = 2.4
+		d.eye_open = 1.3
+		d.mouth = 9
+		d.mark_kind = 3
+		d.mark = 1.0 - smoothstep(0.75,1.0,f)
+		d.look = Vector2(-fd,-1.0)
+	elif t < 7.75:
+		var f: float = _seg(t,6.35,7.75)
+		_stand(d,gm_xb + fd * 5.0,0.0)
+		d.lean = 0.045 * sin(t * 22.0)
+		d.arm_f = 1.4
+		d.arm_b = 0.9
+		d.eye_open = 1.25
+		d.brow = -0.9
+		d.mouth = 9
+		d.mark_kind = 1
+		d.mark = 1.0 - smoothstep(7.3,7.75,t)
+		d.look = Vector2(0.0,-1.0)
+	elif t < 9.8:
+		var f: float = _seg(t,7.75,9.8)
+		_stand(d,gm_xb + fd * 5.0,2.0 * absf(sin(t * 5.0)))
+		d.arm_f = 2.4 + 0.35 * sin(t * 7.0)
+		d.arm_b = -0.5
+		d.eye_open = 0.8
+		d.brow = 0.25
+		d.mouth = 4
+		d.blush = smoothstep(7.9,8.2,t)
+		d.look = Vector2(0.0,-0.8)
+	else:
+		var f: float = _seg(t,9.8,11.6)
+		var home_x: float = gm_xb
+		_stand(d,lerpf(gm_xb + fd * 5.0,home_x,_ease_io(f)),2.0 * sin(PI * f))
+		d.arm_f = 2.0 + 0.35 * sin(t * 11.0)
+		d.mouth = 2
+		d.brow = 0.2
+		d.look = Vector2(-fd,-0.25)
+
+func _yellow_zoomies(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = fd
+	if t < 0.7 or t >= 11.6: return
+	d.shown = 1.0
+	d.look = Vector2(-fd,-0.7)
+	if t < 1.5:
+		var f: float = _seg(t,0.7,1.5)
+		_stand(d,gm_yc,-60.0 * (1.0 - _pop(f)))
+		d.arm_f = 1.6
+		d.arm_b = -1.8
+		d.eye_open = 1.1
+		d.mouth = 1
+		d.brow = 0.4
+	elif t < 5.9:
+		var f: float = _seg(t,1.5,5.9)
+		var angle: float = TAU * 1.15 * f
+		var target_x: float = gm_yc - fd * 7.0 * sin(angle - 0.75)
+		d.walk = angle * 2.1 + PI
+		d.stride = 1.0
+		_stand(d,target_x,3.0 + 2.5 * absf(sin(d.walk)))
+		d.lean = -fd * 0.2 * sin(angle)
+		d.arm_f = 1.1 + 0.6 * sin(d.walk)
+		d.arm_b = -0.7 + 0.6 * sin(d.walk + PI)
+		d.speed = 0.65
+		d.mouth = 2
+		d.brow = 0.6
+		d.look = Vector2(fd * cos(angle),-0.8)
+	elif t < 6.35:
+		var f: float = _seg(t,5.9,6.35)
+		_stand(d,gm_yc - fd * 5.0,13.0 * sin(PI * f))
+		d.squash = 1.0 + 0.1 * sin(PI * f)
+		d.arm_f = 2.8
+		d.arm_b = 2.5
+		d.eye_open = 1.3
+		d.mouth = 9
+		d.mark_kind = 2
+		d.mark = 1.0 - smoothstep(0.75,1.0,f)
+		d.look = Vector2(-fd,-1.0)
+	elif t < 7.75:
+		var f: float = _seg(t,6.35,7.75)
+		_stand(d,gm_yc - fd * 5.0,0.0)
+		d.arm_mode = 5
+		d.eye_open = 1.1
+		d.brow = 0.8
+		d.mouth = 4
+		d.look = Vector2(-fd,-0.8)
+		d.mark_kind = 2
+		d.mark = smoothstep(6.45,6.6,t) * (1.0 - smoothstep(7.4,7.75,t))
+	elif t < 9.8:
+		var f: float = _seg(t,7.75,9.8)
+		_stand(d,gm_yc - fd * 5.0,1.5 * absf(sin(t * 5.0)))
+		d.arm_f = 2.7
+		d.arm_b = -2.7
+		d.eye_open = -1.0
+		d.brow = -0.3
+		d.mouth = 2
+		d.mark_kind = 7
+		d.mark = 1.0 - smoothstep(9.4,9.8,t)
+	else:
+		var f: float = _seg(t,9.8,11.6)
+		_stand(d,lerpf(gm_yc - fd * 5.0,gm_yc,_ease_io(f)),1.5 * sin(PI * f))
+		d.arm_f = 2.3 + 0.35 * sin(t * 10.0)
+		d.mouth = 2
+		d.brow = -0.2
+		d.look = Vector2(-fd,-0.2)
+
+func _dance_star(t: float) -> Vector4:
+	var home: Vector2 = gm_home
+	var center: Vector2 = Vector2(gm_ax,FLOOR_Y - 32.0)
+	var p: Vector2 = home
+	var spin: float = 0.0
+	cur_star_mood = 0
+	if t < 0.75: return Vector4.ZERO
+	if t < 1.4:
+		p = home + Vector2(0.0,-24.0 * _ease_out(_seg(t,0.75,1.4)))
+	elif t < 5.0:
+		var f: float = _seg(t,1.4,5.0)
+		var angle: float = TAU * 1.3 * f
+		p = Vector2(center.x + cos(angle) * 24.0,center.y + sin(angle * 1.5) * 9.0)
+		spin = angle * 1.5
+		cur_star_mood = 2
+	elif t < 7.15:
+		var f: float = _seg(t,5.0,7.15)
+		var high: Vector2 = center + Vector2(0.0,-22.0)
+		p = high.lerp(home,_ease_in(f))
+		spin = TAU * 2.0 * f
+		cur_star_mood = 1
+	else:
+		p = home + Vector2(0.0,-4.0 * absf(sin((t - 7.15) * 7.0)))
+		cur_star_mood = 2 if t < 10.2 else 0
+	return Vector4(p.x,p.y,SR,spin)
+
+func _dance_pose(t: float) -> void:
+	_geom()
+	cur_gap = 0.0
+	cur_pull = 0.0
+	cur_ghost = 0.0
+	cur_board = Vector4.ZERO
+	cur_pebble = 0.0
+	cur_trail = false
+	_dance_blue(blue,t)
+	_dance_yellow(yellow,t)
+	cur_star = _dance_star(t)
+
+func _dance_blue(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = -fd
+	if t < 0.45 or t >= 11.6: return
+	d.shown = 1.0
+	if t < 1.4:
+		var f: float = _seg(t,0.45,1.4)
+		_stand(d,gm_xb,-48.0 * (1.0 - _pop(f)))
+		d.arm_f = 1.6
+		d.mouth = 4
+		d.look = Vector2(-fd,-0.8)
+	elif t < 5.0:
+		var f: float = _seg(t,1.4,5.0)
+		d.walk = f * PI * 8.0
+		d.stride = 0.65
+		_stand(d,gm_xb + fd * 13.0 * sin(d.walk),4.0 * absf(sin(d.walk)))
+		d.tilt = fd * 0.08 * sin(d.walk)
+		d.arm_mode = 8 if int(f * 4.0) % 2 == 0 else 5
+		d.arm_f = 2.8
+		d.mouth = 2
+		d.brow = 0.4
+		d.look = Vector2(-fd,0.0)
+		if f > 0.72:
+			d.arm_f = 0.8
+			d.eye_open = 0.8
+	elif t < 6.55:
+		var f: float = _seg(t,5.0,6.55)
+		_stand(d,gm_xb + fd * 8.0 * sin(f * TAU),12.0 * absf(sin(f * PI * 2.0)))
+		d.squash = 1.0 + 0.12 * sin(PI * f)
+		d.arm_f = 2.6
+		d.arm_b = 2.3
+		d.mouth = 9
+		d.eye_open = 1.3
+		d.look = Vector2(-fd,-0.5)
+	elif t < 7.2:
+		var f: float = _seg(t,6.55,7.2)
+		_stand(d,gm_xb + fd * 9.0,0.0)
+		d.lean = fd * (0.72 + 0.04 * sin(t * 26.0))
+		d.mark_kind = 5
+		d.mark = 1.0 - smoothstep(6.9,7.2,t)
+		d.eye_open = 0.5
+		d.look = Vector2(0.0,0.0)
+		d.mouth = 7
+	elif t < 9.6:
+		var f: float = _seg(t,7.2,9.6)
+		_stand(d,gm_xb + fd * 9.0,0.0)
+		d.lean = fd * 0.2 * (1.0 - f)
+		d.arm_mode = 7
+		d.eye_open = 0.8
+		d.mouth = 6
+		d.blush = 0.45 * (1.0 - f)
+		d.look = Vector2(-fd,-0.5)
+	else:
+		var f: float = _seg(t,9.6,11.6)
+		_stand(d,lerpf(gm_xb + fd * 9.0,gm_xb,_ease_io(f)),2.0 * sin(PI * f))
+		d.arm_f = 2.4 + 0.35 * sin(t * 12.0)
+		d.mouth = 2
+		d.brow = 0.1
+		d.look = Vector2(-fd,0.0)
+
+func _dance_yellow(d: Doodle, t: float) -> void:
+	var fd: float = gm_d
+	d.face = fd
+	if t < 0.65 or t >= 11.6: return
+	d.shown = 1.0
+	if t < 1.4:
+		var f: float = _seg(t,0.65,1.4)
+		_stand(d,gm_yc,-52.0 * (1.0 - _pop(f)))
+		d.arm_f = 1.8
+		d.mouth = 4
+		d.look = Vector2(fd,-0.8)
+	elif t < 5.0:
+		var f: float = _seg(t,1.4,5.0)
+		d.walk = f * PI * 8.0 - PI * 0.5
+		d.stride = 0.65
+		_stand(d,gm_yc - fd * 13.0 * sin(d.walk),4.0 * absf(sin(d.walk)))
+		d.tilt = -fd * 0.08 * sin(d.walk)
+		d.arm_mode = 8 if int((f + 0.2) * 4.0) % 2 == 0 else 5
+		d.arm_b = 2.8
+		d.mouth = 2
+		d.brow = -0.2
+		d.look = Vector2(fd,0.0)
+		if f < 0.25:
+			d.arm_b = 0.5
+			d.eye_open = 1.1
+	elif t < 6.55:
+		var f: float = _seg(t,5.0,6.55)
+		_stand(d,gm_yc - fd * 8.0 * sin(f * TAU + 0.4),10.0 * absf(sin(f * PI * 2.0 + 0.4)))
+		d.squash = 1.0 + 0.1 * sin(PI * f)
+		d.arm_f = 2.5
+		d.arm_b = 2.2
+		d.mouth = 9
+		d.eye_open = 1.3
+		d.look = Vector2(fd,-0.5)
+	elif t < 7.2:
+		var f: float = _seg(t,6.55,7.2)
+		_stand(d,gm_yc - fd * 9.0,0.0)
+		d.lean = -fd * (0.72 + 0.04 * sin(t * 27.0))
+		d.mark_kind = 2
+		d.mark = 1.0 - smoothstep(6.9,7.2,t)
+		d.eye_open = 0.5
+		d.look = Vector2(0.0,0.0)
+		d.mouth = 7
+	elif t < 9.6:
+		var f: float = _seg(t,7.2,9.6)
+		_stand(d,gm_yc - fd * 9.0,0.0)
+		d.lean = -fd * 0.2 * (1.0 - f)
+		d.arm_mode = 7
+		d.eye_open = 0.9
+		d.mouth = 4
+		d.look = Vector2(-fd,0.0)
+	else:
+		var f: float = _seg(t,9.6,11.6)
+		_stand(d,lerpf(gm_yc - fd * 9.0,gm_yc,_ease_io(f)),2.0 * sin(PI * f))
+		d.arm_f = 2.4 + 0.35 * sin(t * 12.0 + 0.7)
+		d.mouth = 2
+		d.brow = -0.2
+		d.look = Vector2(fd,0.0)
 
 func _gap_loop(t: float) -> float:
 	if t < 2.7 or t >= 11.2: return 0.0
@@ -1073,6 +1433,68 @@ func _board_loop(t: float) -> Vector4:
 	return Vector4(x,y,-fd * PI * _ease_out(f),alpha)
 
 func _loop_events(prev: float, cur: float) -> void:
+	for act in range(ACT_COUNT):
+		var start: float = float(act) * ACT_LEN
+		var finish: float = start + ACT_LEN
+		if cur <= start or prev >= finish: continue
+		var local_prev: float = maxf(prev,start) - start
+		var local_cur: float = minf(cur,finish) - start
+		match act:
+			0: _heist_events(local_prev,local_cur)
+			1: _zoomies_events(local_prev,local_cur)
+			_: _dance_events(local_prev,local_cur)
+
+func _zoomies_events(prev: float, cur: float) -> void:
+	_geom()
+	if _crossed(prev,cur,0.65):
+		_add_ring(gm_ax,3.0)
+		_burst(gm_home,5,GOLD_HI,56.0,false)
+	if _crossed(prev,cur,1.7):
+		_burst(Vector2(gm_xb,FLOOR_Y - 54.0),3,GOLD,54.0,false,2)
+	if _crossed(prev,cur,3.8):
+		var center: Vector2 = Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 55.0)
+		_burst(center,3,GOLD_HI,45.0,false,2)
+	if _crossed(prev,cur,5.9):
+		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 2.0),4,DUST,62.0,true)
+	if _crossed(prev,cur,6.35):
+		_add_ring(gm_ax,5.0)
+		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 48.0),5,GOLD_HI,74.0,true,2)
+	if _crossed(prev,cur,7.75):
+		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 50.0),3,CREAM,44.0,false,1)
+	if _crossed(prev,cur,9.8):
+		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 50.0),4,GOLD,54.0,false,2)
+	if _crossed(prev,cur,10.65):
+		_add_ring(gm_ax,3.0)
+		_burst(gm_home,5,GOLD_HI,52.0,false)
+	if _crossed(prev,cur,T_OFF):
+		_burst(Vector2(gm_xb,FLOOR_Y - 2.0),3,DUST,48.0,true)
+		_burst(Vector2(gm_yc,FLOOR_Y - 2.0),3,DUST,48.0,true)
+
+func _dance_events(prev: float, cur: float) -> void:
+	_geom()
+	if _crossed(prev,cur,0.75):
+		_add_ring(gm_ax,3.0)
+		_burst(gm_home,4,GOLD_HI,52.0,false)
+	if _crossed(prev,cur,1.4):
+		_burst(Vector2(gm_ax,FLOOR_Y - 2.0),3,DUST,42.0,true)
+	if _crossed(prev,cur,5.0):
+		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 54.0),4,GOLD_HI,56.0,false,2)
+	if _crossed(prev,cur,6.55):
+		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 2.0),6,DUST,76.0,true)
+		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 41.0),3,CREAM,54.0,true,1)
+	if _crossed(prev,cur,7.15):
+		_add_ring(gm_ax,4.0)
+		_burst(Vector2((gm_xb + gm_yc) * 0.5,FLOOR_Y - 54.0),5,GOLD,62.0,false,2)
+	if _crossed(prev,cur,9.6):
+		_burst(gm_home,4,GOLD_HI,48.0,false)
+	if _crossed(prev,cur,11.15):
+		_add_ring(gm_ax,3.5)
+		_burst(gm_home,5,GOLD,48.0,false)
+	if _crossed(prev,cur,T_OFF):
+		_burst(Vector2(gm_xb,FLOOR_Y - 2.0),3,DUST,45.0,true)
+		_burst(Vector2(gm_yc,FLOOR_Y - 2.0),3,DUST,45.0,true)
+
+func _heist_events(prev: float, cur: float) -> void:
 	_geom()
 	var fd: float = gm_d
 	if _crossed(prev,cur,1.0):
