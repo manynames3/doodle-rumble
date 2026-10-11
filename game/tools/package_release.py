@@ -16,7 +16,7 @@ EXCLUDED_SOURCE_PARTS = {
     ".cache", "__pycache__", "__macosx", "builds", "cache", "test-logs",
 }
 # These folders contain working references and planning material, rather than
-# distributable source. Keep source_art: it contains the nine original packs.
+# distributable source. Keep source_art: it contains the original and supplemental art packs.
 PRIVATE_SOURCE_PARTS = {"reference", "planning", "private"}
 SENSITIVE_FILE_NAMES = {
     ".ds_store", ".mcp.json", "agents.md", "export_credentials.cfg",
@@ -109,7 +109,7 @@ def assert_source_archive(archive: zipfile.ZipFile, project: Path) -> None:
 
     source_art = project / "source_art"
     pack_names = {path.name for path in source_art.iterdir() if path.is_dir()}
-    assert pack_names - RUNTIME_ART_OVERRIDES == REQUIRED_SOURCE_PACKS, "Expected all nine original production source packs"
+    assert REQUIRED_SOURCE_PACKS.issubset(pack_names - RUNTIME_ART_OVERRIDES), "Expected all nine original production source packs"
     for override in RUNTIME_ART_OVERRIDES:
         override_dir = source_art / override
         assert override_dir.is_dir(), f"Required authored runtime correction missing: {override}"

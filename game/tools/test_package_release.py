@@ -27,6 +27,8 @@ class SourceArchivePolicyTests(unittest.TestCase):
         self._write(project, "docs/licenses/GODOT_THIRD_PARTY.txt", "notice")
         for pack in package_release.REQUIRED_SOURCE_PACKS:
             self._write(project, f"source_art/{pack}/production.png")
+        self._write(project, "source_art/Fuse_Production_Assets/missile.png")
+        self._write(project, "source_art/Crackle_Production_Assets/helmet.png")
         self._write(project, "source_art/Pac_Man_One_Eye_Runtime_Overrides/canonical.png")
         self._write(project, "source_art/Pac_Man_One_Eye_Runtime_Overrides/README.md")
         return project
@@ -41,6 +43,8 @@ class SourceArchivePolicyTests(unittest.TestCase):
                 names = set(archive.namelist())
             self.assertIn("Doodle_Rumble/game/project.godot", names)
             self.assertIn("Doodle_Rumble/source_art/Blue_Transparent_Asset_Pack/production.png", names)
+            self.assertIn("Doodle_Rumble/source_art/Fuse_Production_Assets/missile.png", names)
+            self.assertIn("Doodle_Rumble/source_art/Crackle_Production_Assets/helmet.png", names)
 
     def test_source_archive_preserves_authored_runtime_art_corrections(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
