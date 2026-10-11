@@ -71,9 +71,9 @@ These are native captures from the running Godot project, after the nine new pac
 | --- | --- | --- |
 | ![Pac-Man in Arcade Afterglow](docs/screenshots/13-pac-man-pack.png) | ![H4CK3R in Neon Switchyard](docs/screenshots/12-h4ck3r-pack.png) | ![Dark lord in Glitch Core](docs/screenshots/11-dark-lord-pack.png) |
 
-Fuse joins the local eight-chapter story between H4CK3R and Dark lord. His launcher has a visible warning, fixed missile lanes and an open reload window.
+Fuse joins the eight-chapter story between H4CK3R and Dark lord. His launcher has a visible warning, fixed missile lanes and an open reload window. The v0.7.11 follow-up adds a timed three-shot burst, 50% more attack damage and faster recovery after hits.
 
-![Fuse launching a missile salvo in Neon Switchyard](docs/screenshots/14-fuse-pack.png)
+![Fuse firing a timed missile burst in Neon Switchyard](docs/screenshots/16-fuse-burst.png)
 
 Crackle brings the new diamond-helmet drawing to chapter four, just before Pac-Man.
 

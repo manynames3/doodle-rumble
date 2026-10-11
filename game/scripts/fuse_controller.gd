@@ -4,36 +4,42 @@ const Difficulty = preload("res://scripts/difficulty.gd")
 const BossProjectile = preload("res://scripts/boss_projectile.gd")
 signal pattern_released(kind: String, angle: float)
 
-const PATTERNS := ["missile_single", "missile_salvo", "missile_high_low", "launcher_bash"]
-const TELLS := ["MISSILE! DODGE!", "THREE MISSILES!", "HIGH / LOW!", "LAUNCHER SWING!"]
+const PATTERNS := ["missile_single", "missile_salvo", "missile_high_low", "launcher_bash", "missile_burst"]
+const TELLS := ["MISSILE! DODGE!", "THREE MISSILES!", "HIGH / LOW!", "LAUNCHER SWING!", "BURST! KEEP MOVING!"]
 const TELL_DURATION := 0.85
 const RELEASE_DURATION := 0.12
-const RELOAD_DURATION := 0.65
+const BURST_SPACING := 0.18
+const RELOAD_DURATION := 0.45
+const HIT_RESTART_DURATION := 0.08
 
 var state := "rest"
-var time_left := 0.55
+var time_left := 0.20
 var pattern := 0
 var tell := ""
 var committed_facing := -1
 var committed_angle := 0.0
-var approach_speed := 1.08
+var approach_speed := 1.20
 var difficulty_level: int = Difficulty.EASY
 var jump_wait := 0.0
+var burst_shots_left := 0
+var burst_spacing_left := 0.0
 
 func configure_difficulty(selected_level: int) -> void:
 	var previous_factor: float = Difficulty.rest_factor(difficulty_level)
 	difficulty_level = Difficulty.normalized_level(selected_level)
-	approach_speed = 1.08 * Difficulty.move_factor(difficulty_level)
+	approach_speed = 1.20 * Difficulty.move_factor(difficulty_level)
 	if state == "rest": time_left *= Difficulty.rest_factor(difficulty_level) / previous_factor
 
 func reset() -> void:
 	state = "rest"
-	time_left = 0.55 * Difficulty.rest_factor(difficulty_level)
+	time_left = 0.20 * Difficulty.rest_factor(difficulty_level)
 	pattern = 0
 	tell = ""
 	committed_facing = -1
 	committed_angle = 0.0
 	jump_wait = 0.0
+	burst_shots_left = 0
+	burst_spacing_left = 0.0
 
 func _clear_cast(fighter) -> void:
 	tell = ""
@@ -75,7 +81,9 @@ func _begin_reload(fighter) -> void:
 
 func _begin_released(fighter) -> void:
 	state = "released"
-	time_left = RELEASE_DURATION
+	burst_shots_left = 2 if pattern == 4 else 0
+	burst_spacing_left = BURST_SPACING
+	time_left = RELEASE_DURATION + BURST_SPACING * burst_shots_left
 	tell = ""
 	fighter.boss_charge = 1.0
 	fighter.guard_remaining = 0.0
@@ -89,20 +97,27 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 		_clear_cast(fighter)
 		return command
 	if fighter.hurt_time > 0.0:
-		if state != "rest":
+		if state != "stagger":
+			if state in ["tell", "released", "executing"]:
+				pattern = (pattern + 1) % PATTERNS.size()
 			_clear_cast(fighter)
-			state = "rest"
-			time_left = RELOAD_DURATION
+			state = "stagger"
+			time_left = HIT_RESTART_DURATION
+			burst_shots_left = 0
 		return command
 	jump_wait = maxf(0.0, jump_wait - delta)
 	time_left -= delta
 	var dx: float = opponent.position.x - fighter.position.x
 	var dy: float = opponent.position.y - fighter.position.y
 	match state:
+		"stagger":
+			if time_left <= 0.0:
+				state = "approach"
+				time_left = 0.0
 		"rest":
 			if time_left <= 0.0 and fighter.attack_time < 0.0:
 				state = "approach"
-				time_left = 1.2
+				time_left = 0.65
 		"approach":
 			var reach: float = minf(float(fighter.weapon.reach) * 0.84, 165.0) if pattern == 3 else 510.0
 			if absf(dx) > reach and time_left > 0.0:
@@ -111,6 +126,8 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 					command.jump = true
 					jump_wait = 1.35
 			else:
+				if pattern == 3 and (absf(dx) > reach or absf(dy) > 100.0):
+					pattern = 4
 				_begin_tell(fighter, opponent, dx)
 		"tell":
 			command.lock_facing = true
@@ -129,6 +146,12 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 		"released":
 			command.lock_facing = true
 			fighter.facing = committed_facing
+			if burst_shots_left > 0:
+				burst_spacing_left -= delta
+				while burst_shots_left > 0 and burst_spacing_left <= 0.0:
+					pattern_released.emit(PATTERNS[pattern], committed_angle)
+					burst_shots_left -= 1
+					burst_spacing_left += BURST_SPACING
 			if time_left <= 0.0:
 				_begin_reload(fighter)
 		"executing":
@@ -145,5 +168,5 @@ func read_input(delta: float, fighter, opponent) -> Dictionary:
 			if time_left <= 0.0:
 				_clear_cast(fighter)
 				state = "rest"
-				time_left = 0.16 * Difficulty.rest_factor(difficulty_level)
+				time_left = 0.08 * Difficulty.rest_factor(difficulty_level)
 	return command

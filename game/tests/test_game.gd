@@ -89,6 +89,14 @@ func run() -> void:
 	await process_frame
 	check(game.state == "title","full game opens on title screen")
 	check(game.selected[0] == saved_fighter,"title restores selected fighter")
+	if "--live-fuse-only" in OS.get_cmdline_user_args():
+		await test_live_arcade(6, 7)
+		finish()
+		return
+	if "--live-journey-only" in OS.get_cmdline_user_args():
+		await test_live_arcade()
+		finish()
+		return
 	await test_controls_and_pause()
 	await test_platform_and_hazards()
 	await test_platform_route()
@@ -480,7 +488,7 @@ func drive_bot(slot: int, frame: int, aggressive: bool = true) -> void:
 				move = -1 if fighter.position.x<mark.x else 1
 				attack = false
 				special = false
-	if slot == 0 and game.mode == "arcade" and fighter.definition.id == "purple":
+	if slot == 0 and game.mode == "arcade" and fighter.definition.id == "purple" and opponent.definition.id == "dark_lord":
 		# Switch to the unlocked ranged fighter for the final boss, using visible attack cues.
 		move = signf(dx) if absf(dx)>435 else -signf(dx) if absf(dx)<410 else 0.0
 		attack = absf(dx)<490
@@ -512,6 +520,22 @@ func drive_bot(slot: int, frame: int, aggressive: bool = true) -> void:
 		for mark in game.hazards.marks:
 			if absf(fighter.position.x-mark.x)<game.hazards.TYPES[mark.kind].width/2+50:
 				move = -1 if fighter.position.x<mark.x else 1
+				attack = false
+				special = false
+	if slot == 0 and game.mode == "arcade" and fighter.definition.id == "purple" and opponent.definition.id == "fuse":
+		# Stay in arrow range and use Purple's shield dodge against incoming
+		# fixed-aim missiles. Grounded arrows land during the exposed reload.
+		move = signf(dx) if absf(dx)>320 else -signf(dx) if absf(dx)<230 else 0.0
+		jump = false
+		attack = fighter.is_on_floor() and absf(dx)<390 and game.fuse_ai.state in ["rest", "approach", "reload"]
+		special = fighter.is_on_floor() and fighter.cooldown<=0 and absf(dx)<450 and game.fuse_ai.state == "reload"
+		if game.fuse_ai.state == "tell":
+			attack = false
+			special = false
+		for shot in game.projectiles:
+			if shot.owner_fighter != fighter and shot.velocity.x*(fighter.position.x-shot.position.x)>0 and absf(shot.position.x-fighter.position.x)<140 and fighter.attack_time<0 and fighter.dodge_cooldown<=0:
+				dodge = true
+				move = signf(dx)
 				attack = false
 				special = false
 	if slot == 0 and game.mode == "arcade" and opponent.definition.id == "pac_man":
@@ -548,17 +572,20 @@ func test_live_local() -> void:
 		check(game.rules.scores[0] >= 2 or game.rules.scores[1] >= 2,"local match ends by actual attacks with two wins")
 		print("LIVE_LOCAL fighters=%s frames=%d score=%s" % [str(pairing),frames,str(game.rules.scores)])
 
-func test_live_arcade() -> void:
+func test_live_arcade(start_stage: int = 0, stop_after_stage: int = 8) -> void:
 	release_inputs()
-	game.selected[0] = "orange"
+	game.selected[0] = "purple" if start_stage == 6 else "orange"
 	game.optional_hazards = true
 	game.start_arcade()
+	if start_stage > 0:
+		game.arcade_stage = start_stage
+		game.start_match()
 	game.countdown = 0
 	var total_frames = 0
 	var won_stages = 0
 	var start_wins = settings.arcade_wins
 	game.ai.rng.seed = 41903
-	for stage in range(JOURNEY_OPPONENTS.size()):
+	for stage in range(start_stage, stop_after_stage):
 		var stage_won = false
 		for attempt in range(3):
 			var frames = 0
@@ -587,11 +614,12 @@ func test_live_arcade() -> void:
 		won_stages += 1
 		check(game.second.definition.id == JOURNEY_OPPONENTS[stage],"live journey beats the required opponent at stage " + str(stage+1))
 		check(root.get_node("Sound")._music_context == ["desktop","quarry","journey_green","quarry","pac_man","glitch","glitch","dark_lord"][stage],"journey stage uses its assigned music context")
-		if stage < JOURNEY_OPPONENTS.size()-1:
+		if stage < stop_after_stage-1:
 			check(settings.arcade_wins == start_wins,"live stage %d gives no reward before the final boss" % (stage+1))
 			if stage == 5: game.selected[0] = "purple"
 			game.advance_arcade()
 			game.countdown = 0
-	check(won_stages == JOURNEY_OPPONENTS.size(),"live input bot wins all eight journey matches through real combat")
-	check(settings.arcade_wins == start_wins+1,"real combat eight-stage journey completion triggers one final unlock")
+	check(won_stages == stop_after_stage-start_stage,"live input bot wins the selected journey matches through real combat")
+	if stop_after_stage == JOURNEY_OPPONENTS.size():
+		check(settings.arcade_wins == start_wins+1,"real combat eight-stage journey completion triggers one final unlock")
 	print("LIVE_JOURNEY total_frames=%d won_stages=%d retries=%d" % [total_frames,won_stages,live_retries])

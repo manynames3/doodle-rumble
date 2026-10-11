@@ -38,7 +38,7 @@
       "id": "fuse",
       "name": "Fuse",
       "role": "Seventh story boss",
-      "proposal": "Oversized shoulder launcher, warned single shot, salvo and high/low missile lanes, with a close-range launcher bash.",
+      "proposal": "Oversized shoulder launcher, warned single shot, salvo, high/low missile lanes and a timed three-shot burst, with a close-range launcher bash.",
       "phase": "Implemented boss",
       "implementation_status": "implemented_boss",
       "starting_weapon": "missile_launcher",

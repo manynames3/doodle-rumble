@@ -82,7 +82,7 @@ func configure(fighter, effect_kind: String, direction: int, angle: float = 0) -
 		position = muzzle_position(fighter, direction)
 		tint = Color("ff6548")
 		radius = 18.0 if kind == "missile_single" else 16.0
-		damage = 18 if kind == "missile_single" else 11 if kind == "missile_salvo" else 13
+		damage = 18 if kind == "missile_single" else 11 if kind in ["missile_salvo", "missile_burst"] else 13
 		knockback = 370.0
 		lifetime = 1.9
 		missile_texture = _optional_texture("res://assets/character_art/fuse/missile.png")

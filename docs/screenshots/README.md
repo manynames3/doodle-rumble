@@ -19,6 +19,7 @@ These are native 1280×720 captures from the running Godot project, selected to 
 | `13-pac-man-pack.png` | Pac-Man's new bite art in Arcade Afterglow. |
 | `14-fuse-pack.png` | Fuse releasing a three-missile salvo in chapter six of the local v0.7.9 build, using his empty-barrel firing pose and separate missile/exhaust sprites. Captured natively on October 10, 2026. |
 | `15-crackle-pack.png` | Crackle in chapter four of the local v0.7.10 build: diamond helmet, oversized boots, spear and empty firing tube with separate fireworks. Captured natively on October 10, 2026. |
+| `16-fuse-burst.png` | Fuse's new timed three-missile burst in chapter seven of v0.7.11, using the existing firing pose, missile and exhaust art. Captured natively on October 10, 2026. |
 
 The Workshop gallery in `workshop/` uses captures from the running game and authored sample creations. It shows My Doodles, a custom-fighter match, articulated poses, weapon specials, and the drawing/preview pages. These files are deliberately copied into the public screenshot folder so README images do not depend on Git-ignored QA output. The private original drawing and remaining versioned QA captures stay out of the public repository. The nine transparent production packs are retained under `source_art/`, with optimized runtime copies under `game/assets/character_art/`. Provenance and licenses are documented in [`docs/ASSET_PROVENANCE.md`](../ASSET_PROVENANCE.md).
 

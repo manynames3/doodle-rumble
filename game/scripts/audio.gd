@@ -29,7 +29,7 @@ const BOSS_PATTERN_STYLE := {
 	},
 	"fuse": {
 		"missile_single": "dash", "missile_salvo": "eclipse",
-		"missile_high_low": "dark_quake", "launcher_bash": "quake",
+		"missile_high_low": "dark_quake", "missile_burst": "dash", "launcher_bash": "quake",
 	},
 	"dark_lord": {
 		"reaper": "dark_slash", "quake": "dark_quake", "void_orb": "void", "rift": "dark_rift",

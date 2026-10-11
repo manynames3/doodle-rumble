@@ -29,6 +29,7 @@ func run():
 	check(capacities == [150,190,215,240],"late bosses gain durability at each stage")
 	var strength = load("res://scripts/boss_strength.gd")
 	check(is_equal_approx(float(strength.MULTIPLIERS.dark_lord)/1.50,1.30),"Dark lord attack damage tier rises exactly 30 percent before final rounding")
+	check(is_equal_approx(float(strength.MULTIPLIERS.fuse)/1.375,1.50),"Fuse attack damage tier rises exactly 50 percent before final rounding")
 	check(strength.damage("dark_lord",26) == 51 and strength.damage("h4ck3r",13) == 17 and strength.damage("red",20) == 20,"Dark lord has a higher damage tier while H4CK3R and other fighters keep their own values")
 	game.countdown = 0
 	game.first.reset_at(Vector2(400,599))

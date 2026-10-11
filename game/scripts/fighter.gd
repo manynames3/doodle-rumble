@@ -427,7 +427,7 @@ func take_hit(amount: int, direction: int, force: float = 350, launch_y: float =
 	# The short guard expires before recovery; ordinary fighters retain their escape window.
 	invulnerable = 0.68
 	if guard_remaining <= 0 or health <= 0:
-		hurt_time = 0.12 if str(definition.get("id", "")) == "dark_lord" else 0.18
+		hurt_time = 0.10 if str(definition.get("id", "")) == "fuse" else 0.12 if str(definition.get("id", "")) == "dark_lord" else 0.18
 		attack_time = -1
 		dodge_time = -1
 		jump_buffer = 0

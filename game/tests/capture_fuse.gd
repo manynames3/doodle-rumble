@@ -48,8 +48,8 @@ func run() -> void:
 	await _step(20)
 	game._update_hud()
 	await _save("idle")
-	for index in range(3):
-		var pattern: String = ["missile_single", "missile_salvo", "missile_high_low"][index]
+	for index in [0, 1, 2, 4]:
+		var pattern: String = ["missile_single", "missile_salvo", "missile_high_low", "launcher_bash", "missile_burst"][index]
 		for shot in game.projectiles: game._discard_projectile(shot)
 		game.projectiles.clear()
 		game.first.reset_at(Vector2(360, 599))
@@ -67,6 +67,10 @@ func run() -> void:
 		await _step(3)
 		game._update_hud()
 		await _save(pattern + "_release")
+		if index == 4:
+			await _step(19)
+			game._update_hud()
+			await _save("missile_burst_train")
 		await _step(8)
 		game._update_hud()
 		await _save(pattern + "_reload")
