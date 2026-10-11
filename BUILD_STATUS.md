@@ -2,13 +2,13 @@
 
 Updated 2026-10-10. Godot 4.7.2 / GDScript. The Universal Mac build was prepared on an Apple M1 Mac.
 
-## Local v0.7.11 — Fuse aggression follow-up
+## Published v0.7.11 — Fuse aggression follow-up
 
 - Raised Fuse's attack damage multiplier from 1.375 to 2.0625, exactly **50%** before rounding. Shortened his hit stun from 0.18 to 0.10 seconds and replaced the full reload after a hit with a single 0.08-second restart. Damage invulnerability and full 0.85-second attack warnings remain intact.
 - Added a fixed-aim three-shot burst spaced 0.18 seconds apart, reusing the existing missile, exhaust, impact and firing pose. Out-of-range bashes become the burst; all five attack choices remain available. Faster approach decisions, shorter rests and a 0.45-second vulnerable reload increase attack frequency.
 - The new real held-bow test reproduces v0.7.10's hesitation and passes after the fix: longest post-stun restart fell from 64 to 7 frames, missile release events rose from three to twelve across four missile patterns, and damage to the shooter rose from 59 to 199 in the same 15-second scenario. In a separate 25-second passive sample, Fuse rose from 236 to 352 damage, between H4CK3R's 224 and Dark lord's 491.
 - Source verification passed **eight suites / 1,001 checks / zero failures**, including the complete eight-fight journey with no retries at a fixed 60-Hz step. The bot reads Fuse's warnings and uses Purple's real shield dodge, winning the stronger fight with 42 HP; it no longer borrows Dark lord's stationary shooting strategy. Inspected 23 native captures, including the distinct burst train and its head-clear warning. An independent integrated review found no blockers. See [TESTING_0_7_11.md](docs/TESTING_0_7_11.md).
-- Prepared Universal Mac **v0.7.11 / build 29** in `builds/mac-v0.7.11/`. The exact exported pack passed **110 checks / zero failures**, including the real held-bow and live dodge/counter scenarios. Both architecture slices, strict ad-hoc signature verification, ZIP integrity and actual exported-app startup passed. The app is not notarized.
+- Published Universal Mac **v0.7.11 / build 29** as the latest [GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.11), with the [playable Mac ZIP](https://github.com/manynames3/doodle-rumble/releases/download/v0.7.11/Doodle_Rumble_Mac_v0.7.11.zip) and matching source commit `cacb248`. Local copies remain in `builds/mac-v0.7.11/`. The exact exported pack passed **110 checks / zero failures**, including the real held-bow and live dodge/counter scenarios. Both architecture slices, strict ad-hoc signature verification, ZIP integrity and actual exported-app startup passed. GitHub's asset digest matches the verified local ZIP, and the public download returns HTTP 200. The app is not notarized.
 
 ## Published v0.7.10 — Crackle expansion and Dark lord upgrade
 

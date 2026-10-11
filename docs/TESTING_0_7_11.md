@@ -2,6 +2,8 @@
 
 Verified October 10, 2026 with Godot 4.7.2 on Apple M1. Automated runs used `--isolated-qa`; the family profile was not used.
 
+Published as the [v0.7.11 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.11) with matching source commit `cacb248`. The [playable Mac ZIP](https://github.com/manynames3/doodle-rumble/releases/download/v0.7.11/Doodle_Rumble_Mac_v0.7.11.zip) is 261,117,521 bytes; GitHub reports the same SHA-256 as the verified local archive. The public download returned HTTP 200.
+
 ## Behavior and regression
 
 Fuse's attack multiplier increased from 1.375 to 2.0625, exactly 50% before final per-hit rounding. Single missiles deal 38 damage, fan and burst missiles 23, high/low missiles 27 and launcher bash 42. Health remains 215. Hit stun decreased from 0.18 to 0.10 seconds while the existing 0.68-second hit invulnerability remains intact. A distinct stagger state replaces the former full 0.65-second reload after a hit with one 0.08-second restart; continued stun ticks do not restart the pause.
