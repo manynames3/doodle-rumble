@@ -1,14 +1,19 @@
 extends Control
 ## A narrow painted footer leaves the poster's cast and descriptions unobscured.
 const FONT = preload("res://assets/fonts/Kalam-Bold.ttf")
+const TitleMotion = preload("res://scripts/title_motion.gd")
 var hint: Label
 var buttons: Array[Button] = []
+var motion: Control
 
 func build(entries: Array) -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	size = Vector2(1280,720)
 	var widths = [206,220,184,221,174,119]
 	var x = 78.0
+	# First child: the underline and doodles stay beneath the hint and button labels, as the old underline did.
+	motion = TitleMotion.new()
+	add_child(motion)
 	hint = Label.new()
 	hint.position = Vector2(80,634)
 	hint.size = Vector2(1120,25)
@@ -33,8 +38,8 @@ func build(entries: Array) -> void:
 			b.add_theme_color_override(state,Color("fff0d7") if state == "font_color" else Color("ffb539"))
 		b.add_theme_color_override("font_outline_color",Color("070810"))
 		b.add_theme_constant_override("outline_size",7)
-		b.focus_entered.connect(func(): hint.text = entry[2]; queue_redraw())
-		b.focus_exited.connect(queue_redraw)
+		b.focus_entered.connect(func(): hint.text = entry[2]; motion.set_focus(b))
+		b.focus_exited.connect(func(): motion.clear_focus(b))
 		b.mouse_entered.connect(func(): b.grab_focus())
 		b.pressed.connect(func(): Sound.play("ui"); entry[1].call())
 		add_child(b)
@@ -49,9 +54,4 @@ func _draw() -> void:
 	# Feather the bottom into the painted foreground, without a window or border.
 	for i in range(28):
 		draw_rect(Rect2(0,632+i*3.2,1280,3.4),Color(0.012,0.015,0.033,float(i)/28.0*0.88))
-	for b in buttons:
-		if not b.has_focus(): continue
-		var p = b.position
-		var w = b.size.x
-		draw_polyline(PackedVector2Array([p+Vector2(25,42),p+Vector2(w*0.47,40),p+Vector2(w-21,42)]),Color("ffb539"),3,true)
-		draw_polyline(PackedVector2Array([p+Vector2(6,18),p+Vector2(13,24),p+Vector2(5,29)]),Color("ffb539"),3,true)
+	# The focus underline and caret are drawn by the title_motion overlay so they can play with the doodles.
