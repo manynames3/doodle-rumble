@@ -1,6 +1,6 @@
-# Crackle and Dark lord verification — local v0.7.10
+# Crackle and Dark lord verification — v0.7.10
 
-Verified October 10, 2026 using Godot 4.7.2 on Apple M1. This is a local build, not a published GitHub release. Automated runs used `--isolated-qa` profiles.
+Verified October 10, 2026 using Godot 4.7.2 on Apple M1. Published as the [v0.7.10 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.10) with matching source commit `feee642`. Automated runs used `--isolated-qa` profiles.
 
 ## Source checks
 
@@ -41,9 +41,11 @@ Dark lord's attack multiplier increased from 1.50 to 1.95: exactly 30% before pe
 - Captured and inspected 26 named native 1280×720 views of combat patterns, rocket impact, firecracker pop, spear strike, victory/defeat, reduced motion, the eight-card journal and before/after/final dialogue. Fallen feet stay on the floor; warnings clear the helmet; story text and journal cards fit the viewport. The final capture run completed cleanly; one earlier run reported an intermittent Godot exit resource warning.
 - The curated gameplay capture is [15-crackle-pack.png](screenshots/15-crackle-pack.png). Other local QA captures are under `docs/test-results/crackle/` and are ignored by Git. Reproduce them with `game/tests/capture_crackle.gd` using the native renderer.
 
-## Local Mac package
+## Mac package
 
 The app and app-only ZIP are under `builds/mac-v0.7.10/`. Info.plist reports v0.7.10 / build 28. The executable contains arm64 and x86_64 slices. Strict ad-hoc signature verification, ZIP integrity and a 120-frame headless startup of the actual exported executable passed.
+
+The [published playable ZIP](https://github.com/manynames3/doodle-rumble/releases/download/v0.7.10/Doodle_Rumble_Mac_v0.7.10.zip) is 261,111,576 bytes. GitHub reports the same SHA-256 as the verified local ZIP: `f0a85d11ce2bb2a21140057b00231b8fc2ffd7d000cf7c867f0c0c59916eca6c`.
 
 The exact exported PCK passed `test_character_art_packs` (436 checks), `test_premium_story` (150 checks), `test_crackle_boss` (50 checks) and `test_dark_lord_pressure` (18 checks): **654 checks / zero failures**, run through Godot's editor executable with `--main-pack`. The release export template does not support standalone `--script` execution. Packaged 15-second pressure was Green 82, Crackle 101, Pac-Man 146; Green varied from the source sample, while the intended ordering remained intact. Packaged held-bow pursuit matched the source result: 19 arrows, six spells, 203 damage and 438.3 pixels closest distance.
 

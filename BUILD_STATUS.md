@@ -2,13 +2,13 @@
 
 Updated 2026-10-10. Godot 4.7.2 / GDScript. The Universal Mac build was prepared on an Apple M1 Mac.
 
-## Local Crackle expansion and Dark lord upgrade (not yet released)
+## Published v0.7.10 — Crackle expansion and Dark lord upgrade
 
 - Added **Crackle**, guided by the supplied drawing: a diamond helmet, huge crystal boots, firework launcher and spear. He appears after Green and immediately before Pac-Man. The eight-chapter story includes his dialogue and journal card. Version-one and version-two saves preserve existing checkpoints, completions and bonus stickers.
 - Generated and integrated 13 authored poses, six effects and three projectile sprites. The single rocket, popping firecracker, three-lane firework fan and close-range spear strike have fixed tells and vulnerable recovery. Exact built-in image prompts and extraction geometry are preserved in `source_art/Crackle_Production_Assets/`; all 23 runtime PNG/JSON outputs reproduced byte-for-byte in an independent rebuild. The original private drawing remains outside the repository.
 - Dark lord's attack damage multiplier rose from 1.50 to 1.95, exactly **30%** before rounding. Faster pursuit, ranged attack selection and the warned full-height pillar counter distant/elevated shooters. Shorter hit stun and controller recovery reduce hesitation while preserving existing damage tells and invulnerability. A real held-bow scenario fired 19 arrows while Dark lord closed from 1,080 to 438.3 pixels and dealt 203 damage.
 - Focused source verification passed **19 suites / 2,379 checks / zero failures**, including the full eight-fight authored-art journey with no retries. Crackle's 15-second pressure was between Green and Pac-Man. Inspected 26 native captures covering combat, authored effects, results, reduced motion, story dialogue and the eight-card journal. This is automated and visual verification; the new fights have not received family playtesting.
-- Prepared local **v0.7.10 / build 28** in `builds/mac-v0.7.10/`, including a Universal Mac app and app-only ZIP. Both architecture slices, strict ad-hoc signature verification, ZIP integrity and a 120-frame exported-app startup passed. The exact exported PCK passed **654 asset, story and boss checks / zero failures**. See [TESTING_0_7_10.md](docs/TESTING_0_7_10.md). The app is not notarized. No GitHub release was created.
+- Published **v0.7.10 / build 28** as the latest [GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.10), with the [playable Universal Mac ZIP](https://github.com/manynames3/doodle-rumble/releases/download/v0.7.10/Doodle_Rumble_Mac_v0.7.10.zip) and matching source commit `feee642`. Local copies remain in `builds/mac-v0.7.10/`. Both architecture slices, strict ad-hoc signature verification, ZIP integrity and a 120-frame exported-app startup passed. The exact exported PCK passed **654 asset, story and boss checks / zero failures**. GitHub's uploaded asset digest matches the local SHA-256. See [TESTING_0_7_10.md](docs/TESTING_0_7_10.md). The app is not notarized.
 
 ## Local Fuse expansion (not yet released)
 
@@ -59,9 +59,9 @@ Updated 2026-10-10. Godot 4.7.2 / GDScript. The Universal Mac build was prepared
 - Native captures were rendered and inspected for fighter scale, attack framing, HUD legibility, imported cutout poses, and story routes. Story, ending, arena, custom combat, Workshop, AI, pause/rematch, and racing regression suites passed. Racing was not modified.
 - `git diff --check`, six package-policy checks, Universal app slices, ad-hoc code signature, exported PCK boot, and archive integrity checks passed. The exported PCK was smoke-booted headlessly for 120 frames; a second Mac and GUI launch were not tested.
 
-## Mac build and launch
+## Earlier v0.7.7 Mac build and launch
 
-- Current app: **v0.7.7 / build 25**, Universal arm64/x86_64, Godot 4.7.2 Compatibility renderer at `builds/mac-v0.7.7/Doodle Rumble.app`. The executable contains both architecture slices; strict local signature verification passed. Its embedded game pack boots headlessly for 120 frames and exits without errors.
+- Earlier app: **v0.7.7 / build 25**, Universal arm64/x86_64, Godot 4.7.2 Compatibility renderer at `builds/mac-v0.7.7/Doodle Rumble.app`. The executable contains both architecture slices; strict local signature verification passed. Its embedded game pack boots headlessly for 120 frames and exits without errors.
 - Public archives: `Doodle_Rumble_Mac_v0.7.7.zip` and `Doodle_Rumble_Project_v0.7.7.zip`, available from the [v0.7.7 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.7). The [v0.7.6 release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.6) remains available as an earlier version.
 - Launch the local build by double-clicking **Doodle Rumble.app** in the v0.7.7 folder. From source, open `game/project.godot` in Godot 4.7.2 and press F5.
 

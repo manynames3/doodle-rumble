@@ -81,13 +81,11 @@ Crackle brings the new diamond-helmet drawing to chapter four, just before Pac-M
 
 ## Play on a Mac
 
-The latest public downloadable Mac build is **v0.7.7**. It includes independent Fighter/Pen colors, a more effective warm-gray paper cleanup, and clearer manual photo-cutout guidance, alongside the Doodle Workshop, six custom weapon kits and the latest visual/performance pass. Download the Mac app or Godot project from the [v0.7.7 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.7). See the [v0.7.7 verification report](docs/TESTING_0_7_7.md) or run the project in Godot 4.7.2.
+The latest public downloadable Mac build is **v0.7.10 / build 28**, with Fuse, Crackle, an eight-chapter story and a harder Dark lord. [Download the playable Mac game](https://github.com/manynames3/doodle-rumble/releases/download/v0.7.10/Doodle_Rumble_Mac_v0.7.10.zip) or visit the [v0.7.10 GitHub release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.10). Verification is recorded in [TESTING_0_7_10.md](docs/TESTING_0_7_10.md).
 
-The local **v0.7.10 / build 28** includes Fuse, Crackle, the eight-chapter story and a harder Dark lord. Its Universal Mac app and app-only ZIP are in `builds/mac-v0.7.10/`; verification is recorded in [TESTING_0_7_10.md](docs/TESTING_0_7_10.md). This build is ad-hoc signed and not notarized.
+This release also includes the earlier Workshop preview improvements and expanded stage music/audio cues. Its Universal Mac app and app-only ZIP are available locally in `builds/mac-v0.7.10/`.
 
-The current `main` source also includes the later Workshop preview fixes and expanded stage music/audio cues, with full verification recorded in [`BUILD_STATUS.md`](BUILD_STATUS.md) and [`TESTING_0_7_8.md`](docs/TESTING_0_7_8.md). These source updates are ahead of the latest downloadable release; no v0.7.8 GitHub release has been published yet.
-
-Download and extract `Doodle_Rumble_Mac_v0.7.7.zip`, then double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly before the title menu. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default. The separate `Doodle_Rumble_Project_v0.7.7.zip` contains the complete Godot project for editing or running from source.
+Download and extract `Doodle_Rumble_Mac_v0.7.10.zip`, then double-click **Doodle Rumble.app**. The BenJam Games logo appears briefly before the title menu. Choose **Story Mode**, **Quick Match**, **2P Battle** or **Doodle Rally**. Orange and a gentle opponent are ready by default. To edit or run from source, clone this repository and open `game/project.godot` in Godot 4.7.2. The [v0.7.7 release](https://github.com/manynames3/doodle-rumble/releases/tag/v0.7.7) remains available as an earlier version.
 
 This Universal arm64/x86_64 build is ad-hoc signed and not Apple-notarized. macOS may require **System Settings → Privacy & Security → Open Anyway** after a transfer.
 
